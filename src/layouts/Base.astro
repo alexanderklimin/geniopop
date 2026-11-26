@@ -7,6 +7,7 @@ import '../styles/tools.css';
 import { SITE_NAME } from '../data/site.js';
 import { LANG_NAMES, OG_LOCALE, LIVE, NAV, sectionOf, t } from '../i18n/ui.js';
 import { authorPath } from '../data/author.js';
+import { LEGAL, legalPath } from '../data/legal.js';
 
 interface Props {
   lang: string;               // 'es' | 'de' | 'it'
@@ -73,11 +74,11 @@ if (trail.length) schemas.push({
             {nav.map((n) => <a href={n.href} data-c={n.key} aria-current={current.startsWith(n.href) ? 'page' : undefined}>{n.label}</a>)}
           </nav>
         )}
-        <nav class="langs" aria-label={ui.language}>
+        {switcher.length > 1 && <nav class="langs" aria-label={ui.language}>
           {switcher.map(([l, p]) => (
             <a href={p} hreflang={l} lang={l} aria-current={l === lang ? 'true' : undefined}>{l.toUpperCase()}</a>
           ))}
-        </nav>
+        </nav>}
       </div>
     </header>
     <main id="main" class="wrap">
@@ -115,8 +116,10 @@ if (trail.length) schemas.push({
           <p class="foot-h">{ui.footerAbout}</p>
           <ul>
             <li><a href={authorPath(lang)}>{ui.authorLink}</a></li>
+            {LEGAL[lang] && (['contact', 'privacy', 'legal'] as const).map((k) => <li><a href={legalPath(lang, k)}>{LEGAL[lang].names[k]}</a></li>)}
+            <li><button type="button" class="footer-button" data-open-consent hidden>{LEGAL[lang]?.names.cookies ?? 'Cookies'}</button></li>
           </ul>
-          <p class="foot-langs">{switcher.map(([l, p]) => <a href={p} hreflang={l} lang={l}>{LANG_NAMES[l]}</a>)}</p>
+          {switcher.length > 1 && <p class="foot-langs">{switcher.map(([l, p]) => <a href={p} hreflang={l} lang={l}>{LANG_NAMES[l]}</a>)}</p>}
         </div>
       </div>
     </footer>

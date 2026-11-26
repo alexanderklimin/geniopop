@@ -1,7 +1,8 @@
 // Interface strings per language. Content is written per language at native level, not translated word by word.
 // LIVE = languages built into the site now (wave A). Others are added when their content is ready.
 
-export const LIVE = ['es', 'de', 'it'];
+// de/it are hidden until they have real content (user 2026-11-26: no placeholder pages). Their strings stay here.
+export const LIVE = ['es'];
 
 export const LANG_NAMES = { es: 'Español', de: 'Deutsch', it: 'Italiano' };
 export const OG_LOCALE = { es: 'es_ES', de: 'de_DE', it: 'it_IT' };
@@ -29,7 +30,7 @@ export const UI = {
     trust: [['check', 'Explicaciones paso a paso, como en el cuaderno'], ['print', 'Fichas para imprimir con soluciones'], ['heart', 'Sin registro y sin pedir datos a los niños']],
     reviewedBy: 'Contenidos revisados por',
     reviewer: 'profesora y cofundadora de Inana Show, un espectáculo de ciencia para niños',
-    home_lead: 'Practica las tablas, resuelve fracciones paso a paso e imprime fichas con soluciones. Para niños, familias y profes.',
+    home_lead: 'Practica las tablas, resuelve fracciones y divisiones paso a paso e imprime fichas con soluciones. Para niños, familias y profes.',
     sections: [
       { title: 'Tablas de multiplicar', text: 'Del 1 al 12, con práctica en orden, salteada o contrarreloj, y la tabla pitagórica.', href: '/es/tablas-de-multiplicar/' },
       { title: 'Fracciones', text: 'Calculadora de suma, resta, multiplicación y división con el procedimiento completo.', href: '/es/fracciones/' },

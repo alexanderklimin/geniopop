@@ -46,7 +46,7 @@ const site = { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Geni
 
   <h2 class="sections-h">{ui.sectionsTitle}</h2>
   <ul class="sections">
-    {ui.sections.map((s, i) => {
+    {ui.sections.map((s, i) => ({ s, i })).filter(({ s }) => s.href || s.links).map(({ s, i }) => {
       const st = SECTION_STYLE[i];
       const live = s.href || s.links;
       return (

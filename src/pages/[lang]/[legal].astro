@@ -1,0 +1,42 @@
+---
+// Legal pages in every live language: privacy (with children's section), legal notice / Impressum, contact.
+import Base from '../../layouts/Base.astro';
+import { LIVE } from '../../i18n/ui.js';
+import { LEGAL, legalPath } from '../../data/legal.js';
+import { CONTACT_EMAIL, OWNER_NAME, OWNER_COUNTRY } from '../../data/site.js';
+
+export function getStaticPaths() {
+  return LIVE.flatMap((lang) => (['privacy', 'legal', 'contact'] as const).map((key) => ({ params: { lang, legal: LEGAL[lang].slugs[key] }, props: { key } })));
+}
+const { lang } = Astro.params as { lang: string };
+const { key } = Astro.props as { key: 'privacy' | 'legal' | 'contact' };
+const L = LEGAL[lang];
+const P = L[key];
+const o = { owner: OWNER_NAME, country: OWNER_COUNTRY[lang], email: CONTACT_EMAIL };
+const alternates = Object.fromEntries(LIVE.map((l) => [l, legalPath(l, key)]));
+const sections = key === 'contact' ? [] : P.sections(o);
+---
+<Base lang={lang} title={P.title} description={P.description} alternates={alternates} xDefault={legalPath('es', key)} crumbs={[{ name: L.names[key], path: legalPath(lang, key) }]}>
+  <article class="prose legal">
+    <h1>{P.title}</h1>
+    {P.lead && <p class="lead">{P.lead}</p>}
+    {key === 'contact' ? (
+      <>
+        <p><a class="button primary" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
+        <h2>{P.tipsTitle}</h2>
+        <ul>{P.tips.map((t) => <li>{t}</li>)}</ul>
+      </>
+    ) : (
+      <>
+        {sections.map(([h, ps]) => (<><h2>{h}</h2>{ps.map((p) => (p.startsWith('<ul') || p.startsWith('<table') ? <Fragment set:html={p} /> : <p set:html={p} />))}</>))}
+        <p class="updated">{L.updated}: {L.date}.</p>
+      </>
+    )}
+  </article>
+</Base>
+<style>
+  .legal :global(table) { border-collapse: collapse; width: 100%; background: #fff; border-radius: 12px; overflow: hidden; font-size: 0.95rem; }
+  .legal :global(th), .legal :global(td) { text-align: left; padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .legal :global(th) { background: var(--paper); }
+  .updated { color: var(--muted); font-size: 0.9rem; margin-top: 2rem; }
+</style>
