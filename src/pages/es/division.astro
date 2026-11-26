@@ -1,0 +1,77 @@
+---
+import Base from '../../layouts/Base.astro';
+import LongDivision from '../../components/LongDivision.astro';
+import { longDivision } from '../../lib/longdivision.js';
+import { divisionHTML } from '../../i18n/division-render.js';
+import { generate } from '../../lib/worksheet.js';
+
+const path = '/es/division/';
+const labels = { dividend: 'Dividendo', divisor: 'Divisor', decimals: 'Decimales', dec0: 'Sin decimales (con resto)', dec2: '2 decimales', decAll: 'Hasta 10 decimales', calc: 'Dividir', galera: 'Como en España y Sudamérica', bracket: 'Como en México y EE. UU. (casita)', products: 'Escribir las restas', steps: 'Paso a paso', err: 'Escribe un dividendo (puede tener decimales) y un divisor entero.', errZero: 'No se puede dividir entre 0.' };
+const faqs = [
+  { q: '¿Cuáles son las partes de una división?', a: 'El dividendo es el número que se reparte, el divisor es entre cuántos se reparte, el cociente es el resultado y el resto es lo que sobra. Siempre se cumple: dividendo = divisor × cociente + resto.' },
+  { q: '¿Cómo se divide entre dos cifras?', a: 'Igual que entre una, pero al principio se toman dos o tres cifras del dividendo. Para estimar cuántas veces cabe, fíjate en las primeras cifras: para saber cuántas veces cabe 23 en 97, piensa cuántas veces cabe 2 en 9 (4) y comprueba: 4 × 23 = 92.' },
+  { q: '¿Qué hago si el divisor no cabe?', a: 'Se escribe un 0 en el cociente y se baja la siguiente cifra. Olvidar ese 0 es el error más común: 408 ÷ 4 = 102, no 12.' },
+  { q: '¿Cómo saco decimales en una división?', a: 'Cuando ya no quedan cifras por bajar y el resto no es 0, se pone una coma en el cociente y se baja un 0. Se repite hasta que el resto sea 0 o hasta tener los decimales que se piden.' },
+  { q: '¿Por qué en México se escribe diferente?', a: 'En México y Estados Unidos se usa la «casita»: el divisor va a la izquierda y el cociente encima del dividendo. En España y gran parte de Sudamérica, el divisor va a la derecha y el cociente debajo. El cálculo es exactamente el mismo.' },
+];
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+const ex408 = divisionHTML(longDivision(408, 4), { layout: 'galera' });
+const sheet1 = generate('div', { count: 8, seed: 3, divisorDigits: 1, quotientDigits: 3 }).problems;
+const sheet2 = generate('div', { count: 4, seed: 4, divisorDigits: 2, quotientDigits: 2, remainder: true }).problems;
+const sheet = [...sheet1, ...sheet2];
+---
+<Base lang="es" title="División paso a paso: calculadora de divisiones con resto y decimales"
+  description="Resuelve divisiones en columna paso a paso, entre una y dos cifras, con resto o con decimales, escritas como en España y Sudamérica o con la «casita» de México. Explicación, errores frecuentes y fichas."
+  alternates={{ es: path }} crumbs={[{ name: 'División paso a paso', path }]} jsonLd={[faq]}>
+  <h1>División paso a paso</h1>
+  <p class="lead">Escribe el dividendo y el divisor y verás la división hecha como en el cuaderno, con cada resta y la explicación de cada paso. Puedes elegir la forma de escribirla de tu país y sacar decimales.</p>
+
+  <LongDivision lang="es" dividend="7865" divisor={5} labels={labels} />
+
+  <section class="prose">
+    <h2>Cómo hacer una división, paso a paso</h2>
+    <ol>
+      <li>Toma la primera cifra del dividendo. Si es menor que el divisor, toma dos (o las que hagan falta).</li>
+      <li>Busca cuántas veces cabe el divisor en ese número y escríbelo en el cociente.</li>
+      <li>Multiplica esa cifra por el divisor y réstalo.</li>
+      <li>Baja la siguiente cifra del dividendo junto al resto y vuelve al paso 2.</li>
+      <li>Cuando no quedan cifras, lo que sobra es el resto. Comprueba: divisor × cociente + resto = dividendo.</li>
+    </ol>
+    <p>En España también se enseña la <strong>división abreviada</strong>: se hacen las restas de cabeza y solo se escribe el resto. Desmarca «Escribir las restas» para verla así.</p>
+
+    <h2>El error del cero en el cociente</h2>
+    <p>Si al bajar una cifra el divisor no cabe, hay que escribir un 0 en el cociente antes de bajar la siguiente. En 408 ÷ 4, al bajar el 0 queda 0, y el 4 cabe 0 veces: el resultado es 102, no 12.</p>
+    <div class="example" set:html={ex408} />
+
+    <h2>Divisiones entre dos cifras</h2>
+    <p>El método es el mismo, pero estimar cuántas veces cabe cuesta más. Un truco: tapa la última cifra de los dos números. Para 97 ÷ 23, piensa en 9 ÷ 2 ≈ 4 y comprueba 4 × 23 = 92. Si te pasas, prueba con una menos.</p>
+
+    <h2>Errores frecuentes</h2>
+    <ul>
+      <li>Olvidar el 0 en el cociente (ver arriba).</li>
+      <li>Escribir un resto mayor o igual que el divisor: si pasa, el divisor cabía una vez más.</li>
+      <li>Bajar dos cifras a la vez sin escribir nada en el cociente.</li>
+      <li>Con decimales, olvidar la coma en el cociente al bajar el primer 0.</li>
+    </ul>
+  </section>
+
+  <h2>Divisiones para imprimir</h2>
+  <p>8 divisiones exactas entre una cifra y 4 con resto entre dos cifras. Las soluciones están en la segunda página.</p>
+  <div class="sheet" data-print-area="sheet">
+    <div class="sheet-head"><strong>Divisiones</strong><span>Nombre: ____________________</span><span>Fecha: __________</span></div>
+    <ol class="sheet-grid div-sheet">{sheet.map((p) => <li>{p.operands[0]} ÷ {p.operands[1]}</li>)}</ol>
+    <div class="sheet-answers"><strong>Soluciones</strong><ol class="sheet-key">{sheet.map((p) => <li>{p.answer}{p.remainder ? `, resto ${p.remainder}` : ''}</li>)}</ol></div>
+  </div>
+  <div class="actions"><button type="button" class="button primary" data-print="sheet">Imprimir ficha</button></div>
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{faqs.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>
+<style>
+  .example { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 0.25rem 1.1rem; display: inline-block; }
+  .div-sheet { grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); font-size: 1.25rem; row-gap: 6rem; }
+  @media print { .div-sheet { grid-template-columns: repeat(3, 1fr); row-gap: 50mm; } }
+  .sheet-key { grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)) !important; }
+</style>

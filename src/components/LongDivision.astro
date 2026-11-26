@@ -1,0 +1,89 @@
+---
+import { longDivision } from '../lib/longdivision.js';
+import { resolvePrefs } from '../lib/locale.js';
+import { divisionHTML, DIV_TEXT } from '../i18n/division-render.js';
+interface Props { lang: string; dividend?: string; divisor?: number; decimals?: number; labels: Record<string, string> }
+const { lang, dividend = '7865', divisor = 5, decimals = 0, labels } = Astro.props;
+const prefs = resolvePrefs(lang, []);
+const res = longDivision(dividend, divisor, { decimals });
+const html = divisionHTML(res, { layout: prefs.layout, sep: prefs.decimalSep });
+const steps = DIV_TEXT[lang].steps(res, prefs.decimalSep);
+---
+<section class="fx ldc" data-ld data-lang={lang} data-labels={JSON.stringify(labels)}>
+  <form class="ld-form" data-ld-form novalidate>
+    <label>{labels.dividend}<input name="a" value={dividend} inputmode="decimal" /></label>
+    <span class="ld-sign">÷</span>
+    <label>{labels.divisor}<input name="b" value={divisor} inputmode="numeric" /></label>
+    <label>{labels.decimals}
+      <select name="dec">
+        <option value="0" selected={decimals === 0}>{labels.dec0}</option>
+        <option value="2" selected={decimals === 2}>{labels.dec2}</option>
+        <option value="10" selected={decimals === 10}>{labels.decAll}</option>
+      </select>
+    </label>
+    <button class="fx-go">{labels.calc}</button>
+  </form>
+  <div class="ld-opts">
+    <label><input type="radio" name="layout" value="galera" checked={prefs.layout === 'galera'} /> {labels.galera}</label>
+    <label><input type="radio" name="layout" value="bracket" checked={prefs.layout === 'bracket'} /> {labels.bracket}</label>
+    <label><input type="checkbox" name="products" checked /> {labels.products}</label>
+  </div>
+  <p class="fx-err" data-ld-err role="alert"></p>
+  <div class="ld-out" data-ld-out set:html={html} />
+  <h3>{labels.steps}</h3>
+  <ol class="fx-steps" data-ld-steps>{steps.map((s) => <li set:html={s} />)}</ol>
+</section>
+
+<script>
+  import { longDivision } from '../lib/longdivision.js';
+  import { resolvePrefs } from '../lib/locale.js';
+  import { divisionHTML, DIV_TEXT } from '../i18n/division-render.js';
+  for (const root of document.querySelectorAll('[data-ld]')) {
+    const lang = root.dataset.lang, L = JSON.parse(root.dataset.labels);
+    const prefs = resolvePrefs(lang, navigator.languages || []);
+    const form = root.querySelector('[data-ld-form]');
+    root.querySelector(`[name=layout][value=${prefs.layout}]`).checked = true;
+    const run = () => {
+      const err = root.querySelector('[data-ld-err]');
+      err.textContent = '';
+      const a = form.elements.a.value.trim().replace(/\s/g, ''), b = form.elements.b.value.trim();
+      if (!/^\d{1,12}([.,]\d{1,6})?$/.test(a) || !/^\d{1,6}$/.test(b) || Number(b) === 0) { err.textContent = Number(b) === 0 && /^\d+$/.test(b) ? L.errZero : L.err; return; }
+      try {
+        const res = longDivision(a, Number(b), { decimals: Number(form.elements.dec.value) });
+        const layout = root.querySelector('[name=layout]:checked').value;
+        root.querySelector('[data-ld-out]').innerHTML = divisionHTML(res, { layout, showProducts: root.querySelector('[name=products]').checked, sep: prefs.decimalSep });
+        root.querySelector('[data-ld-steps]').innerHTML = DIV_TEXT[lang].steps(res, prefs.decimalSep).map((s) => `<li>${s}</li>`).join('');
+      } catch { err.textContent = L.err; }
+    };
+    form.addEventListener('submit', (e) => { e.preventDefault(); run(); });
+    root.querySelectorAll('.ld-opts input, [name=dec]').forEach((i) => i.addEventListener('change', run));
+    if (prefs.layout !== 'galera' || prefs.decimalSep !== ',') run();
+  }
+</script>
+
+<style is:global>
+  .ld-form { display: flex; flex-wrap: wrap; align-items: end; gap: 0.75rem; }
+  .ld-form label { display: flex; flex-direction: column; font-size: 0.85rem; font-weight: 600; color: var(--muted); gap: 0.2rem; }
+  .ld-form input { width: 8rem; font: inherit; font-size: 1.3rem; font-weight: 700; color: var(--ink); padding: 0.4rem 0.6rem; border: 2px solid var(--line); border-radius: 10px; }
+  .ld-form input[name=b] { width: 5.5rem; }
+  .ld-form select { font: inherit; font-size: 1rem; padding: 0.55rem; border: 2px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); }
+  .ld-sign { font-size: 1.6rem; font-weight: 800; padding-bottom: 0.4rem; }
+  .ld-opts { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin: 0.75rem 0 0; font-size: 0.95rem; }
+  .ld-opts input { accent-color: var(--pop); }
+  .ld-out { overflow-x: auto; padding: 1rem 0; }
+  .ld { display: inline-flex; align-items: flex-start; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 1.6rem; line-height: 1.6; }
+  .ld-grid { display: grid; grid-auto-rows: 1.6em; }
+  .ld-row { display: grid; grid-template-columns: repeat(var(--n), 1.1ch); }
+  .ld-row span { text-align: center; position: relative; }
+  .ld-row .ul { border-bottom: 2px solid var(--ink); }
+  .ld-row .mi { color: var(--muted); }
+  .ld-row .pt::after { content: ','; position: absolute; right: -0.35ch; }
+  .ld-row.rest span:not(:empty) { color: var(--pop-dark); font-weight: 700; }
+  .ld-side { display: flex; flex-direction: column; border-left: 2px solid var(--ink); margin-left: 0.6ch; }
+  .ld-side .ld-dv { border-bottom: 2px solid var(--ink); padding: 0 0.6ch; }
+  .ld-side .ld-q { padding: 0 0.6ch; color: var(--pop-dark); font-weight: 700; }
+  .ld-bracket .ld-left { padding-top: 1.6em; padding-right: 0.2ch; }
+  .ld-row.brk { border-top: 2px solid var(--ink); border-left: 2px solid var(--ink); border-top-left-radius: 10px; }
+  .ld-row.quot span { color: var(--pop-dark); font-weight: 700; }
+  .rep { text-decoration: overline; }
+</style>
