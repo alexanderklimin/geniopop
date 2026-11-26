@@ -33,6 +33,10 @@ const prev = COURSES.find((x) => x.id === c.id - 1), next = COURSES.find((x) => 
     <h2>Qué se trabaja en {c.name}</h2>
     <ul>{c.learn.map((l) => <li>{l}</li>)}</ul>
     <p>El orden exacto cambia según el país y el colegio, así que úsalo como guía.</p>
+    <h2>Consejos para practicar en casa</h2>
+    <ul>{c.tips.map((t) => <li set:html={t} />)}</ul>
+    <h2>Errores típicos de {c.name}</h2>
+    <ul>{c.mistakes.map((t) => <li>{t}</li>)}</ul>
   </section>
 
   {sheets.map((s) => (

@@ -1,0 +1,24 @@
+---
+// "Te puede servir": siblings from the same topic group + one entry from each other group. Built from HOME[lang].groups.
+import { HOME } from '../data/home.js';
+import Icon from './Icon.astro';
+interface Props { lang: string; path: string; title: string }
+const { lang, path, title } = Astro.props;
+const groups = HOME[lang]?.groups ?? [];
+const own = groups.find((g) => g.links.some(([, h]) => h === path)) ?? (path.includes('/tablas-de-multiplicar/') ? groups[0] : path.includes('/fichas/') ? null : null);
+const links: { l: string; h: string; c: string }[] = [];
+if (own) for (const [l, h] of own.links) if (h !== path && links.length < 5) links.push({ l, h, c: own.c });
+for (const g of groups) if (g !== own) { const [l, h] = g.links.find(([, x]) => x !== path) ?? []; if (h) links.push({ l: `${g.title}: ${l}`, h, c: g.c }); }
+if (!path.startsWith(`/${lang}/fichas/`) && lang === 'es') links.push({ l: 'Fichas para imprimir', h: '/es/fichas/', c: 'fichas' });
+---
+{links.length > 0 && (
+  <nav class="related no-print" aria-label={title}>
+    <h2>{title}</h2>
+    <ul>{links.map((x) => <li style={`--c: var(--c-${x.c})`}><a href={x.h}>{x.l} <Icon name="arrow" size={16} /></a></li>)}</ul>
+  </nav>
+)}
+<style>
+  .related ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .related a { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.5rem 0.9rem; border-radius: 999px; background: #fff; border: 2px solid var(--c); color: var(--ink); font-weight: 800; text-decoration: none; }
+  .related a:hover { background: var(--c); color: #fff; }
+</style>

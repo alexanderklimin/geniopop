@@ -4,6 +4,7 @@ import Trainer from '../../../components/Trainer.astro';
 import TableList from '../../../components/TableList.astro';
 import Sheet from '../../../components/Sheet.astro';
 import { TABLES } from '../../../data/es/tablas.js';
+import { PROBLEMS } from '../../../data/es/tablas-problemas.js';
 
 export function getStaticPaths() {
   return Object.keys(TABLES).map((n) => ({ params: { tabla: `tabla-del-${n}` }, props: { n: Number(n) } }));
@@ -13,6 +14,9 @@ const { n } = Astro.props as { n: number };
 const d = TABLES[n];
 const hub = '/es/tablas-de-multiplicar/';
 const path = `${hub}tabla-del-${n}/`;
+const probs = PROBLEMS[n];
+const multiples = n >= 2 ? Array.from({ length: Math.min(20, Math.floor(120 / n)) }, (_, i) => n * (i + 1)) : [];
+const endings = n >= 2 ? [...new Set(multiples.slice(0, 10).map((m) => m % 10))] : [];
 const prev = n > 0 ? n - 1 : null, next = n < 12 ? n + 1 : null;
 const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: d.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
 const title = n <= 1 || n === 10 ? `Tabla del ${n}: explicación, práctica y ficha para imprimir` : `Tabla del ${n}: trucos para aprenderla y ficha para imprimir`;
@@ -43,6 +47,29 @@ const description = `La tabla del ${n} completa (${n} × 1 = ${n} … ${n} × 10
     <p>{d.mistake}</p>
   </section>
 
+  <section class="prose">
+    <h2>Problemas con la tabla del {n}</h2>
+    <p>Para saber si de verdad se entiende la tabla, nada mejor que usarla en situaciones de la vida diaria. Piensa la respuesta antes de abrirla.</p>
+    <ol class="probs">{probs.map((p) => <li><p>{p.q}</p><details><summary>Ver la solución</summary><p><strong>{p.a}</strong>, porque {p.why}.</p></details></li>)}</ol>
+  </section>
+
+  {n >= 1 && (
+    <section class="prose">
+      <h2>Divisiones de la tabla del {n}</h2>
+      <p>Cada multiplicación de la tabla tiene su división: si {n} × 7 = {n * 7}, entonces {n * 7} ÷ {n} = 7. Saberse la tabla es saberse también estas divisiones.</p>
+      <ul class="divs">{Array.from({ length: 10 }, (_, i) => i + 1).map((k) => <li>{n * k} ÷ {n} = <b>{k}</b></li>)}</ul>
+    </section>
+  )}
+
+  {multiples.length > 0 && (
+    <section class="prose">
+      <h2>Múltiplos de {n}</h2>
+      <p>Los resultados de la tabla del {n} son los múltiplos de {n}. Estos son los primeros:</p>
+      <p class="mults">{multiples.join(', ')}…</p>
+      <p>{endings.length < 10 ? `Fíjate en la última cifra: en los diez primeros solo aparecen ${endings.sort((x, y) => x - y).join(', ')}. Si un resultado termina en otra cifra, no puede ser de la tabla del ${n}.` : `Su última cifra va pasando por todas las cifras del 0 al 9, así que aquí no hay atajo: la última cifra no ayuda a comprobar.`}</p>
+    </section>
+  )}
+
   <h2>Practica la tabla del {n}</h2>
   <Trainer lang="es" tables={[n]} fixed />
 
@@ -69,5 +96,10 @@ const description = `La tabla del ${n} completa (${n} × 1 = ${n} … ${n} × 10
   .hard { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 0.25rem 1.1rem 0.5rem; }
   .hard h2 { margin-top: 0.75rem; font-size: 1.15rem; }
   .hard ul { padding-left: 1.2rem; font-size: 1.2rem; }
+  .probs > li { margin-bottom: 0.9rem; }
+  .probs p { margin: 0 0 0.3rem; }
+  .probs summary { cursor: pointer; font-weight: 800; color: var(--accent-dark); }
+  .divs { list-style: none; padding: 0 !important; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(7.5rem, 100%), 1fr)); gap: 0.3rem 1rem; font-variant-numeric: tabular-nums; font-size: 1.1rem; }
+  .mults { font-variant-numeric: tabular-nums; font-weight: 700; line-height: 1.9; }
   .pager { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-top: 2.5rem; }
 </style>

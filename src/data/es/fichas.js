@@ -5,6 +5,8 @@ export const COURSES = [
   { id: 1, slug: 'primero-de-primaria', name: '1.º de primaria', syn: '1.er grado · 1.º básico', age: '6–7 años',
     intro: 'En primer curso se aprende a contar, leer y escribir números hasta el 99 y a sumar y restar con soltura, primero sin llevadas.',
     learn: ['Números hasta el 99: contar, ordenar, decenas y unidades.', 'Sumas y restas de una cifra y de dos cifras sin llevadas.', 'Primeras sumas con llevadas al final del curso.', 'Problemas sencillos de juntar y quitar.'],
+    tips: ['Usa objetos: botones, garbanzos o los dedos. A esta edad la cuenta tiene que verse antes de escribirse.', 'Practica los «amigos del 10» (1 + 9, 2 + 8, 3 + 7…): son la base de todas las sumas con llevadas que vendrán.', 'Cuenta hacia atrás de 10 en 10 y de 1 en 1: ayuda mucho con las restas.'],
+    mistakes: ['Escribir los números al revés (el 12 como 21) al pasar de lo que se dice a lo que se escribe.', 'Contar el número de partida en las sumas: 5 + 3 → «5, 6, 7» en lugar de «6, 7, 8».', 'Restar el menor del mayor en cada columna aunque esté abajo.'],
     sheets: [
       { title: 'Sumas de una cifra', topic: 'add', v: { digits: 1, carry: 'any' }, count: 20 },
       { title: 'Restas de una cifra', topic: 'sub', v: { digits: 1, borrow: 'none' }, count: 20 },
@@ -14,6 +16,8 @@ export const COURSES = [
   { id: 2, slug: 'segundo-de-primaria', name: '2.º de primaria', syn: '2.º grado · 2.º básico', age: '7–8 años',
     intro: 'En segundo llegan las sumas y restas con llevadas, los números hasta el 999 y las primeras tablas de multiplicar.',
     learn: ['Números hasta el 999: centenas, decenas y unidades.', 'Sumas y restas con llevadas de dos y tres cifras.', 'La multiplicación como suma repetida.', 'Tablas del 2, del 5 y del 10 (y en muchos colegios, del 3 y del 4).'],
+    tips: ['Antes de la cuenta en columna, haz la suma con decenas y unidades separadas: 38 + 25 = 50 + 13 = 63.', 'Para las tablas del 2, 5 y 10 sirven los objetos de casa: zapatos (de 2 en 2), manos (de 5 en 5), monedas.', 'Que el niño explique en voz alta por qué se lleva 1: si lo sabe explicar, lo ha entendido.'],
+    mistakes: ['Olvidar la llevada en la columna de las decenas.', 'No alinear las cifras: las unidades debajo de las unidades.', 'Confundir la multiplicación con la suma: 2 × 5 = 7.'],
     sheets: [
       { title: 'Sumas con llevadas', topic: 'add', v: { digits: 2, carry: 'force' }, count: 15 },
       { title: 'Restas con llevadas', topic: 'sub', v: { digits: 2, borrow: 'force' }, count: 15 },
@@ -23,6 +27,8 @@ export const COURSES = [
   { id: 3, slug: 'tercero-de-primaria', name: '3.º de primaria', syn: '3.er grado · 3.º básico', age: '8–9 años',
     intro: 'Tercero es el curso de las tablas de multiplicar: se completan todas y se empieza a multiplicar y dividir por una cifra.',
     learn: ['Todas las tablas de multiplicar del 1 al 10.', 'Multiplicaciones por una cifra.', 'Divisiones sencillas, exactas, por una cifra.', 'Números hasta el 9999 y restas con llevadas de tres y cuatro cifras.'],
+    tips: ['Las tablas se aprenden mejor en sesiones cortas cada día que en un repaso largo el fin de semana. El <a href="/es/tablas-de-multiplicar/">entrenador de tablas</a> repite las que fallan.', 'Relaciona multiplicar y dividir: si 6 × 7 = 42, entonces 42 ÷ 7 = 6.', 'Para las restas con ceros (400 − 127), practica despacio la llevada que «atraviesa» los ceros.'],
+    mistakes: ['Saberse la tabla solo de memoria y en orden: si se pregunta 7 × 8 salteado, no sale.', 'En la división, olvidar escribir el 0 cuando el divisor no cabe.', 'En las restas con ceros, olvidar que el 0 se convierte en 9 al pedir prestado.'],
     sheets: [
       { title: 'Tablas del 6, 7, 8 y 9', topic: 'table', v: { tables: [6, 7, 8, 9], to: 10 }, count: 20 },
       { title: '¿Qué número falta? (tablas)', topic: 'missingFactor', v: { tables: [2, 3, 4, 5, 6, 7, 8, 9] }, count: 20 },
@@ -33,6 +39,8 @@ export const COURSES = [
   { id: 4, slug: 'cuarto-de-primaria', name: '4.º de primaria', syn: '4.º grado · 4.º básico', age: '9–10 años',
     intro: 'En cuarto se multiplica por dos cifras, se divide con resto y aparecen las fracciones y los números romanos.',
     learn: ['Multiplicaciones por dos cifras.', 'Divisiones por una cifra, con resto y con cociente de dos o tres cifras.', 'Fracciones: leer, comparar y sumar con el mismo denominador.', 'Números romanos.'],
+    tips: ['Antes de multiplicar por dos cifras, repasa la multiplicación por 10: es la clave del hueco en la segunda fila.', 'En las divisiones con resto, comprueba siempre: divisor × cociente + resto = dividendo.', 'Para las fracciones, dibuja: una pizza o una tableta de chocolate dicen más que la regla.'],
+    mistakes: ['Olvidar el hueco (o el 0) al multiplicar por las decenas.', 'Dejar un resto mayor que el divisor: el divisor cabía una vez más.', 'Sumar los denominadores en las fracciones: 1/4 + 2/4 no es 3/8.'],
     sheets: [
       { title: 'Multiplicaciones por dos cifras', topic: 'mul', v: { digitsA: 3, digitsB: 2 }, count: 10 },
       { title: 'Divisiones con resto', topic: 'div', v: { divisorDigits: 1, quotientDigits: 2, remainder: 1 }, count: 9 },
@@ -42,6 +50,8 @@ export const COURSES = [
   { id: 5, slug: 'quinto-de-primaria', name: '5.º de primaria', syn: '5.º grado · 5.º básico', age: '10–11 años',
     intro: 'Quinto trae las divisiones por dos cifras, las fracciones con distinto denominador y los primeros porcentajes.',
     learn: ['Divisiones por dos cifras.', 'Sumas y restas de fracciones con distinto denominador; fracciones equivalentes y simplificación.', 'Números decimales.', 'Porcentajes sencillos (10 %, 25 %, 50 %).'],
+    tips: ['En las divisiones entre dos cifras, estima tapando la última cifra: 156 ÷ 23 ≈ 15 ÷ 2 ≈ 7, y luego ajusta.', 'Antes de sumar fracciones con distinto denominador, repasa el mínimo común múltiplo.', 'Los porcentajes se entienden mejor con dinero: el 10 % de 50 es 5, basta con quitar un cero.'],
+    mistakes: ['Al estimar la cifra del cociente, quedarse corto o pasarse y no corregir.', 'Amplificar solo el denominador de una fracción.', 'Olvidar simplificar el resultado final.'],
     sheets: [
       { title: 'Divisiones por dos cifras', topic: 'div', v: { divisorDigits: 2, quotientDigits: 2, remainder: 0 }, count: 9 },
       { title: 'Sumas y restas de fracciones', topic: 'fraction', v: { ops: '+-', sameDen: 0, maxDen: 10 }, count: 12 },
@@ -52,6 +62,8 @@ export const COURSES = [
   { id: 6, slug: 'sexto-de-primaria', name: '6.º de primaria', syn: '6.º grado · 6.º básico', age: '11–12 años',
     intro: 'Sexto repasa las cuatro operaciones con fracciones y añade el mínimo común múltiplo, el máximo común divisor y más porcentajes.',
     learn: ['Las cuatro operaciones con fracciones.', 'Mínimo común múltiplo y máximo común divisor.', 'Porcentajes, descuentos y aumentos.', 'Potencias y raíces cuadradas sencillas; números romanos grandes.'],
+    tips: ['Para multiplicar y dividir fracciones, simplifica antes en cruz: los números quedan pequeños.', 'Practica los problemas de mcm («¿cuándo vuelven a coincidir?») y de mcd («repartir en partes iguales lo más grandes posible»).', 'En las operaciones combinadas, que el niño subraye primero qué operación va antes.'],
+    mistakes: ['En la división de fracciones, dar la vuelta a la primera fracción en lugar de a la segunda.', 'Confundir cuándo se usa el mcm y cuándo el mcd.', 'Hacer las operaciones combinadas de izquierda a derecha sin respetar la prioridad.'],
     sheets: [
       { title: 'Multiplicación y división de fracciones', topic: 'fraction', v: { ops: '*/', sameDen: 0, maxDen: 10 }, count: 12 },
       { title: 'Operaciones con fracciones (todas)', topic: 'fraction', v: { ops: '+-*/', sameDen: 0, maxDen: 12 }, count: 12 },

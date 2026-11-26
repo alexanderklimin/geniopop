@@ -2,6 +2,7 @@
 import '@fontsource-variable/nunito/wght.css';
 import Analytics from '../components/Analytics.astro';
 import Icon from '../components/Icon.astro';
+import Related from '../components/Related.astro';
 import '../styles/global.css';
 import '../styles/tools.css';
 import '../styles/sheet.css';
@@ -32,6 +33,8 @@ const home = `/${lang}/`;
 const section = sectionOf(Astro.url.pathname);
 const nav = NAV[lang] ?? [];
 const current = Astro.url.pathname;
+const legalLike = /\/(privacidad|aviso-legal|contacto|datenschutz|impressum|kontakt|privacy|note-legali|contatti|sobre-nosotros|ueber-uns|chi-siamo)\//.test(current);
+const showRelated = lang === 'es' && current !== home && !legalLike;
 // hreflang only when the page really exists in more than one language
 const multi = Object.keys(alternates).length > 1;
 const switcher = LIVE.map((l) => [l, alternates[l] ?? `/${l}/`]);
@@ -99,6 +102,7 @@ if (trail.length) schemas.push({
         </nav>
       )}
       <slot />
+      {showRelated && <Related lang={lang} path={current} title="Te puede servir" />}
     </main>
     <footer class="site-footer">
       <div class="wrap foot">
