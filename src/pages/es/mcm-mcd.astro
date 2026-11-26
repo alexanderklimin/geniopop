@@ -1,0 +1,74 @@
+---
+import Base from '../../layouts/Base.astro';
+import GcdLcm from '../../components/GcdLcm.astro';
+import { generate } from '../../lib/worksheet.js';
+
+const path = '/es/mcm-mcd/';
+const faqs = [
+  { q: '¿Cuál es la diferencia entre mcm y mcd?', a: 'El mcd (máximo común divisor) es el número más grande que divide a todos; siempre es menor o igual que el menor de los números. El mcm (mínimo común múltiplo) es el número más pequeño que es múltiplo de todos; siempre es mayor o igual que el mayor.' },
+  { q: '¿Para qué sirve el mcm en las fracciones?', a: 'Para sumar y restar fracciones con distinto denominador: el mcm de los denominadores es el denominador común más pequeño.' },
+  { q: '¿Para qué sirve el mcd en las fracciones?', a: 'Para simplificarlas de una vez: si divides el numerador y el denominador entre su mcd, obtienes la fracción irreducible.' },
+  { q: '¿Qué pasa si los números son primos entre sí?', a: 'Su mcd es 1 y su mcm es el producto de los números. Por ejemplo, mcd(8, 15) = 1 y mcm(8, 15) = 120.' },
+];
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+const sheet = generate('gcdLcm', { count: 12, seed: 5, max: 60 }).problems;
+const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97];
+---
+<Base lang="es" title="Calculadora de mcm y mcd paso a paso (MCM y MCD)"
+  description="Calcula el mínimo común múltiplo y el máximo común divisor de 2 a 6 números con descomposición en factores primos y el algoritmo de Euclides. Explicación, problemas típicos y ejercicios para imprimir."
+  alternates={{ es: path }} crumbs={[{ name: 'mcm y mcd', path }]} jsonLd={[faq]}>
+  <h1>Mínimo común múltiplo y máximo común divisor</h1>
+  <p class="lead">Escribe dos o más números y verás el mcm y el mcd con la descomposición en factores primos paso a paso, como se hace en clase. En algunos países se escriben con mayúsculas: MCM y MCD.</p>
+
+  <GcdLcm lang="es" nums={[12, 18]} />
+
+  <section class="prose">
+    <h2>Qué son el mcm y el mcd</h2>
+    <ul>
+      <li>El <strong>mínimo común múltiplo (mcm)</strong> es el número más pequeño que es múltiplo de todos. Múltiplos de 4: 4, 8, <strong>12</strong>, 16…; de 6: 6, <strong>12</strong>, 18… → mcm(4, 6) = 12.</li>
+      <li>El <strong>máximo común divisor (mcd)</strong> es el número más grande que divide a todos. Divisores de 12: 1, 2, 3, 4, <strong>6</strong>, 12; de 18: 1, 2, 3, <strong>6</strong>, 9, 18 → mcd(12, 18) = 6.</li>
+    </ul>
+    <p>Hacer listas funciona con números pequeños. Con números grandes es más rápido el método de los factores primos.</p>
+
+    <h2>Método de la descomposición en factores primos</h2>
+    <ol>
+      <li>Descompón cada número: divide entre 2 mientras puedas, luego entre 3, 5, 7… hasta llegar a 1.</li>
+      <li>Escribe cada número como producto de potencias de primos: 360 = 2³ · 3² · 5.</li>
+      <li><strong>mcd</strong>: factores <em>comunes</em> con el exponente <em>menor</em>.</li>
+      <li><strong>mcm</strong>: factores <em>comunes y no comunes</em> con el exponente <em>mayor</em>.</li>
+    </ol>
+
+    <h2>¿mcm o mcd? Cómo saberlo en un problema</h2>
+    <ul>
+      <li><strong>mcm</strong> cuando algo <em>se repite y buscamos cuándo coincide</em>: «Un autobús pasa cada 12 minutos y otro cada 18. Si salen juntos, ¿cuándo vuelven a coincidir?» → mcm(12, 18) = 36 minutos.</li>
+      <li><strong>mcd</strong> cuando hay que <em>repartir o cortar en partes iguales lo más grandes posible</em>: «Tenemos 12 caramelos de fresa y 18 de limón y queremos hacer bolsas iguales sin mezclar sabores, con el mayor número de caramelos por bolsa» → mcd(12, 18) = 6 caramelos por bolsa.</li>
+    </ul>
+
+    <h2>Errores frecuentes</h2>
+    <ul>
+      <li>Cambiar las reglas: para el mcd se toma el exponente <em>menor</em> y solo los factores comunes; para el mcm, el <em>mayor</em> y todos los factores.</li>
+      <li>Usar números que no son primos en la descomposición (dividir entre 4 o 6). Solo valen 2, 3, 5, 7, 11…</li>
+      <li>Olvidar que el 1 no es primo, y que si no hay factores comunes el mcd es 1.</li>
+    </ul>
+
+    <h2>Números primos hasta el 100</h2>
+    <p class="primes">{primes.join(', ')}</p>
+  </section>
+
+  <h2>Ejercicios para imprimir</h2>
+  <div class="sheet" data-print-area="sheet">
+    <div class="sheet-head"><strong>mcm y mcd</strong><span>Nombre: ____________________</span><span>Fecha: __________</span></div>
+    <ol class="sheet-grid gl-sheet">{sheet.map((p) => <li>{p.op === 'gcd' ? 'mcd' : 'mcm'} ({p.operands.join(', ')}) = <span class="blank"></span></li>)}</ol>
+    <div class="sheet-answers"><strong>Soluciones</strong><ol class="sheet-key">{sheet.map((p) => <li>{p.answer}</li>)}</ol></div>
+  </div>
+  <div class="actions"><button type="button" class="button primary" data-print="sheet">Imprimir ficha</button></div>
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{faqs.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>
+<style>
+  .primes { font-variant-numeric: tabular-nums; line-height: 1.9; }
+  .gl-sheet { grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); font-size: 1.15rem; }
+</style>

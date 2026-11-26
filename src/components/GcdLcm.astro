@@ -1,0 +1,54 @@
+---
+import { gcdLcmSteps, euclidSteps } from '../lib/numtheory.js';
+import { GCD_TEXT } from '../i18n/gcd-steps.js';
+interface Props { lang: string; nums?: number[] }
+const { lang, nums = [12, 18] } = Astro.props;
+const T = GCD_TEXT[lang];
+const r = gcdLcmSteps(nums);
+const html = T.html(r, nums.length === 2 ? euclidSteps(nums[0], nums[1]) : null);
+---
+<section class="fx gl" data-gl data-lang={lang}>
+  <form class="gl-form" data-gl-form novalidate>
+    <input name="nums" value={nums.join(', ')} inputmode="numeric" placeholder={T.labels.placeholder} aria-label={T.labels.placeholder} />
+    <button class="fx-go">{T.labels.calc}</button>
+  </form>
+  <p class="fx-err" data-gl-err role="alert"></p>
+  <div class="fx-result" data-gl-result><div><span>{T.labels.mcd}</span><b>{r.gcd}</b></div><div><span>{T.labels.mcm}</span><b>{r.lcm}</b></div></div>
+  <h3>{T.labels.steps}</h3>
+  <div data-gl-steps set:html={html} />
+</section>
+
+<script>
+  import { gcdLcmSteps, euclidSteps } from '../lib/numtheory.js';
+  import { GCD_TEXT } from '../i18n/gcd-steps.js';
+  for (const root of document.querySelectorAll('[data-gl]')) {
+    const T = GCD_TEXT[root.dataset.lang];
+    root.querySelector('[data-gl-form]').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const err = root.querySelector('[data-gl-err]');
+      err.textContent = '';
+      const raw = e.target.elements.nums.value.split(/[\s,;y]+/).filter(Boolean);
+      const nums = raw.map(Number);
+      if (nums.length < 2 || nums.length > 6 || !nums.every((n) => Number.isInteger(n) && n >= 1 && n <= 1e6) || raw.some((x) => !/^\d+$/.test(x))) { err.textContent = T.labels.err; return; }
+      try {
+        const r = gcdLcmSteps(nums);
+        root.querySelector('[data-gl-result]').innerHTML = `<div><span>${T.labels.mcd}</span><b>${r.gcd}</b></div><div><span>${T.labels.mcm}</span><b>${r.lcm}</b></div>`;
+        root.querySelector('[data-gl-steps]').innerHTML = T.html(r, nums.length === 2 ? euclidSteps(nums[0], nums[1]) : null);
+      } catch { err.textContent = T.labels.err; }
+    });
+  }
+</script>
+
+<style is:global>
+  .gl-form { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .gl-form input { flex: 1 1 14rem; font: inherit; font-size: 1.3rem; font-weight: 700; padding: 0.5rem 0.8rem; border: 2px solid var(--line); border-radius: 12px; }
+  .gl-form input:focus { outline: none; border-color: var(--pop); }
+  .ladders { display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 0.5rem 0; }
+  .ladder { margin: 0; }
+  .ladder table { border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 1.1rem; }
+  .ladder td { padding: 0.1rem 0.7rem; text-align: right; }
+  .ladder td:first-child { border-right: 2px solid var(--ink); }
+  .ladder td:last-child { text-align: left; color: var(--pop-dark); font-weight: 700; }
+  .ladder figcaption { font-weight: 700; margin-top: 0.3rem; }
+  .euclid { list-style: none; padding: 0; font-variant-numeric: tabular-nums; }
+</style>

@@ -117,31 +117,3 @@ const ops = [['+', '+'], ['-', '−'], ['*', '×'], ['/', '÷']];
     });
   }
 </script>
-
-<style is:global>
-  .fx { background: #fff; border: 2px solid var(--line); border-radius: 20px; padding: 1.25rem; margin: 1.5rem 0; }
-  .fx-form { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
-  .fx-in { display: flex; align-items: center; gap: 0.35rem; }
-  .fx-in input { width: 4.2rem; font: inherit; font-size: 1.35rem; font-weight: 700; text-align: center; padding: 0.3rem; border: 2px solid var(--line); border-radius: 10px; }
-  .fx-in input:focus { outline: none; border-color: var(--pop); }
-  .fx-in .w { width: 3.4rem; }
-  .stack { display: inline-flex; flex-direction: column; gap: 0.3rem; }
-  .stack input:first-child { border-bottom: 3px solid var(--ink); }
-  .fx-op { font: inherit; font-size: 1.6rem; font-weight: 800; padding: 0.2rem 0.4rem; border: 2px solid var(--line); border-radius: 10px; background: #fff; }
-  .fx-op.static { border: 0; }
-  .fx-go { min-height: 3rem; padding: 0 1.4rem; border-radius: 999px; border: 0; background: var(--pop); color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
-  .fx-hint { font-size: 0.85rem; color: var(--muted); margin: 0.5rem 0 0; }
-  .fx-err { color: #b42318; font-weight: 600; min-height: 1.2em; margin: 0.5rem 0; }
-  .fx-result { display: flex; flex-wrap: wrap; gap: 1rem 2rem; padding: 0.9rem 1rem; background: var(--paper); border-radius: 14px; font-size: 1.3rem; }
-  .fx-result span:first-child { display: block; font-size: 0.8rem; color: var(--muted); font-weight: 600; }
-  .fx-sol h3 { margin: 1.25rem 0 0.5rem; }
-  .fx-problem { font-size: 1.4rem; }
-  .fx-steps li { margin-bottom: 0.9rem; line-height: 1.9; }
-  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 0.15em; line-height: 1.15; font-variant-numeric: tabular-nums; }
-  .fr .nu { border-bottom: 2px solid currentColor; padding: 0 0.2em; }
-  .fr .de { padding: 0 0.2em; }
-  .int { font-variant-numeric: tabular-nums; }
-  .math { white-space: nowrap; display: inline-block; }
-  .op { margin: 0 0.15em; }
-  @media print { .fx-form, .fx-hint, .fx-err { display: none; } .fx { border: 0; padding: 0; } }
-</style>
