@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import RomanConverter from '../../components/RomanConverter.astro';
 import { toRoman, romanTable } from '../../lib/roman.js';
 import { generate } from '../../lib/worksheet.js';
+import { NUMBERS } from '../../data/es/romanos.js';
 
 const path = '/es/numeros-romanos/';
 const t100 = romanTable(1, 100);
@@ -49,8 +50,11 @@ const sheet = generate('roman', { count: 16, seed: 21, max: 100 }).problems;
     </ul>
   </section>
 
+  <h2>Los números más buscados</h2>
+  <p class="popnums">{[...NUMBERS].sort((a, b) => a - b).map((x) => <a href={`/es/numeros-romanos/${x}/`}>{x.toLocaleString('es-ES').replace(/\./g, ' ')}</a>)}</p>
+
   <h2>Tabla de números romanos del 1 al 100</h2>
-  <div class="actions"><button type="button" class="button primary" data-print="table">Imprimir la tabla</button></div>
+  <div class="actions"><button type="button" class="button primary" data-print="table">Imprimir la tabla</button><a class="button" href="/es/numeros-romanos/del-1-al-100/">Ver la tabla del 1 al 100</a></div>
   <div class="rm-table" data-print-area="table">
     {t100.map(([n, r]) => <div><span>{n}</span><b>{r}</b></div>)}
   </div>
@@ -76,6 +80,9 @@ const sheet = generate('roman', { count: 16, seed: 21, max: 100 }).problems;
   </section>
 </Base>
 <style>
+  .popnums { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .popnums a { padding: 0.3rem 0.7rem; border-radius: 999px; background: #fff; border: 2px solid var(--line); color: var(--ink); font-weight: 800; text-decoration: none; }
+  .popnums a:hover { border-color: var(--accent); }
   .rm-sym { border-collapse: collapse; font-size: 1.2rem; width: 100%; max-width: 32rem; table-layout: fixed; }
   .rm-sym th, .rm-sym td { border: 1px solid var(--line); padding: 0.4rem 0.1rem; text-align: center; background: #fff; }
   @media (max-width: 420px) { .rm-sym { font-size: 0.95rem; } }

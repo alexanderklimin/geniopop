@@ -1,0 +1,129 @@
+---
+import Base from '../../../layouts/Base.astro';
+import RomanConverter from '../../../components/RomanConverter.astro';
+import { toRoman, toRomanSteps, fromRoman } from '../../../lib/roman.js';
+import { NUMBERS, BIG, FACTS } from '../../../data/es/romanos.js';
+
+export function getStaticPaths() {
+  return NUMBERS.map((n) => ({ params: { n: String(n) }, props: { n } }));
+}
+const { n } = Astro.props as { n: number };
+const base = '/es/numeros-romanos/';
+const path = `${base}${n}/`;
+const big = BIG[n];
+const roman = big ? big.roman : toRoman(n);
+const steps = big ? null : toRomanSteps(n);
+const SUB = { IV: 4, IX: 9, XL: 40, XC: 90, CD: 400, CM: 900 };
+const ADD = { IV: 'IIII', IX: 'VIIII', XL: 'XXXX', XC: 'LXXXX', CD: 'CCCC', CM: 'DCCCC' };
+const VAL = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+// typical wrong spellings for this number, computed
+const wrong: string[] = [];
+if (!big) {
+  let long = roman; for (const [k, v] of Object.entries(ADD)) long = long.replace(k, v);
+  if (long !== roman) wrong.push(`<strong>${long}</strong>: no se repite un símbolo cuatro veces ni se pone V, L o D dos veces. Se escribe restando: <strong>${roman}</strong>.`);
+  for (const [a, va] of Object.entries(VAL)) for (const [b, vb] of Object.entries(VAL)) if (va < vb && vb - va === n && !SUB[a + b]) wrong.push(`<strong>${a}${b}</strong>: parece lógico (${vb} − ${va}), pero ${a === 'V' || a === 'L' || a === 'D' ? `la ${a} nunca se usa para restar` : `la ${a} solo puede restarse a los dos símbolos siguientes (${a === 'I' ? 'V y X' : a === 'X' ? 'L y C' : 'D y M'})`}. Lo correcto es <strong>${roman}</strong>.`);
+  const rev = [...roman].reverse().join('');
+  if (rev !== roman) { try { const r = fromRoman(rev); wrong.push(`No lo confundas con <strong>${rev}</strong>, que vale ${r.value}: el orden de los símbolos cambia el número.`); } catch {} }
+}
+const near = big ? [] : [-3, -2, -1, 1, 2, 3].map((d) => n + d).filter((x) => x >= 1 && x <= 3999);
+const quiz = big ? [] : near.filter((_, i) => i % 2 === 1).slice(0, 3);
+const others = NUMBERS.filter((x) => x !== n).sort((a, b) => a - b);
+const title = `${n} en números romanos: ${roman}`;
+const description = big ? `¿Cómo se escribe ${n} en números romanos? ${n} = ${roman}, con una raya encima que multiplica por mil. Explicación y ejemplos.` : `¿Cómo se escribe ${n} en números romanos? ${n} = ${roman}. Explicación paso a paso, errores frecuentes, números cercanos y convertidor.`;
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [{ '@type': 'Question', name: `¿Cómo se escribe ${n} en números romanos?`, acceptedAnswer: { '@type': 'Answer', text: `${n} se escribe ${roman}.` } }] };
+const PLACE = { 1000: 'millares', 100: 'centenas', 10: 'decenas', 1: 'unidades' };
+const placeNames = (parts) => { const names = parts.map((p) => PLACE[p.place]); return names.length > 1 ? `${names.slice(0, -1).join(', ')} y ${names.at(-1)}` : names[0]; };
+const fmt = (x: number) => x.toLocaleString('es-ES').replace(/\./g, ' ');
+---
+<Base lang="es" title={title} description={description} alternates={{ es: path }}
+  crumbs={[{ name: 'Números romanos', path: base }, { name: String(n), path }]} jsonLd={[faq]}>
+  <h1>{fmt(n)} en números romanos</h1>
+  <div class="answer"><span class="num">{fmt(n)}</span><span class="eq">=</span><span class="rom">{roman}</span></div>
+
+  <section class="prose">
+    <h2>Cómo se forma</h2>
+    {big ? (
+      <>
+        <p>Con los siete símbolos de siempre (I, V, X, L, C, D, M) solo se puede escribir hasta 3999. Para números más grandes, los romanos ponían una <strong>raya encima</strong> (llamada vínculo o vinculum), que multiplica el valor por 1000.</p>
+        <ul>{big.parts.map(([a, b]) => <li><strong>{a}</strong> = {b} = {fmt(n)}</li>)}</ul>
+        {big.alt && <p>También verás {big.alt}.</p>}
+      </>
+    ) : (
+      <>
+        {steps.parts.length > 1
+          ? <p>Se separa {fmt(n)} en {placeNames(steps.parts)} y cada parte se escribe con sus símbolos:</p>
+          : <p>{fmt(n)} se escribe directamente{steps.parts[0].roman.length > 1 ? ', combinando símbolos' : ' con un solo símbolo'}:</p>}
+        <ul class="parts">{steps.parts.map((p) => <li><span>{fmt(p.value)}</span><b>{p.roman}</b>{SUB[p.roman] ? <small>resta: {VAL[p.roman[1]]} − {VAL[p.roman[0]]}</small> : p.roman.length > 1 ? <small>suma: {[...p.roman].map((c) => VAL[c]).join(' + ')}</small> : null}</li>)}</ul>
+        {steps.parts.length > 1 && <p>Juntando las partes: {steps.parts.map((p) => p.roman).join(' + ')} = <strong>{roman}</strong>.</p>}
+      </>
+    )}
+
+    {wrong.length > 0 && (
+      <>
+        <h2>Errores frecuentes</h2>
+        <ul>{wrong.slice(0, 3).map((w) => <li set:html={w} />)}</ul>
+      </>
+    )}
+
+    {FACTS[n] && (
+      <>
+        <h2>Dónde lo verás</h2>
+        <ul>{FACTS[n].map((f) => <li>{f}</li>)}</ul>
+      </>
+    )}
+
+    {near.length > 0 && (
+      <>
+        <h2>Números cercanos</h2>
+        <div class="near">{[...near.slice(0, 3), n, ...near.slice(3)].sort((a, b) => a - b).map((x) => <div class:list={{ me: x === n }}><span>{fmt(x)}</span><b>{toRoman(x)}</b></div>)}</div>
+      </>
+    )}
+
+    {quiz.length > 0 && (
+      <>
+        <h2>Ponte a prueba</h2>
+        <ol>{quiz.map((x) => <li>¿Cómo se escribe {fmt(x)}? <details><summary>Ver respuesta</summary><strong>{toRoman(x)}</strong></details></li>)}</ol>
+      </>
+    )}
+  </section>
+
+  <section class="prose">
+    <h2>Las reglas en 30 segundos</h2>
+    <div class="sym">{[['I', 1], ['V', 5], ['X', 10], ['L', 50], ['C', 100], ['D', 500], ['M', 1000]].map(([r, v]) => <span><b>{r}</b>{v}</span>)}</div>
+    <ol>
+      <li>Un símbolo a la derecha de otro igual o mayor <strong>se suma</strong>: VI = 6, XV = 15.</li>
+      <li>I, X y C delante de uno mayor <strong>se restan</strong>, solo en seis casos: IV, IX, XL, XC, CD y CM.</li>
+      <li>I, X, C y M se repiten <strong>como mucho tres veces</strong>; V, L y D nunca se repiten.</li>
+      <li>Se escribe por partes: <strong>millares, centenas, decenas y unidades</strong>, de izquierda a derecha.</li>
+    </ol>
+  </section>
+
+  <h2>Convierte cualquier número</h2>
+  <RomanConverter lang="es" example={big ? '3999' : String(n)} placeholder="Por ejemplo: 1987 o XLIV" button="Convertir" />
+
+  <section class="prose">
+    <h2>Otros números romanos</h2>
+    <p class="others">{others.map((x) => <a href={`${base}${x}/`}>{fmt(x)}</a>)}</p>
+    <p>Consulta también la <a href={`${base}del-1-al-100/`}>tabla de números romanos del 1 al 100</a> y las <a href={base}>reglas para escribirlos</a>.</p>
+  </section>
+</Base>
+<style>
+  .answer { display: inline-flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; padding: 1rem 1.5rem; background: #fff; border: 3px solid var(--ink); border-radius: 24px; box-shadow: 7px 7px 0 var(--accent); margin: 0.5rem 0 1rem; }
+  .answer .num { font-size: clamp(2.4rem, 9vw, 3.6rem); font-weight: 900; }
+  .answer .eq { font-size: 2rem; color: var(--muted); font-weight: 900; }
+  .answer .rom { font-size: clamp(2.6rem, 10vw, 4rem); font-weight: 900; color: var(--accent-dark); letter-spacing: 0.05em; }
+  .parts { list-style: none; padding: 0 !important; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .parts li { display: grid; justify-items: center; background: #fff; border: 2px solid var(--line); border-radius: 14px; padding: 0.5rem 0.9rem; }
+  .parts b { font-size: 1.5rem; color: var(--accent-dark); }
+  .parts small { color: var(--muted); font-size: 0.8rem; }
+  .near { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .near div { display: grid; justify-items: center; min-width: 4.5rem; padding: 0.4rem 0.6rem; border-radius: 12px; background: #fff; border: 2px solid var(--line); }
+  .near div.me { border-color: var(--accent); background: var(--accent-soft); }
+  .near span { color: var(--muted); font-weight: 700; font-size: 0.85rem; }
+  .sym { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.4rem 0 0.8rem; }
+  .sym span { display: grid; justify-items: center; min-width: 3.4rem; padding: 0.3rem 0.5rem; border-radius: 12px; background: #fff; border: 2px solid var(--line); font-weight: 700; color: var(--muted); font-size: 0.85rem; }
+  .sym b { font-size: 1.3rem; color: var(--accent-dark); }
+  .others { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .others a { padding: 0.3rem 0.7rem; border-radius: 999px; background: #fff; border: 2px solid var(--line); color: var(--ink); font-weight: 800; text-decoration: none; }
+  .others a:hover { border-color: var(--accent); }
+</style>

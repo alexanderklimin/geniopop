@@ -1,0 +1,59 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { romanTable, toRoman } from '../../../lib/roman.js';
+import { NUMBERS } from '../../../data/es/romanos.js';
+import { generate } from '../../../lib/worksheet.js';
+import { sheetHTML } from '../../../i18n/sheet-render.js';
+
+const base = '/es/numeros-romanos/';
+const path = `${base}del-1-al-100/`;
+const rows = romanTable(1, 100);
+const tens = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+const units = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const sheet = sheetHTML('es', generate('roman', { max: 100, count: 20, seed: 101 }).problems, { title: 'Números romanos del 1 al 100' });
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
+  { '@type': 'Question', name: '¿Cómo se escriben los números romanos del 1 al 100?', acceptedAnswer: { '@type': 'Answer', text: 'Se escriben las decenas (X, XX, XXX, XL, L, LX, LXX, LXXX, XC) y detrás las unidades (I, II, III, IV, V, VI, VII, VIII, IX). Por ejemplo, 47 = XL + VII = XLVII. El 100 es C.' } },
+  { '@type': 'Question', name: '¿Cuál es el número romano más largo del 1 al 100?', acceptedAnswer: { '@type': 'Answer', text: 'El 88: LXXXVIII, con ocho símbolos.' } },
+] };
+---
+<Base lang="es" title="Números romanos del 1 al 100: tabla para imprimir"
+  description="Tabla de números romanos del 1 al 100 para imprimir, con el truco de decenas y unidades para escribir cualquiera, errores frecuentes y una ficha de ejercicios con soluciones."
+  alternates={{ es: path }} crumbs={[{ name: 'Números romanos', path: base }, { name: 'Del 1 al 100', path }]} jsonLd={[faq]}>
+  <h1>Números romanos del 1 al 100</h1>
+  <p class="lead">La tabla completa, lista para imprimir. Debajo tienes el truco para escribir cualquier número hasta el 100 sin tabla.</p>
+  <div class="actions"><button type="button" class="button primary" data-print="table">Imprimir la tabla</button></div>
+  <div class="t100" data-print-area="table">{rows.map(([n, r]) => <a href={NUMBERS.includes(n) ? `${base}${n}/` : undefined} class:list={{ dec: n % 10 === 0 }}><span>{n}</span><b>{r}</b></a>)}</div>
+
+  <section class="prose">
+    <h2>El truco: decenas + unidades</h2>
+    <p>Cualquier número del 1 al 99 se escribe juntando su decena y su unidad. Con estas dos filas no necesitas la tabla:</p>
+    <div class="row2"><strong>Decenas</strong>{tens.slice(0, 9).map((t) => <span><small>{t}</small>{toRoman(t)}</span>)}</div>
+    <div class="row2"><strong>Unidades</strong>{units.map((u) => <span><small>{u}</small>{toRoman(u)}</span>)}</div>
+    <p>Ejemplo: 74 = 70 + 4 = LXX + IV = <strong>LXXIV</strong>. Y 99 = 90 + 9 = XC + IX = <strong>XCIX</strong> (no IC).</p>
+
+    <h2>Errores frecuentes</h2>
+    <ul>
+      <li>Escribir IIII, XXXX o LXXXX: los símbolos I, X y C se repiten como mucho tres veces. Se usan IV, XL y XC.</li>
+      <li>Atajos que no existen: 49 no es IL, sino XLIX; 95 no es VC, sino XCV.</li>
+      <li>Repetir V o L: 10 es X, no VV, y 100 es C, no LL.</li>
+    </ul>
+    <p>¿Buscas un número concreto? Mira cómo se escriben <a href={`${base}4/`}>el 4</a>, <a href={`${base}9/`}>el 9</a>, <a href={`${base}40/`}>el 40</a>, <a href={`${base}49/`}>el 49</a>, <a href={`${base}90/`}>el 90</a> o <a href={`${base}99/`}>el 99</a>, o usa el <a href={base}>convertidor</a>.</p>
+  </section>
+
+  <h2>Ficha para imprimir</h2>
+  <div class="actions"><button type="button" class="button primary" data-print="sheet">Imprimir ficha</button><a class="button" href="/es/fichas/?t=roman&max=100&direction=both">Crear otra</a></div>
+  <div data-print-area="sheet" set:html={sheet} />
+</Base>
+<style>
+  .t100 { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(7.2rem, 100%), 1fr)); gap: 0.3rem 0.8rem; font-variant-numeric: tabular-nums; }
+  .t100 a { display: flex; justify-content: space-between; padding: 0.2rem 0.4rem; border-bottom: 1px dashed var(--line); color: var(--ink); text-decoration: none; border-radius: 6px; }
+  .t100 a[href] { background: #fff; }
+  .t100 a[href]:hover { background: var(--accent-soft); }
+  .t100 a.dec b { color: var(--accent-dark); }
+  .t100 span { color: var(--muted); font-weight: 700; }
+  .row2 { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin: 0.5rem 0; }
+  .row2 strong { min-width: 6rem; }
+  .row2 span { display: grid; justify-items: center; padding: 0.25rem 0.55rem; border-radius: 10px; background: #fff; border: 2px solid var(--line); font-weight: 900; }
+  .row2 small { color: var(--muted); font-weight: 700; font-size: 0.75rem; }
+  @media print { .t100 { grid-template-columns: repeat(5, 1fr); font-size: 10pt; gap: 0 6mm; } .t100 a { background: none !important; } }
+</style>
