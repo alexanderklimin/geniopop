@@ -1,0 +1,133 @@
+---
+// Worksheet generator island. State lives in the URL (?t=add&digits=3&carry=force&n=20&s=123&p=A4),
+// so a sheet can be bookmarked, shared and printed again identically.
+import { GEN, toParams } from '../i18n/generator.js';
+import { generate } from '../lib/worksheet.js';
+import { sheetHTML } from '../i18n/sheet-render.js';
+interface Props { lang: string; topic?: string }
+const { lang, topic = 'add' } = Astro.props;
+const G = GEN[lang];
+const T = G.topics.find((x) => x.id === topic)!;
+const defaults = Object.fromEntries(T.controls.map((c) => [c.k, c.def]));
+const first = generate(topic, { ...toParams(topic, defaults), count: 20, seed: 1 }).problems;
+const html = sheetHTML(lang, first, { title: T.title });
+---
+<section class="gen" data-gen data-lang={lang} data-topic={topic}>
+  <form class="fx gen-form" data-gen-form novalidate>
+    <label class="gen-topic">{G.topicLabel}
+      <select name="t">{G.topics.map((x) => <option value={x.id} selected={x.id === topic}>{x.label}</option>)}</select>
+    </label>
+    <div class="gen-controls" data-controls></div>
+    <div class="gen-row">
+      <label>{G.countLabel}<select name="n" data-count></select></label>
+      <label>{G.paperLabel}<select name="p">{G.papers.map(([v, l]) => <option value={v}>{l}</option>)}</select></label>
+    </div>
+    <div class="actions">
+      <button type="button" class="button primary" data-print="gen-sheet">{G.print}</button>
+      <button type="button" class="button" data-new>{G.newSheet}</button>
+      <button type="button" class="button" data-copy>{G.copy}</button>
+    </div>
+    <p class="fx-hint">{G.hint}</p>
+    <p class="fx-err" data-gen-err role="alert"></p>
+  </form>
+  <div data-print-area="gen-sheet" data-gen-out set:html={html} />
+</section>
+<style id="gp-page" is:inline>@page { size: A4; margin: 12mm; }</style>
+
+<script>
+  import { GEN, toParams } from '../i18n/generator.js';
+  import { generate } from '../lib/worksheet.js';
+  import { sheetHTML } from '../i18n/sheet-render.js';
+  import { resolvePrefs } from '../lib/locale.js';
+
+  const root = document.querySelector('[data-gen]');
+  if (root) {
+    const lang = root.dataset.lang, G = GEN[lang];
+    const form = root.querySelector('[data-gen-form]');
+    const box = root.querySelector('[data-controls]');
+    const out = root.querySelector('[data-gen-out]');
+    const err = root.querySelector('[data-gen-err]');
+    const q = new URLSearchParams(location.search);
+    let seed = Number(q.get('s')) || Math.floor(Math.random() * 1e6) + 1;
+    const prefs = resolvePrefs(lang, navigator.languages || []);
+    form.elements.p.value = q.get('p') || prefs.paper;
+    if (q.get('t') && G.topics.some((x) => x.id === q.get('t'))) form.elements.t.value = q.get('t');
+
+    const topic = () => G.topics.find((x) => x.id === form.elements.t.value);
+    function buildControls(fromQuery) {
+      const T = topic();
+      box.innerHTML = '';
+      for (const c of T.controls) {
+        const wrap = document.createElement(c.type === 'checks' ? 'fieldset' : 'label');
+        if (c.type === 'checks') {
+          const lg = document.createElement('legend'); lg.textContent = c.label; wrap.append(lg);
+          const chosen = fromQuery && q.get(c.k) ? q.get(c.k).split(',').map(Number) : c.def;
+          for (const o of c.options) {
+            const l = document.createElement('label'); l.className = 'chip';
+            l.innerHTML = `<input type="checkbox" name="${c.k}" value="${o}" ${chosen.includes(o) ? 'checked' : ''}><span>${o}</span>`;
+            wrap.append(l);
+          }
+          wrap.className = 'gen-checks';
+        } else {
+          wrap.append(document.createTextNode(c.label));
+          const s = document.createElement('select'); s.name = c.k;
+          for (const [v, l] of c.options) { const o = document.createElement('option'); o.value = String(v); o.textContent = l; s.append(o); }
+          s.value = String(fromQuery && q.get(c.k) !== null ? q.get(c.k) : c.def);
+          if (s.selectedIndex < 0) s.value = String(c.def);
+          wrap.append(s);
+        }
+        box.append(wrap);
+      }
+      const counts = T.id === 'div' ? [6, 9, 12] : [10, 15, 20, 30];
+      const cs = form.elements.n;
+      cs.innerHTML = counts.map((c) => `<option value="${c}">${c}</option>`).join('');
+      const want = fromQuery && q.get('n') ? q.get('n') : String(T.id === 'div' ? 9 : 20);
+      cs.value = counts.map(String).includes(want) ? want : String(counts[Math.min(1, counts.length - 1)]);
+    }
+    function values() {
+      const T = topic(), v = {};
+      for (const c of T.controls) v[c.k] = c.type === 'checks' ? [...form.querySelectorAll(`input[name="${c.k}"]:checked`)].map((i) => Number(i.value)) : form.elements[c.k].value;
+      return v;
+    }
+    function render() {
+      err.textContent = '';
+      const T = topic(), v = values();
+      if (T.controls.some((c) => c.type === 'checks') && T.controls.filter((c) => c.type === 'checks').some((c) => !v[c.k].length)) { err.textContent = G.err; return; }
+      try {
+        const problems = generate(T.id, { ...toParams(T.id, v), count: Number(form.elements.n.value), seed }).problems;
+        out.innerHTML = sheetHTML(lang, problems, { title: T.title });
+      } catch { err.textContent = G.err; }
+      document.getElementById('gp-page').textContent = `@page { size: ${form.elements.p.value === 'Letter' ? 'letter' : 'A4'}; margin: 12mm; }`;
+      const params = new URLSearchParams({ t: T.id });
+      for (const [k, val] of Object.entries(v)) params.set(k, Array.isArray(val) ? val.join(',') : val);
+      params.set('n', form.elements.n.value); params.set('s', String(seed)); params.set('p', form.elements.p.value);
+      history.replaceState(null, '', `${location.pathname}?${params}`);
+    }
+    buildControls(true);
+    render();
+    form.addEventListener('change', (e) => { if (e.target.name === 't') buildControls(false); render(); });
+    root.querySelector('[data-new]').addEventListener('click', () => { seed = Math.floor(Math.random() * 1e6) + 1; render(); });
+    root.querySelector('[data-copy]').addEventListener('click', async (e) => {
+      try { await navigator.clipboard.writeText(location.href); e.target.textContent = G.copied; } catch { prompt('', location.href); }
+    });
+  }
+</script>
+
+<style>
+  .gen-form { display: grid; gap: 1rem; }
+  .gen-form label { display: flex; flex-direction: column; gap: 0.25rem; font-weight: 800; font-size: 0.9rem; color: var(--muted); }
+  .gen-form select { font: inherit; font-size: 1.05rem; font-weight: 700; color: var(--ink); padding: 0.55rem 0.7rem; border: 2px solid var(--line); border-radius: 12px; background: #fff; }
+  .gen-topic select { font-size: 1.2rem; font-weight: 900; border-color: var(--ink); }
+  .gen-controls, .gen-row { display: flex; flex-wrap: wrap; gap: 0.9rem 1.2rem; }
+  .gen-controls :global(label) { display: flex; flex-direction: column; gap: 0.25rem; font-weight: 800; font-size: 0.9rem; color: var(--muted); }
+  .gen-controls :global(select) { font: inherit; font-size: 1.05rem; font-weight: 700; color: var(--ink); padding: 0.55rem 0.7rem; border: 2px solid var(--line); border-radius: 12px; background: #fff; }
+  .gen-controls :global(.gen-checks) { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .gen-controls :global(.gen-checks legend) { font-weight: 800; font-size: 0.9rem; color: var(--muted); margin-bottom: 0.3rem; }
+  .gen-controls :global(.chip) { flex-direction: row; }
+  .gen-controls :global(.chip input) { position: absolute; opacity: 0; }
+  .gen-controls :global(.chip span) { display: inline-grid; place-items: center; min-width: 2.6rem; min-height: 2.6rem; border-radius: 12px; border: 2px solid var(--line); background: #fff; color: var(--ink); font-weight: 900; cursor: pointer; }
+  .gen-controls :global(.chip input:checked + span) { background: var(--accent); border-color: var(--accent-dark); color: #fff; }
+  .gen-controls :global(.chip input:focus-visible + span) { outline: 3px solid var(--ink); }
+  .gen .actions { margin: 0; }
+  @media print { .gen-form { display: none; } }
+</style>

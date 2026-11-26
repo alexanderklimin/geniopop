@@ -1,0 +1,53 @@
+---
+import Base from '../../../layouts/Base.astro';
+import WorksheetGenerator from '../../../components/WorksheetGenerator.astro';
+import { COURSES } from '../../../data/es/fichas.js';
+
+const path = '/es/fichas/';
+const faqs = [
+  { q: '¿Las fichas son gratis?', a: 'Sí. Puedes imprimir todas las que quieras para casa o para clase, sin registrarte.' },
+  { q: '¿Cómo imprimo la misma ficha otra vez?', a: 'Cada ficha tiene su propio enlace con todas las opciones y el número de ficha. Pulsa «Copiar enlace» y guárdalo: al abrirlo saldrá exactamente la misma ficha.' },
+  { q: '¿Vienen con las soluciones?', a: 'Sí. Las soluciones se imprimen en una hoja aparte, para que el niño no las vea mientras trabaja.' },
+  { q: '¿Qué tamaño de papel uso?', a: 'Elige A4 o Carta según tu impresora. En México, Colombia, Chile, Venezuela y Estados Unidos se usa sobre todo el tamaño Carta; en España y Argentina, A4.' },
+  { q: '¿Puedo usarlas en clase?', a: 'Sí, puedes fotocopiarlas y repartirlas a tus alumnos. Lo único que no se permite es venderlas o publicarlas como propias en otra web.' },
+];
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+---
+<Base lang="es" title="Fichas de matemáticas para imprimir con soluciones (generador)"
+  description="Generador gratuito de fichas de matemáticas para primaria: sumas y restas con llevadas, tablas, multiplicaciones, divisiones, fracciones, números romanos, porcentajes y mcm y mcd. Con soluciones, en A4 o Carta."
+  alternates={{ es: path }} crumbs={[{ name: 'Fichas para imprimir', path }]} jsonLd={[faq]}>
+  <h1>Fichas de matemáticas para imprimir</h1>
+  <p class="lead">Elige el tema y el nivel y la ficha se crea al momento, con su hoja de soluciones. Cada vez que pulses «Otra ficha» salen ejercicios nuevos: nunca se acaban.</p>
+
+  <WorksheetGenerator lang="es" topic="add" />
+
+  <h2>Fichas por curso</h2>
+  <ul class="courses">
+    {COURSES.map((c) => (
+      <li><a href={`${path}${c.slug}/`}><strong>{c.name}</strong><span>{c.syn}</span><small>{c.age}</small></a></li>
+    ))}
+  </ul>
+
+  <section class="prose">
+    <h2>Cómo sacarles partido</h2>
+    <ul>
+      <li><strong>Poco y a menudo:</strong> una ficha de 10 o 15 ejercicios al día rinde más que tres fichas el domingo.</li>
+      <li><strong>Que corrija el propio niño</strong> con la hoja de soluciones: así ve dónde se equivoca y por qué.</li>
+      <li><strong>Repite lo que falla:</strong> si cuestan las restas con llevadas, imprime otra ficha igual con «Otra ficha» hasta que salgan solas.</li>
+      <li><strong>Para explicar el método</strong>, usa las páginas de cada tema: <a href="/es/division/">división paso a paso</a>, <a href="/es/fracciones/">fracciones</a> o <a href="/es/tablas-de-multiplicar/">tablas de multiplicar</a>.</li>
+    </ul>
+  </section>
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{faqs.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>
+<style>
+  .courses { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 0.9rem; }
+  .courses a { display: flex; flex-direction: column; gap: 0.15rem; padding: 1rem 1.1rem; border-radius: 18px; background: #fff; border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--accent); color: var(--ink); text-decoration: none; transition: transform 0.12s; }
+  .courses a:hover { transform: translate(-2px, -2px); }
+  .courses strong { font-size: 1.25rem; font-weight: 900; }
+  .courses span { color: var(--muted); font-weight: 700; font-size: 0.92rem; }
+  .courses small { color: var(--accent-dark); font-weight: 800; }
+</style>

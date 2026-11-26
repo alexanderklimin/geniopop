@@ -1,0 +1,61 @@
+// /es/fichas/ course pages. Grade names with regional synonyms (Spain / Mexico-Colombia-Peru… / Chile).
+// "learn" lists are typical contents of each year across Spanish-speaking curricula, not one official program.
+
+export const COURSES = [
+  { id: 1, slug: 'primero-de-primaria', name: '1.º de primaria', syn: '1.er grado · 1.º básico', age: '6–7 años',
+    intro: 'En primer curso se aprende a contar, leer y escribir números hasta el 99 y a sumar y restar con soltura, primero sin llevadas.',
+    learn: ['Números hasta el 99: contar, ordenar, decenas y unidades.', 'Sumas y restas de una cifra y de dos cifras sin llevadas.', 'Primeras sumas con llevadas al final del curso.', 'Problemas sencillos de juntar y quitar.'],
+    sheets: [
+      { title: 'Sumas de una cifra', topic: 'add', v: { digits: 1, carry: 'any' }, count: 20 },
+      { title: 'Restas de una cifra', topic: 'sub', v: { digits: 1, borrow: 'none' }, count: 20 },
+      { title: 'Sumas de dos cifras sin llevadas', topic: 'add', v: { digits: 2, carry: 'none' }, count: 15 },
+      { title: 'Restas de dos cifras sin llevadas', topic: 'sub', v: { digits: 2, borrow: 'none' }, count: 15 },
+    ] },
+  { id: 2, slug: 'segundo-de-primaria', name: '2.º de primaria', syn: '2.º grado · 2.º básico', age: '7–8 años',
+    intro: 'En segundo llegan las sumas y restas con llevadas, los números hasta el 999 y las primeras tablas de multiplicar.',
+    learn: ['Números hasta el 999: centenas, decenas y unidades.', 'Sumas y restas con llevadas de dos y tres cifras.', 'La multiplicación como suma repetida.', 'Tablas del 2, del 5 y del 10 (y en muchos colegios, del 3 y del 4).'],
+    sheets: [
+      { title: 'Sumas con llevadas', topic: 'add', v: { digits: 2, carry: 'force' }, count: 15 },
+      { title: 'Restas con llevadas', topic: 'sub', v: { digits: 2, borrow: 'force' }, count: 15 },
+      { title: 'Sumas de tres cifras', topic: 'add', v: { digits: 3, carry: 'any' }, count: 15 },
+      { title: 'Tablas del 2, 5 y 10', topic: 'table', v: { tables: [2, 5, 10], to: 10 }, count: 20 },
+    ] },
+  { id: 3, slug: 'tercero-de-primaria', name: '3.º de primaria', syn: '3.er grado · 3.º básico', age: '8–9 años',
+    intro: 'Tercero es el curso de las tablas de multiplicar: se completan todas y se empieza a multiplicar y dividir por una cifra.',
+    learn: ['Todas las tablas de multiplicar del 1 al 10.', 'Multiplicaciones por una cifra.', 'Divisiones sencillas, exactas, por una cifra.', 'Números hasta el 9999 y restas con llevadas de tres y cuatro cifras.'],
+    sheets: [
+      { title: 'Tablas del 6, 7, 8 y 9', topic: 'table', v: { tables: [6, 7, 8, 9], to: 10 }, count: 20 },
+      { title: '¿Qué número falta? (tablas)', topic: 'missingFactor', v: { tables: [2, 3, 4, 5, 6, 7, 8, 9] }, count: 20 },
+      { title: 'Multiplicaciones por una cifra', topic: 'mul', v: { digitsA: 2, digitsB: 1 }, count: 15 },
+      { title: 'Divisiones exactas por una cifra', topic: 'div', v: { divisorDigits: 1, quotientDigits: 1, remainder: 0 }, count: 9 },
+      { title: 'Restas de tres cifras con llevadas', topic: 'sub', v: { digits: 3, borrow: 'force' }, count: 15 },
+    ] },
+  { id: 4, slug: 'cuarto-de-primaria', name: '4.º de primaria', syn: '4.º grado · 4.º básico', age: '9–10 años',
+    intro: 'En cuarto se multiplica por dos cifras, se divide con resto y aparecen las fracciones y los números romanos.',
+    learn: ['Multiplicaciones por dos cifras.', 'Divisiones por una cifra, con resto y con cociente de dos o tres cifras.', 'Fracciones: leer, comparar y sumar con el mismo denominador.', 'Números romanos.'],
+    sheets: [
+      { title: 'Multiplicaciones por dos cifras', topic: 'mul', v: { digitsA: 3, digitsB: 2 }, count: 10 },
+      { title: 'Divisiones con resto', topic: 'div', v: { divisorDigits: 1, quotientDigits: 2, remainder: 1 }, count: 9 },
+      { title: 'Fracciones con igual denominador', topic: 'fraction', v: { ops: '+-', sameDen: 1, maxDen: 10 }, count: 15 },
+      { title: 'Números romanos hasta el 100', topic: 'roman', v: { max: 100, direction: 'both' }, count: 20 },
+    ] },
+  { id: 5, slug: 'quinto-de-primaria', name: '5.º de primaria', syn: '5.º grado · 5.º básico', age: '10–11 años',
+    intro: 'Quinto trae las divisiones por dos cifras, las fracciones con distinto denominador y los primeros porcentajes.',
+    learn: ['Divisiones por dos cifras.', 'Sumas y restas de fracciones con distinto denominador; fracciones equivalentes y simplificación.', 'Números decimales.', 'Porcentajes sencillos (10 %, 25 %, 50 %).'],
+    sheets: [
+      { title: 'Divisiones por dos cifras', topic: 'div', v: { divisorDigits: 2, quotientDigits: 2, remainder: 0 }, count: 9 },
+      { title: 'Sumas y restas de fracciones', topic: 'fraction', v: { ops: '+-', sameDen: 0, maxDen: 10 }, count: 12 },
+      { title: 'Simplificar fracciones', topic: 'simplify', v: { maxDen: 12 }, count: 20 },
+      { title: 'Porcentajes sencillos', topic: 'percent', v: { level: 'easy' }, count: 15 },
+    ] },
+  { id: 6, slug: 'sexto-de-primaria', name: '6.º de primaria', syn: '6.º grado · 6.º básico', age: '11–12 años',
+    intro: 'Sexto repasa las cuatro operaciones con fracciones y añade el mínimo común múltiplo, el máximo común divisor y más porcentajes.',
+    learn: ['Las cuatro operaciones con fracciones.', 'Mínimo común múltiplo y máximo común divisor.', 'Porcentajes, descuentos y aumentos.', 'Potencias y raíces cuadradas sencillas; números romanos grandes.'],
+    sheets: [
+      { title: 'Multiplicación y división de fracciones', topic: 'fraction', v: { ops: '*/', sameDen: 0, maxDen: 10 }, count: 12 },
+      { title: 'Operaciones con fracciones (todas)', topic: 'fraction', v: { ops: '+-*/', sameDen: 0, maxDen: 12 }, count: 12 },
+      { title: 'mcm y mcd', topic: 'gcdLcm', v: { which: 'both', max: 60 }, count: 15 },
+      { title: 'Porcentajes', topic: 'percent', v: { level: 'mid' }, count: 15 },
+      { title: 'Números romanos hasta el 3999', topic: 'roman', v: { max: 3999, direction: 'both' }, count: 15 },
+    ] },
+];

@@ -150,7 +150,5 @@ table { font-variant-numeric: tabular-nums; }
   main { padding: 0; }
   h1 { text-decoration: none; }
   h2::before { display: none; }
-  body[data-printing] main > *:not([data-print-area]) { display: none !important; }
-  body[data-printing='table'] main [data-print-area]:not([data-print-area='table']),
-  body[data-printing='sheet'] main [data-print-area]:not([data-print-area='sheet']) { display: none !important; }
+  .np { display: none !important; }
 }

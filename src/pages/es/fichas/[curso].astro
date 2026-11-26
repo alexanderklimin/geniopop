@@ -1,0 +1,62 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { COURSES } from '../../../data/es/fichas.js';
+import { generate } from '../../../lib/worksheet.js';
+import { toParams } from '../../../i18n/generator.js';
+import { sheetHTML } from '../../../i18n/sheet-render.js';
+
+export function getStaticPaths() {
+  return COURSES.map((c) => ({ params: { curso: c.slug }, props: { c } }));
+}
+const { c } = Astro.props;
+const base = '/es/fichas/';
+const path = `${base}${c.slug}/`;
+const sheets = c.sheets.map((s, i) => {
+  const problems = generate(s.topic, { ...toParams(s.topic, s.v), count: s.count, seed: c.id * 100 + i + 1 }).problems;
+  const q = new URLSearchParams({ t: s.topic, ...Object.fromEntries(Object.entries(s.v).map(([k, v]) => [k, Array.isArray(v) ? v.join(',') : String(v)])), n: String(s.count) });
+  return { ...s, html: sheetHTML('es', problems, { title: `${s.title} · ${c.name}` }), gen: `${base}?${q}`, area: `sheet-${i + 1}` };
+});
+const prev = COURSES.find((x) => x.id === c.id - 1), next = COURSES.find((x) => x.id === c.id + 1);
+---
+<Base lang="es" title={`Fichas de matemáticas para ${c.name} (${c.syn.split(' · ')[0]}) para imprimir`}
+  description={`Fichas de matemáticas de ${c.name} (${c.syn}) para imprimir con soluciones: ${c.sheets.map((s) => s.title.toLowerCase()).join(', ')}.`}
+  alternates={{ es: path }} crumbs={[{ name: 'Fichas para imprimir', path: base }, { name: c.name, path }]}>
+  <h1>Fichas de matemáticas para {c.name}</h1>
+  <p class="syn">{c.syn} · {c.age}</p>
+  <p class="lead">{c.intro} Aquí tienes fichas listas para imprimir, con las soluciones en una hoja aparte.</p>
+
+  <nav class="toc no-print" aria-label="Fichas">
+    {sheets.map((s) => <a href={`#${s.area}`}>{s.title}</a>)}
+  </nav>
+
+  <section class="prose">
+    <h2>Qué se trabaja en {c.name}</h2>
+    <ul>{c.learn.map((l) => <li>{l}</li>)}</ul>
+    <p>El orden exacto cambia según el país y el colegio, así que úsalo como guía.</p>
+  </section>
+
+  {sheets.map((s) => (
+    <section class="sheet-block" id={s.area}>
+      <h2>{s.title}</h2>
+      <div class="actions">
+        <button type="button" class="button primary" data-print={s.area}>Imprimir esta ficha</button>
+        <a class="button" href={s.gen}>Crear otra parecida</a>
+      </div>
+      <div data-print-area={s.area} set:html={s.html} />
+    </section>
+  ))}
+
+  <nav class="pager no-print" aria-label="Otros cursos">
+    {prev ? <a class="button" href={`${base}${prev.slug}/`}>← {prev.name}</a> : <span></span>}
+    <a class="button" href={base}>Generador de fichas</a>
+    {next ? <a class="button" href={`${base}${next.slug}/`}>{next.name} →</a> : <span></span>}
+  </nav>
+</Base>
+<style>
+  .syn { font-weight: 800; color: var(--accent-dark); margin: -0.25rem 0 0.75rem; }
+  .toc { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .toc a { padding: 0.4rem 0.8rem; border-radius: 999px; background: #fff; border: 2px solid var(--line); color: var(--ink); font-weight: 800; text-decoration: none; font-size: 0.92rem; }
+  .toc a:hover { border-color: var(--accent); }
+  .pager { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-top: 2.5rem; }
+  @media print { .sheet-block > h2 { display: none; } }
+</style>

@@ -4,6 +4,7 @@ import Analytics from '../components/Analytics.astro';
 import Icon from '../components/Icon.astro';
 import '../styles/global.css';
 import '../styles/tools.css';
+import '../styles/sheet.css';
 import { SITE_NAME } from '../data/site.js';
 import { LANG_NAMES, OG_LOCALE, LIVE, NAV, sectionOf, t } from '../i18n/ui.js';
 import { authorPath } from '../data/author.js';
@@ -125,14 +126,27 @@ if (trail.length) schemas.push({
     </footer>
     <Analytics lang={lang} />
     <script is:inline>
-      // [data-print="table"|"sheet"] prints only that part of the page
+      // [data-print="name"] prints only the matching [data-print-area="name"] (and its answers page)
       document.addEventListener('click', function (e) {
         var b = e.target.closest && e.target.closest('[data-print]');
         if (!b) return;
-        document.body.setAttribute('data-printing', b.getAttribute('data-print'));
+        var name = b.getAttribute('data-print');
+        var target = document.querySelector('[data-print-area="' + name + '"]');
+        if (!target) return;
+        var main = document.getElementById('main');
+        var hidden = [];
+        (function hide(parent) {
+          Array.prototype.forEach.call(parent.children, function (el) {
+            if (el === target) return;
+            if (el.contains(target)) { hide(el); return; }
+            el.classList.add('np'); hidden.push(el);
+          });
+        })(main);
+        document.body.setAttribute('data-printing', name);
+        var restore = function () { hidden.forEach(function (el) { el.classList.remove('np'); }); document.body.removeAttribute('data-printing'); window.removeEventListener('afterprint', restore); };
+        window.addEventListener('afterprint', restore);
         window.print();
       });
-      window.addEventListener('afterprint', function () { document.body.removeAttribute('data-printing'); });
     </script>
   </body>
 </html>
