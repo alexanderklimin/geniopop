@@ -69,3 +69,7 @@ test('powers and roots have whole answers', () => {
     else assert.equal(p.operands[0] ** p.operands[1], p.answer);
   }
 });
+
+test('averages are whole numbers', () => {
+  for (const p of generate('average', { count: 20, seed: 4 }).problems) assert.equal(p.operands.reduce((a, b) => a + b, 0) / p.operands.length, p.answer);
+});

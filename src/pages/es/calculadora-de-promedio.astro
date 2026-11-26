@@ -1,0 +1,182 @@
+---
+import Base from '../../layouts/Base.astro';
+import { generate } from '../../lib/worksheet.js';
+import { sheetHTML } from '../../i18n/sheet-render.js';
+
+const path = '/es/calculadora-de-promedio/';
+const faqs = [
+  { q: '¿Cómo se saca el promedio?', a: 'Se suman todos los números y el resultado se divide entre cuántos números hay. El promedio de 7, 8, 6 y 9 es (7 + 8 + 6 + 9) ÷ 4 = 30 ÷ 4 = 7,5.' },
+  { q: '¿Cómo se saca el promedio de notas con porcentajes?', a: 'Cada nota se multiplica por su porcentaje, se suman los resultados y se divide entre la suma de los porcentajes (normalmente 100). Por ejemplo, 6 (30 %), 5 (30 %) y 4 (40 %): (6 × 30 + 5 × 30 + 4 × 40) ÷ 100 = 4,9.' },
+  { q: '¿Qué diferencia hay entre promedio, media, mediana y moda?', a: 'Promedio y media aritmética son lo mismo. La mediana es el valor del medio cuando ordenas los datos, y la moda es el valor que más se repite. Si hay un dato muy raro (por ejemplo, una nota de 0), la mediana se mueve menos que el promedio.' },
+  { q: '¿Se puede promediar promedios?', a: 'Solo si cada promedio tiene el mismo número de notas o el mismo peso. Si no, hay que usar el promedio ponderado.' },
+  { q: '¿Cómo redondeo mi promedio?', a: 'Depende del colegio o la universidad: muchos redondean a un decimal (4,95 → 5,0) y otros truncan. Consulta el reglamento de tu centro antes de dar por aprobada una asignatura.' },
+];
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+const scales = [['España', '0 a 10', '5'], ['México', '0 a 10', '6'], ['Argentina', '1 a 10', '6 (según la provincia, 4 a 7)'], ['Chile', '1,0 a 7,0', '4,0'], ['Colombia', '0 a 5 (o 1 a 5)', '3,0'], ['Perú', '0 a 20', '11'], ['Venezuela', '0 a 20', '10'], ['Ecuador', '0 a 10', '7']];
+const sheet = sheetHTML('es', generate('average', { count: 12, seed: 61 }).problems, { title: 'Calcula el promedio' });
+---
+<Base lang="es" title="Calculadora de promedio y de promedio de notas (ponderado)"
+  description="Saca el promedio de varios números o de tus notas con porcentajes, paso a paso, y calcula qué nota necesitas para aprobar. Con mediana, moda y escalas de notas por país."
+  alternates={{ es: path }} crumbs={[{ name: 'Calculadora de promedio', path }]} jsonLd={[faq]}>
+  <h1>Calculadora de promedio</h1>
+  <p class="lead">Escribe tus números o tus notas y el promedio sale al momento, con la cuenta explicada.</p>
+
+  <section class="fx avg" data-avg>
+    <div class="avg-tabs" role="tablist">
+      <button type="button" role="tab" data-t="simple" aria-selected="true">Promedio simple</button>
+      <button type="button" role="tab" data-t="notas" aria-selected="false">Promedio de notas</button>
+      <button type="button" role="tab" data-t="necesito" aria-selected="false">¿Qué nota necesito?</button>
+    </div>
+
+    <div data-p="simple">
+      <label class="avg-l">Números (separados por espacios o punto y coma)<textarea name="list" rows="2">7 8 6 9</textarea></label>
+      <div class="fx-result" data-out-simple><div><span>Promedio</span><b>7,5</b></div><div><span>Mediana</span><b>7,5</b></div><div><span>Moda</span><b>—</b></div><div><span>Rango</span><b>3</b></div></div>
+      <ol class="fx-steps" data-steps-simple><li>Sumamos: 7 + 8 + 6 + 9 = 30.</li><li>Dividimos entre la cantidad de números (4): 30 ÷ 4 = <strong>7,5</strong>.</li></ol>
+    </div>
+
+    <div data-p="notas" hidden>
+      <table class="avg-rows"><thead><tr><th>Nota</th><th>Peso (% o créditos)</th><th></th></tr></thead><tbody data-rows></tbody></table>
+      <button type="button" class="button" data-add>+ Añadir nota</button>
+      <div class="fx-result" data-out-notas></div>
+      <ol class="fx-steps" data-steps-notas></ol>
+    </div>
+
+    <div data-p="necesito" hidden>
+      <p class="avg-hint">Escribe las notas que ya tienes con su porcentaje, el porcentaje que falta (por ejemplo, el examen final) y el promedio que quieres conseguir.</p>
+      <table class="avg-rows"><thead><tr><th>Nota</th><th>Peso (%)</th><th></th></tr></thead><tbody data-rows2></tbody></table>
+      <button type="button" class="button" data-add2>+ Añadir nota</button>
+      <div class="avg-need">
+        <label>Peso que falta (%)<input name="rest" value="40" inputmode="decimal" /></label>
+        <label>Promedio que quiero<input name="target" value="4" inputmode="decimal" /></label>
+        <label>Escala<select name="scale">
+          <option value="cl">Chile (1–7, aprueba 4)</option><option value="mx">México (0–10, aprueba 6)</option><option value="es">España (0–10, aprueba 5)</option><option value="ar">Argentina (1–10)</option><option value="co">Colombia (0–5, aprueba 3)</option><option value="pe">Perú (0–20, aprueba 11)</option><option value="ve">Venezuela (0–20)</option><option value="ec">Ecuador (0–10, aprueba 7)</option>
+        </select></label>
+      </div>
+      <div class="fx-result" data-out-need></div>
+      <ol class="fx-steps" data-steps-need></ol>
+    </div>
+    <p class="fx-err" data-err role="alert"></p>
+  </section>
+
+  <section class="prose">
+    <h2>Cómo se calcula el promedio</h2>
+    <p>El promedio (o media aritmética) reparte el total en partes iguales: es el valor que tendría cada dato si todos fueran iguales. La fórmula es:</p>
+    <p class="formula">promedio = suma de los datos ÷ número de datos</p>
+    <p>Si en cuatro exámenes sacaste 7, 8, 6 y 9, en total tienes 30 puntos; repartidos entre 4 exámenes, tocan a 7,5 por examen.</p>
+
+    <h2>Promedio ponderado: cuando las notas no valen lo mismo</h2>
+    <p>Si el examen final vale el 40 % y dos pruebas valen el 30 % cada una, no basta con sumar y dividir entre 3. Hay que multiplicar cada nota por su peso:</p>
+    <p class="formula">promedio = (nota₁ × peso₁ + nota₂ × peso₂ + …) ÷ (peso₁ + peso₂ + …)</p>
+    <p>Con notas 6, 5 y 4 y pesos 30 %, 30 % y 40 %: (180 + 150 + 160) ÷ 100 = <strong>4,9</strong>. El promedio simple daría 5, porque no tiene en cuenta que el 4 pesa más. En la universidad, en lugar de porcentajes se usan los créditos de cada asignatura; la cuenta es la misma.</p>
+
+    <h2>Escalas de notas en distintos países</h2>
+    <table class="scales"><thead><tr><th>País</th><th>Escala</th><th>Nota para aprobar</th></tr></thead><tbody>{scales.map(([a, b, c]) => <tr><td>{a}</td><td>{b}</td><td>{c}</td></tr>)}</tbody></table>
+    <p>Son las escalas habituales en la educación escolar; cada centro puede tener sus propias reglas de redondeo y de aprobación.</p>
+
+    <h2>Errores frecuentes</h2>
+    <ul>
+      <li>Dividir entre un número equivocado: si son 5 notas, se divide entre 5, aunque una sea 0.</li>
+      <li>Promediar promedios de grupos de distinto tamaño sin ponderar.</li>
+      <li>Usar el promedio simple cuando las notas tienen porcentajes distintos.</li>
+    </ul>
+  </section>
+
+  <h2>Ejercicios para imprimir</h2>
+  <div class="actions"><button type="button" class="button primary" data-print="sheet">Imprimir ficha</button></div>
+  <div data-print-area="sheet" set:html={sheet} />
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{faqs.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>
+
+<script>
+  import { parseList, mean, median, mode, range, weightedMean, neededGrade, SCALES } from '../../lib/stats.js';
+  import { resolvePrefs } from '../../lib/locale.js';
+  import { formatNumber } from '../../lib/format.js';
+  const root = document.querySelector('[data-avg]');
+  const prefs = resolvePrefs('es', navigator.languages || []);
+  const f = (x) => formatNumber(x, prefs, 3);
+  const $ = (s) => root.querySelector(s);
+  const err = $('[data-err]');
+  const toNum = (v) => { const t = String(v).trim().replace(',', '.'); return t === '' ? NaN : Number(t); };
+
+  root.querySelectorAll('[data-t]').forEach((b) => b.addEventListener('click', () => {
+    root.querySelectorAll('[data-t]').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+    root.querySelectorAll('[data-p]').forEach((p) => { p.hidden = p.dataset.p !== b.dataset.t; });
+    err.textContent = ''; update();
+  }));
+
+  function simple() {
+    const xs = parseList($('[name=list]').value);
+    if (!xs.length || xs.some((x) => !Number.isFinite(x))) { err.textContent = 'Escribe números separados por espacios o por punto y coma.'; return; }
+    const m = mean(xs), md = median(xs), mo = mode(xs);
+    $('[data-out-simple]').innerHTML = `<div><span>Promedio</span><b>${f(m.mean)}</b></div><div><span>Mediana</span><b>${f(md.median)}</b></div><div><span>Moda</span><b>${mo.modes.length ? mo.modes.map(f).join(' y ') : '—'}</b></div><div><span>Rango</span><b>${f(range(xs))}</b></div>`;
+    $('[data-steps-simple]').innerHTML = `<li>Sumamos: ${xs.map(f).join(' + ')} = ${f(m.sum)}.</li><li>Dividimos entre la cantidad de números (${m.count}): ${f(m.sum)} ÷ ${m.count} = <strong>${f(m.mean)}</strong>.</li><li>Mediana: ordenados, ${md.sorted.map(f).join(', ')}; ${md.middle.length === 1 ? `el del medio es ${f(md.middle[0])}` : `los del medio son ${f(md.middle[0])} y ${f(md.middle[1])}, y su promedio es ${f(md.median)}`}.</li>`;
+  }
+
+  function rowsHTML(tbody, data) {
+    tbody.innerHTML = data.map(([g, w]) => `<tr><td><input data-g value="${g}" inputmode="decimal" aria-label="Nota"></td><td><input data-w value="${w}" inputmode="decimal" aria-label="Peso"></td><td><button type="button" class="link" data-del aria-label="Quitar">✕</button></td></tr>`).join('');
+  }
+  const read = (tbody) => [...tbody.querySelectorAll('tr')].map((tr) => ({ grade: toNum(tr.querySelector('[data-g]').value), weight: toNum(tr.querySelector('[data-w]').value) })).filter((x) => !(Number.isNaN(x.grade) && Number.isNaN(x.weight)));
+
+  function notas() {
+    const items = read($('[data-rows]'));
+    if (!items.length || items.some((x) => !Number.isFinite(x.grade) || !Number.isFinite(x.weight))) { err.textContent = 'Completa la nota y el peso de cada fila.'; return; }
+    try {
+      const w = weightedMean(items);
+      $('[data-out-notas]').innerHTML = `<div><span>Promedio ponderado</span><b>${f(w.mean)}</b></div>`;
+      $('[data-steps-notas]').innerHTML = `<li>Multiplicamos cada nota por su peso: ${w.rows.map((r) => `${f(r.grade)} × ${f(r.weight)} = ${f(r.product)}`).join('; ')}.</li><li>Sumamos los productos: ${f(w.sumProducts)}. Sumamos los pesos: ${f(w.sumWeights)}.</li><li>Dividimos: ${f(w.sumProducts)} ÷ ${f(w.sumWeights)} = <strong>${f(w.mean)}</strong>.</li>`;
+    } catch { err.textContent = 'Los pesos no pueden sumar 0.'; }
+  }
+
+  function necesito() {
+    const items = read($('[data-rows2]'));
+    const rest = toNum($('[name=rest]').value), target = toNum($('[name=target]').value);
+    const sc = SCALES[$('[name=scale]').value];
+    if (items.some((x) => !Number.isFinite(x.grade) || !Number.isFinite(x.weight)) || !(rest > 0) || !Number.isFinite(target)) { err.textContent = 'Completa las notas, el peso que falta y el promedio que quieres.'; return; }
+    const n = neededGrade(items, target, rest);
+    const verdict = n.needed <= sc.min ? `¡Ya lo tienes! Incluso con la nota mínima (${f(sc.min)}) llegas.` : n.needed > sc.max ? `Con la escala de ${f(sc.min)} a ${f(sc.max)} ya no es posible: harías falta un ${f(n.needed)}.` : `Necesitas al menos un <strong>${f(n.needed)}</strong> en lo que falta.`;
+    $('[data-out-need]').innerHTML = `<div><span>Nota que necesitas</span><b>${n.needed > sc.max ? '—' : f(Math.max(n.needed, sc.min))}</b></div>`;
+    $('[data-steps-need]').innerHTML = `<li>Lo que ya tienes vale ${f(n.doneProducts)} puntos·% (${items.map((r) => `${f(r.grade)} × ${f(r.weight)}`).join(' + ') || '0'}), sobre ${f(n.doneWeight)} %.</li><li>Para un promedio de ${f(target)} sobre ${f(n.total)} %, necesitas ${f(target)} × ${f(n.total)} = ${f(target * n.total)} puntos·%.</li><li>Faltan ${f(target * n.total - n.doneProducts)}, que hay que sacar en el ${f(rest)} % restante: ${f(target * n.total - n.doneProducts)} ÷ ${f(rest)} = ${f(n.needed)}. ${verdict}</li>`;
+  }
+
+  function update() {
+    err.textContent = '';
+    const tab = root.querySelector('[data-t][aria-selected=true]').dataset.t;
+    ({ simple, notas, necesito })[tab]();
+  }
+  rowsHTML($('[data-rows]'), [[6, 30], [5, 30], [4, 40]]);
+  rowsHTML($('[data-rows2]'), [[5, 30], [4, 30]]);
+  root.addEventListener('input', update);
+  root.addEventListener('change', update);
+  root.addEventListener('click', (e) => {
+    if (e.target.matches('[data-del]')) { e.target.closest('tr').remove(); update(); }
+    if (e.target.matches('[data-add]')) { $('[data-rows]').insertAdjacentHTML('beforeend', '<tr><td><input data-g inputmode="decimal" aria-label="Nota"></td><td><input data-w inputmode="decimal" aria-label="Peso"></td><td><button type="button" class="link" data-del aria-label="Quitar">✕</button></td></tr>'); }
+    if (e.target.matches('[data-add2]')) { $('[data-rows2]').insertAdjacentHTML('beforeend', '<tr><td><input data-g inputmode="decimal" aria-label="Nota"></td><td><input data-w inputmode="decimal" aria-label="Peso"></td><td><button type="button" class="link" data-del aria-label="Quitar">✕</button></td></tr>'); }
+  });
+  // Chile users: default target 4.0 on scale 1–7 is preselected; others get their pass mark
+  const region = (navigator.languages || []).map((l) => l.split('-')[1]).find(Boolean)?.toLowerCase();
+  if (region && SCALES[region]) { $('[name=scale]').value = region; $('[name=target]').value = String(SCALES[region].pass).replace('.', prefs.decimalSep); }
+  update();
+</script>
+<style is:global>
+  .avg-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+  .avg-tabs button { padding: 0.5rem 0.9rem; border-radius: 999px; border: 2px solid var(--line); background: #fff; font: inherit; font-weight: 900; cursor: pointer; }
+  .avg-tabs button[aria-selected=true] { background: var(--accent); border-color: var(--ink); color: #fff; box-shadow: 0 3px 0 var(--ink); }
+  .avg-l { display: grid; gap: 0.3rem; font-weight: 800; color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem; }
+  .avg textarea { font: inherit; font-size: 1.3rem; font-weight: 700; padding: 0.6rem 0.8rem; border: 2px solid var(--line); border-radius: 12px; width: 100%; resize: vertical; color: var(--ink); }
+  .avg-rows { border-collapse: collapse; margin-bottom: 0.6rem; }
+  .avg-rows th { text-align: left; font-size: 0.85rem; color: var(--muted); padding: 0 0.4rem 0.3rem 0; }
+  .avg-rows input { width: min(6.5rem, 34vw); font: inherit; font-size: 1.15rem; font-weight: 700; padding: 0.4rem 0.6rem; border: 2px solid var(--line); border-radius: 10px; margin: 0 0.4rem 0.4rem 0; }
+  .avg-rows .link { font-size: 1.1rem; text-decoration: none; }
+  .avg-need { display: flex; flex-wrap: wrap; gap: 0.8rem; margin: 1rem 0; }
+  .avg-need label { display: grid; gap: 0.25rem; font-weight: 800; font-size: 0.85rem; color: var(--muted); }
+  .avg-need input, .avg-need select { font: inherit; font-size: 1.1rem; font-weight: 700; padding: 0.45rem 0.6rem; border: 2px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); max-width: 100%; }
+  .avg-need input { width: 7rem; }
+  .avg-hint { color: var(--muted); margin-top: 0; }
+  .formula { font-weight: 900; font-size: 1.15rem; background: #fff; border: 2px dashed var(--accent); border-radius: 14px; padding: 0.6rem 1rem; display: inline-block; }
+  .scales { border-collapse: collapse; background: #fff; }
+  .scales th, .scales td { padding: 0.4rem 0.9rem 0.4rem 0; border-bottom: 1px dashed var(--line); text-align: left; }
+</style>

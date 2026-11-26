@@ -126,6 +126,14 @@ const GENERATORS = {
     const e = rng.int(2, 4), b = rng.int(2, e === 2 ? Math.max(maxBase, 12) : e === 3 ? Math.min(maxBase, 10) : Math.min(maxBase, 5));
     return { op: 'pow', operands: [b, e], answer: b ** e };
   },
+  // Average of 3–6 numbers with a whole answer
+  average(rng, { maxN = 6, max = 20 } = {}) {
+    const n = rng.int(3, maxN), m = rng.int(2, max - 2);
+    const xs = Array.from({ length: n - 1 }, () => rng.int(Math.max(0, m - 6), m + 6));
+    const last = m * n - xs.reduce((a, b) => a + b, 0);
+    if (last < 0 || last > max + 10) return null;
+    return { op: 'average', operands: rng.shuffle([...xs, last]), answer: m };
+  },
   gcdLcm(rng, { max = 60, which = 'both' } = {}) {
     const k = rng.int(2, 6);
     const a = k * rng.int(2, Math.floor(max / k)), b = k * rng.int(2, Math.floor(max / k));
