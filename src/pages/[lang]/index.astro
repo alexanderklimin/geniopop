@@ -1,6 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { LIVE, t } from '../../i18n/ui.js';
+import Icon from '../../components/Icon.astro';
+import { LIVE, SECTION_STYLE, t } from '../../i18n/ui.js';
+import { AUTHOR, authorPath } from '../../data/author.js';
 
 export function getStaticPaths() {
   return LIVE.map((lang) => ({ params: { lang } }));
@@ -9,22 +11,93 @@ export function getStaticPaths() {
 const { lang } = Astro.params as { lang: string };
 const ui = t(lang);
 const alternates = Object.fromEntries(LIVE.map((l) => [l, `/${l}/`]));
+const site = { '@context': 'https://schema.org', '@type': 'WebSite', name: 'GenioPop', url: new URL(`/${lang}/`, Astro.site).href, inLanguage: lang };
 ---
-<Base lang={lang} title={ui.home_title} description={ui.home_description} alternates={alternates}>
-  <h1>{ui.home_h1}</h1>
-  <p class="lead">{ui.home_lead}</p>
-  <ul class="cards">
-    {ui.sections.map((s) => (
-      <li class="card">
-        <h2>{s.href ? <a href={s.href}>{s.title}</a> : s.title}</h2>
-        <p>{s.text}</p>
-        {s.links && <p class="card-links">{s.links.map(([t, h]) => <a href={h}>{t}</a>)}</p>}
-        {!s.href && !s.links && <span class="tag">{ui.soon}</span>}
-      </li>
-    ))}
+<Base lang={lang} title={ui.home_title} description={ui.home_description} alternates={alternates} jsonLd={[site]}>
+  <section class="hero">
+    <div class="hero-text">
+      <p class="kicker">{ui.kicker}</p>
+      <h1>{ui.home_h1}</h1>
+      <p class="lead">{ui.home_lead}</p>
+      {ui.popular.length > 0 && (
+        <div class="popular">
+          <p class="popular-h">{ui.popularTitle}</p>
+          <div class="chips">{ui.popular.map(([label, href]) => <a href={href}>{label}</a>)}</div>
+        </div>
+      )}
+    </div>
+    <svg class="hero-art" viewBox="0 0 360 320" role="presentation" aria-hidden="true">
+      <rect x="40" y="40" width="120" height="120" rx="28" fill="var(--c-tablas)" transform="rotate(-8 100 100)" />
+      <text x="100" y="122" text-anchor="middle" font-size="64" font-weight="900" fill="#fff" transform="rotate(-8 100 100)">7×8</text>
+      <circle cx="262" cy="96" r="66" fill="var(--c-fichas)" />
+      <path d="M262 96 L262 30 A66 66 0 0 1 319 129 Z" fill="#fff" opacity=".9" />
+      <rect x="190" y="180" width="130" height="110" rx="26" fill="var(--c-fracciones)" transform="rotate(7 255 235)" />
+      <text x="255" y="222" text-anchor="middle" font-size="44" font-weight="900" fill="#fff" transform="rotate(7 255 235)">3</text>
+      <rect x="225" y="230" width="60" height="6" rx="3" fill="#fff" transform="rotate(7 255 235)" />
+      <text x="255" y="276" text-anchor="middle" font-size="44" font-weight="900" fill="#fff" transform="rotate(7 255 235)">4</text>
+      <circle cx="96" cy="246" r="54" fill="var(--c-juegos)" />
+      <text x="96" y="268" text-anchor="middle" font-size="60" font-weight="900" fill="#fff">%</text>
+      <circle cx="176" cy="160" r="12" fill="var(--pop)" /><circle cx="30" cy="180" r="7" fill="var(--c-calc)" /><circle cx="330" cy="200" r="8" fill="var(--c-ciencia)" />
+      <path d="M160 40 l6 14 15 2 -11 10 3 15 -13-7 -13 7 3-15 -11-10 15-2z" fill="var(--pop)" />
+    </svg>
+  </section>
+
+  <ul class="trust">{ui.trust.map(([icon, text]) => <li><Icon name={icon} size={22} /> {text}</li>)}</ul>
+
+  <h2 class="sections-h">{ui.sectionsTitle}</h2>
+  <ul class="sections">
+    {ui.sections.map((s, i) => {
+      const st = SECTION_STYLE[i];
+      const live = s.href || s.links;
+      return (
+        <li class:list={['sec', { soon: !live }]} style={`--c: var(--c-${st.key})`}>
+          <span class="sec-icon"><Icon name={st.icon} size={30} /></span>
+          <h3>{s.href ? <a href={s.href}>{s.title}</a> : s.title}</h3>
+          <p>{s.text}</p>
+          {s.links && <p class="sec-links">{s.links.map(([label, href]) => <a href={href}>{label}</a>)}</p>}
+          {s.href && <a class="sec-go" href={s.href} aria-hidden="true" tabindex="-1">{ui.open} <Icon name="arrow" size={18} /></a>}
+          {!live && <span class="tag">{ui.soon}</span>}
+        </li>
+      );
+    })}
   </ul>
+
+  <a class="reviewer" href={authorPath(lang)}>
+    <img src={AUTHOR.photo} alt="" width="72" height="72" loading="lazy" />
+    <span><small>{ui.reviewedBy}</small><strong>{AUTHOR.name}</strong>, {ui.reviewer}</span>
+  </a>
 </Base>
+
 <style>
-  .card-links { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; margin-top: 0.6rem !important; }
-  .card-links a { font-weight: 700; }
+  .hero { display: grid; grid-template-columns: 1.25fr 1fr; gap: 2rem; align-items: center; padding: 1rem 0 0.5rem; }
+  .kicker { display: inline-block; margin: 0 0 0.9rem; padding: 0.3rem 0.85rem; border-radius: 999px; background: #fff; border: 2px solid var(--ink); font-weight: 900; font-size: 0.85rem; box-shadow: 3px 3px 0 var(--c-fichas); }
+  .hero h1 { font-size: clamp(2.5rem, 7.5vw, 4.4rem); max-width: 12ch; }
+  .hero-art { width: 100%; max-width: 420px; justify-self: center; font-family: inherit; animation: float 6s ease-in-out infinite; }
+  @keyframes float { 50% { transform: translateY(-8px) rotate(-1deg); } }
+  .popular-h { font-weight: 900; margin: 0 0 0.5rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .chips a { padding: 0.5rem 0.95rem; border-radius: 999px; background: #fff; border: 2px solid var(--line); color: var(--ink); font-weight: 800; text-decoration: none; transition: transform 0.1s, border-color 0.1s; }
+  .chips a:hover { transform: translateY(-2px); border-color: var(--ink); }
+  .trust { list-style: none; padding: 0; margin: 2rem 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 0.75rem; }
+  .trust li { display: flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1rem; border-radius: 16px; background: #fff; border: 2px solid var(--line); font-weight: 700; }
+  .trust svg { color: var(--pop); flex-shrink: 0; }
+  .sections { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); gap: 1.1rem; }
+  .sec { position: relative; display: flex; flex-direction: column; background: #fff; border: 2px solid var(--ink); border-radius: var(--radius); padding: 1.3rem; box-shadow: 5px 5px 0 var(--c); transition: transform 0.12s, box-shadow 0.12s; }
+  .sec:not(.soon):hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--c); }
+  .sec.soon { border-color: var(--line); box-shadow: none; }
+  .sec-icon { display: grid; place-items: center; width: 3.4rem; height: 3.4rem; border-radius: 16px; background: var(--c); color: #fff; margin-bottom: 0.8rem; transform: rotate(-4deg); }
+  .sec.soon .sec-icon { opacity: 0.55; }
+  .sec h3 { margin: 0 0 0.35rem; font-size: 1.3rem; }
+  .sec h3 a { color: var(--ink); text-decoration: none; }
+  .sec h3 a::after { content: ''; position: absolute; inset: 0; }
+  .sec p { margin: 0; color: var(--muted); }
+  .sec-links { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.8rem !important; }
+  .sec-links a { position: relative; z-index: 1; padding: 0.3rem 0.7rem; border-radius: 999px; background: color-mix(in srgb, var(--c) 14%, #fff); color: var(--ink); font-weight: 800; font-size: 0.9rem; text-decoration: none; }
+  .sec-links a:hover { background: var(--c); color: #fff; }
+  .sec-go { margin-top: auto; padding-top: 0.9rem; display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 900; color: var(--c); text-decoration: none; }
+  .tag { align-self: flex-start; margin-top: 0.8rem; font-size: 0.8rem; font-weight: 900; color: var(--muted); background: var(--paper); border-radius: 999px; padding: 0.2rem 0.7rem; }
+  .reviewer { display: flex; align-items: center; gap: 1rem; margin-top: 2.5rem; padding: 1rem 1.2rem; border-radius: var(--radius); background: #fff; border: 2px solid var(--line); color: var(--ink); text-decoration: none; max-width: 40rem; }
+  .reviewer img { border-radius: 50%; object-fit: cover; border: 3px solid var(--c-fichas); }
+  .reviewer small { display: block; color: var(--muted); font-weight: 700; }
+  @media (max-width: 760px) { .hero { grid-template-columns: 1fr; } .hero-art { max-width: 260px; order: -1; margin-bottom: -1rem; } }
 </style>

@@ -16,9 +16,19 @@ export const UI = {
     notFoundText: 'Esta página no existe o ha cambiado de dirección.',
     backHome: 'Volver al inicio',
     footerNote: 'Gratis y sin registro. No pedimos datos a los niños.',
+    tagline: 'Matemáticas que se entienden, para niños, familias y profes.',
+    footerSections: 'Practicar', footerAbout: 'GenioPop', authorLink: 'Quién revisa los contenidos', menu: 'Menú',
     home_title: 'Tablas de multiplicar, fracciones y fichas para imprimir',
     home_description: 'Tablas de multiplicar para practicar, calculadoras que explican cada paso y fichas de mates para imprimir con soluciones. Gratis y sin registro.',
     home_h1: 'Matemáticas que se entienden',
+    kicker: 'Para primaria · gratis · sin registro',
+    popularTitle: 'Lo más buscado',
+    popular: [['Tabla del 7', '/es/tablas-de-multiplicar/tabla-del-7/'], ['Calculadora de fracciones', '/es/fracciones/calculadora-de-fracciones/'], ['Porcentajes', '/es/calculadora-de-porcentajes/'], ['Números romanos', '/es/numeros-romanos/'], ['División paso a paso', '/es/division/'], ['Tabla pitagórica', '/es/tabla-pitagorica/']],
+    sectionsTitle: '¿Qué quieres practicar?',
+    open: 'Abrir',
+    trust: [['check', 'Explicaciones paso a paso, como en el cuaderno'], ['print', 'Fichas para imprimir con soluciones'], ['heart', 'Sin registro y sin pedir datos a los niños']],
+    reviewedBy: 'Contenidos revisados por',
+    reviewer: 'profesora y cofundadora de Inana Show, un espectáculo de ciencia para niños',
     home_lead: 'Practica las tablas, resuelve fracciones paso a paso e imprime fichas con soluciones. Para niños, familias y profes.',
     sections: [
       { title: 'Tablas de multiplicar', text: 'Del 1 al 12, con práctica en orden, salteada o contrarreloj, y la tabla pitagórica.', href: '/es/tablas-de-multiplicar/' },
@@ -38,9 +48,18 @@ export const UI = {
     notFoundText: 'Diese Seite gibt es nicht oder sie ist umgezogen.',
     backHome: 'Zur Startseite',
     footerNote: 'Kostenlos und ohne Anmeldung. Von Kindern erheben wir keine Daten.',
+    tagline: 'Mathe, die man versteht – für Kinder, Eltern und Lehrkräfte.',
+    footerSections: 'Üben', footerAbout: 'GenioPop', authorLink: 'Wer die Inhalte prüft', menu: 'Menü',
     home_title: '1x1 üben, Brüche rechnen und Arbeitsblätter',
     home_description: 'Einmaleins üben, Rechner mit Rechenweg und Mathe-Arbeitsblätter mit Lösungen zum Ausdrucken. Kostenlos und ohne Anmeldung.',
     home_h1: 'Mathe, die man versteht',
+    kicker: 'Für die Grundschule · kostenlos · ohne Anmeldung',
+    popularTitle: 'Beliebt', popular: [],
+    sectionsTitle: 'Was möchtest du üben?',
+    open: 'Öffnen',
+    trust: [['check', 'Rechenwege Schritt für Schritt'], ['print', 'Arbeitsblätter mit Lösungen'], ['heart', 'Ohne Anmeldung, keine Daten von Kindern']],
+    reviewedBy: 'Inhalte geprüft von',
+    reviewer: 'Lehrerin und Mitgründerin von Inana Show, einer Wissenschaftsshow für Kinder',
     home_lead: 'Das 1x1 üben, Brüche mit Rechenweg lösen und Arbeitsblätter mit Lösungen drucken. Für Kinder, Eltern und Lehrkräfte.',
     sections: [
       { title: 'Einmaleins (1x1)', text: 'Kleines und großes Einmaleins: der Reihe nach, gemischt oder auf Zeit, dazu die 1x1-Tabelle.' },
@@ -60,9 +79,18 @@ export const UI = {
     notFoundText: 'Questa pagina non esiste o ha cambiato indirizzo.',
     backHome: 'Torna alla home',
     footerNote: 'Gratis e senza registrazione. Non raccogliamo dati dei bambini.',
+    tagline: 'La matematica che si capisce, per bambini, famiglie e insegnanti.',
+    footerSections: 'Esercitarsi', footerAbout: 'GenioPop', authorLink: 'Chi controlla i contenuti', menu: 'Menu',
     home_title: 'Tabelline, frazioni e schede di matematica da stampare',
     home_description: 'Tabelline da allenare, calcolatrici che spiegano ogni passaggio e schede di matematica da stampare con le soluzioni. Gratis e senza registrazione.',
     home_h1: 'La matematica che si capisce',
+    kicker: 'Per la primaria · gratis · senza registrazione',
+    popularTitle: 'I più cercati', popular: [],
+    sectionsTitle: 'Cosa vuoi esercitare?',
+    open: 'Apri',
+    trust: [['check', 'Spiegazioni passo dopo passo'], ['print', 'Schede da stampare con soluzioni'], ['heart', 'Senza registrazione, nessun dato dei bambini']],
+    reviewedBy: 'Contenuti controllati da',
+    reviewer: 'insegnante e cofondatrice di Inana Show, uno spettacolo di scienza per bambini',
     home_lead: 'Allena le tabelline, risolvi le frazioni passo dopo passo e stampa schede con le soluzioni. Per bambini, genitori e insegnanti.',
     sections: [
       { title: 'Tabelline', text: 'Dalla tabellina dell’1 a quella del 12: in ordine, a caso o a tempo, più la tavola pitagorica.' },
@@ -74,6 +102,38 @@ export const UI = {
     ],
   },
 };
+
+// Section colors/icons (same order as UI[lang].sections) and main navigation per language.
+export const SECTION_STYLE = [
+  { key: 'tablas', icon: 'grid' },
+  { key: 'fracciones', icon: 'pizza' },
+  { key: 'calc', icon: 'calc' },
+  { key: 'fichas', icon: 'sheet' },
+  { key: 'juegos', icon: 'game' },
+  { key: 'ciencia', icon: 'flask' },
+];
+
+export const NAV = {
+  es: [
+    { label: 'Tablas', href: '/es/tablas-de-multiplicar/', key: 'tablas' },
+    { label: 'Fracciones', href: '/es/fracciones/', key: 'fracciones' },
+    { label: 'División', href: '/es/division/', key: 'calc' },
+    { label: 'Porcentajes', href: '/es/calculadora-de-porcentajes/', key: 'calc' },
+    { label: 'Romanos', href: '/es/numeros-romanos/', key: 'calc' },
+    { label: 'mcm y mcd', href: '/es/mcm-mcd/', key: 'calc' },
+  ],
+  de: [],
+  it: [],
+};
+
+// Which section (color) a path belongs to
+export function sectionOf(pathname) {
+  if (/\/(tablas-de-multiplicar|tabla-pitagorica)\//.test(pathname)) return 'tablas';
+  if (/\/fracciones\//.test(pathname)) return 'fracciones';
+  if (/\/(division|calculadora-de-porcentajes|numeros-romanos|mcm-mcd)\//.test(pathname)) return 'calc';
+  if (/\/fichas\//.test(pathname)) return 'fichas';
+  return 'home';
+}
 
 export function t(lang) {
   const ui = UI[lang];

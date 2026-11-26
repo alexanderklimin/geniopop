@@ -72,14 +72,14 @@ const rows = Array.from({ length: N }, (_, r) => r + 1);
   .pg-wrap { overflow-x: auto; }
   .pg { border-collapse: collapse; font-variant-numeric: tabular-nums; background: #fff; }
   .pg th, .pg td { width: 2.6rem; height: 2.4rem; text-align: center; border: 1px solid var(--line); }
-  .pg th { background: var(--paper); color: var(--pop-dark); }
+  .pg th { background: var(--paper); color: var(--accent-dark); }
   .pg td { cursor: pointer; }
   .pg td.sq { background: #fff1e8; font-weight: 700; }
   .pg .on { background: #ffe2d1; }
-  .pg td.hit { background: var(--pop); color: #fff; font-weight: 800; }
+  .pg td.hit { background: var(--accent); color: #fff; font-weight: 800; }
   .pg.to10 .x { display: none; }
   .pg.blank td { color: transparent; }
-  .actions input { margin-right: 0.4rem; accent-color: var(--pop); }
+  .actions input { margin-right: 0.4rem; accent-color: var(--accent); }
   @media print {
     .readout { display: none; }
     .pg { margin: 0 auto; font-size: 12pt; }

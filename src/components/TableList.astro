@@ -4,21 +4,22 @@ interface Props { n: number; to?: number; from?: number; mul?: string; href?: st
 const { n, from = 1, to = 10, mul = '×', href, heading, big = false } = Astro.props;
 const rows = Array.from({ length: to - from + 1 }, (_, i) => from + i);
 ---
-<div class:list={['tlist', { big }]}>
+<div class:list={['tlist', { big }]} style={`--h:${(n * 37 + 250) % 360}`}>
   {heading && (href ? <h3><a href={href}>{heading}</a></h3> : <h3>{heading}</h3>)}
   <ol>
     {rows.map((b) => <li class:list={{ ext: b > 10 || b === 0 }}><span>{n} {mul} {b}</span><b>{n * b}</b></li>)}
   </ol>
 </div>
 <style>
-  .tlist { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 0.9rem 1.1rem; }
-  .tlist h3 { margin: 0 0 0.4rem; font-size: 1.1rem; }
-  .tlist h3 a { color: var(--ink); text-decoration-color: var(--pop); }
-  .tlist ol { list-style: none; margin: 0; padding: 0; font-variant-numeric: tabular-nums; }
-  .tlist li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.1rem 0; border-bottom: 1px dashed var(--line); }
+  .tlist { --tc: hsl(var(--h) 75% 55%); background: #fff; border: 2px solid var(--ink); border-radius: 18px; padding: 0 0 0.6rem; overflow: hidden; box-shadow: 4px 4px 0 var(--tc); }
+  .tlist h3 { margin: 0 0 0.4rem; padding: 0.55rem 1rem; font-size: 1.15rem; background: var(--tc); }
+  .tlist h3 a { color: #fff; text-decoration: none; }
+  .tlist h3 a::after { content: ' →'; opacity: 0.8; }
+  .tlist ol { list-style: none; margin: 0; padding: 0 1rem; font-variant-numeric: tabular-nums; font-weight: 700; }
+  .tlist li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.12rem 0; border-bottom: 1px dashed var(--line); }
   .tlist li:last-child { border-bottom: 0; }
-  .tlist li b { color: var(--pop-dark); }
-  .tlist li.ext { color: var(--muted); }
-  .tlist.big { font-size: 1.35rem; max-width: 22rem; }
-  @media print { .tlist { border: 0; break-inside: avoid; } }
+  .tlist li b { color: hsl(var(--h) 70% 38%); font-weight: 900; }
+  .tlist li.ext { color: var(--muted); font-weight: 600; }
+  .tlist.big { font-size: 1.4rem; max-width: 22rem; padding-top: 0.6rem; }
+  @media print { .tlist { border: 1px solid #999; box-shadow: none; break-inside: avoid; } .tlist h3 { background: none; } .tlist h3 a { color: #000; } }
 </style>

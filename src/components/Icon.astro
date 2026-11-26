@@ -1,0 +1,25 @@
+---
+// Simple line icons drawn in SVG (no icon font, no requests). currentColor, 24×24 grid.
+interface Props { name: string; size?: number; class?: string }
+const { name, size = 28, class: cls } = Astro.props;
+const P: Record<string, string> = {
+  grid: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/>',
+  pizza: '<circle cx="12" cy="12" r="9"/><path d="M12 12V3M12 12l7.8 4.5"/><circle cx="15" cy="8" r="1" fill="currentColor"/><circle cx="8" cy="10" r="1" fill="currentColor"/><circle cx="10" cy="16" r="1" fill="currentColor"/>',
+  calc: '<rect x="5" y="2.5" width="14" height="19" rx="3"/><rect x="8" y="5.5" width="8" height="4" rx="1"/><path d="M8.5 13h.01M12 13h.01M15.5 13h.01M8.5 16.5h.01M12 16.5h.01M15.5 16.5h.01" stroke-width="2.6"/>',
+  sheet: '<path d="M6 2.5h8l4 4v15H6z"/><path d="M14 2.5v4h4M9 11h6M9 14.5h6M9 18h4"/>',
+  game: '<path d="M7 8h10a5 5 0 0 1 4.7 6.7l-.6 1.7a2.6 2.6 0 0 1-4.3.9L15 15.5H9l-1.8 1.8a2.6 2.6 0 0 1-4.3-.9l-.6-1.7A5 5 0 0 1 7 8z"/><path d="M8 10.5v3M6.5 12h3"/><path d="M15.5 11h.01M17.5 13h.01" stroke-width="2.6"/>',
+  flask: '<path d="M9.5 2.5h5M10 2.5v6L4.8 18a2.3 2.3 0 0 0 2 3.5h10.4a2.3 2.3 0 0 0 2-3.5L14 8.5v-6"/><path d="M7 15h10"/><circle cx="10" cy="18" r=".8" fill="currentColor"/><circle cx="14" cy="17.5" r=".8" fill="currentColor"/>',
+  percent: '<path d="M19 5 5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>',
+  roman: '<path d="M4 6h16M4 18h16M7 6v12M11 6l3 12 3-12"/>',
+  divide: '<path d="M5 12h14"/><circle cx="12" cy="6.5" r="1.6" fill="currentColor"/><circle cx="12" cy="17.5" r="1.6" fill="currentColor"/>',
+  layers: '<path d="M12 3 3 8l9 5 9-5z"/><path d="m3 13 9 5 9-5"/>',
+  bulb: '<path d="M9 18h6M10 21.5h4"/><path d="M12 2.5a6.5 6.5 0 0 0-3.8 11.8c.5.4.8 1 .8 1.7h6c0-.7.3-1.3.8-1.7A6.5 6.5 0 0 0 12 2.5z"/>',
+  star: '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+  print: '<path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/>',
+  check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  heart: '<path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/>',
+  arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+};
+const body = P[name] ?? P.star;
+---
+<svg class={cls} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={body} />
