@@ -15,3 +15,6 @@
 - Пользователь выбрал **GenioPop / geniopop.com** (eurekino отклонён: звучит «по-европейски»). Домен не куплен.
 - Deploy key /root/.ssh/geniopop_deploy, алиас github-geniopop в ~/.ssh/config, git init, remote github-geniopop:alexanderklimin/geniopop.git (репозиторий создаёт пользователь).
 - Каркас Astro 7.4.12 + @astrojs/sitemap + wrangler (версии как в plantas-es): wrangler.jsonc с workers_dev true, public/_headers с noindex, корень `/` — выбор языка (x-default, без редиректа), /es/ /de/ /it/ — стартовые страницы с разделами («Próximamente»), hreflang + canonical, общий 404 на трёх языках, Analytics.astro из plantas-es с баннером на es/de/it (GA_ID пустой; на детских страницах не подключается). Сборка: 5 страниц, 68 КБ, JS нет.
+- Первый коммит be4dd8a запушен в alexanderklimin/geniopop (main). Дальше пользователь подключает репозиторий в Cloudflare Workers Builds.
+- Автор: Anna Ryabova (как на numeroastral), био переписано под обучение (без нумерологии и астрологии), es/de/it, страницы /es/sobre-nosotros/anna-ryabova/, /de/ueber-uns/…, /it/chi-siamo/… с Person/ProfilePage. Фото из /opt/astro-es. Тексты — черновик до утверждения Анной. Почта hola@geniopop.com.
+- Био автора пересобрано только из её собственного текста (жизнь и работа); додуманные фразы убраны. de/it — перевод испанской версии с numeroastral.

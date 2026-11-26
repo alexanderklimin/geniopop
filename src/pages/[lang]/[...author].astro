@@ -1,0 +1,47 @@
+---
+// Author page per language: /es/sobre-nosotros/anna-ryabova/, /de/ueber-uns/anna-ryabova/, /it/chi-siamo/anna-ryabova/
+import Base from '../../layouts/Base.astro';
+import { LIVE } from '../../i18n/ui.js';
+import { AUTHOR, authorPath } from '../../data/author.js';
+import { SITE_NAME } from '../../data/site.js';
+
+export function getStaticPaths() {
+  return LIVE.filter((lang) => AUTHOR[lang]).map((lang) => ({ params: { lang, author: `${AUTHOR[lang].about}/${AUTHOR.slug}` } }));
+}
+
+const { lang } = Astro.params as { lang: string };
+const a = AUTHOR[lang];
+const alternates = Object.fromEntries(LIVE.filter((l) => AUTHOR[l]).map((l) => [l, authorPath(l)]));
+const url = new URL(Astro.url.pathname, Astro.site).href;
+const person = {
+  '@context': 'https://schema.org', '@type': 'ProfilePage', url,
+  mainEntity: { '@type': 'Person', name: AUTHOR.name, jobTitle: a.jobTitle, image: new URL(AUTHOR.photo, Astro.site).href, sameAs: AUTHOR.sameAs, worksFor: { '@type': 'Organization', name: SITE_NAME } },
+};
+---
+<Base lang={lang} title={`${AUTHOR.name}, ${a.short}`} description={`${AUTHOR.name}: ${a.short}. ${a.role.split('. ')[0]}.`} alternates={alternates} xDefault={authorPath('es')}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(person).replace(/</g, '\\u003c')} />
+  <article class="reading">
+    <header class="author-head">
+      <img class="author-photo" src={AUTHOR.photo} alt={AUTHOR.name} width="160" height="160" loading="eager" />
+      <div>
+        <h1>{AUTHOR.name}</h1>
+        <p class="lead">{a.jobTitle} · {a.city}</p>
+      </div>
+    </header>
+    {a.bio.map((p) => <p>{p}</p>)}
+    <h2>{a.headings.education}</h2>
+    <ul>{a.education.map((e) => <li>{e}</li>)}</ul>
+    <h2>{a.headings.experience}</h2>
+    <p set:html={a.experience} />
+    <h2>{a.headings.role}</h2>
+    <p>{a.role}</p>
+  </article>
+</Base>
+
+<style>
+  .reading { max-width: 42rem; }
+  .author-head { display: flex; gap: 1.25rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .author-photo { border-radius: 50%; object-fit: cover; }
+  .author-head .lead { margin: 0; }
+  h2 { font-size: 1.3rem; margin-top: 2rem; }
+</style>

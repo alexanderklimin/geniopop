@@ -3,6 +3,7 @@ export const GA_ID = '';
 // Analytics runs only on the production host, so previews do not pollute the data.
 export const ANALYTICS_HOST = 'geniopop.com';
 export const SITE_NAME = 'GenioPop';
+// One mailbox for all languages (Cloudflare Email Routing, set up by the user at launch).
 export const CONTACT_EMAIL = 'hola@geniopop.com';
 // Owner data for the legal pages: filled only after the user confirms them (personal data).
 export const OWNER_NAME = '';
