@@ -151,7 +151,7 @@ const firstDiv = divisionHTML(longDivision(96, 4), { layout: 'galera' });
 </script>
 
 <style>
-  .play { background: #fff; border: 3px solid var(--ink); border-radius: 28px; box-shadow: 8px 8px 0 var(--ink); overflow: hidden; }
+  .play { min-width: 0; background: #fff; border: 3px solid var(--ink); border-radius: 28px; box-shadow: 8px 8px 0 var(--ink); overflow: hidden; }
   .play-tabs { display: flex; gap: 0.4rem; padding: 0.7rem; background: var(--paper); border-bottom: 3px solid var(--ink); overflow-x: auto; scrollbar-width: none; }
   .play-tabs button { display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap; padding: 0.55rem 0.95rem; border-radius: 999px; border: 2px solid transparent; background: transparent; font: inherit; font-weight: 900; color: var(--ink); cursor: pointer; }
   .play-tabs button svg { color: var(--c); }
@@ -159,7 +159,8 @@ const firstDiv = divisionHTML(longDivision(96, 4), { layout: 'galera' });
   .play-tabs button[aria-selected='true'] svg { color: #fff; }
   @media (max-width: 560px) {
     .play-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.3rem; padding: 0.5rem; }
-    .play-tabs button { flex-direction: column; gap: 0.15rem; padding: 0.45rem 0.2rem; border-radius: 14px; font-size: 0.78rem; }
+    .play-tabs button { flex-direction: column; gap: 0.15rem; padding: 0.45rem 0.1rem; border-radius: 14px; font-size: 0.72rem; min-width: 0; }
+    .tb-q { padding: 0.6rem 0.7rem; gap: 0.5rem; }
   }
   .pane { padding: 1.5rem 1.25rem 1.25rem; display: grid; justify-items: center; gap: 0.9rem; text-align: center; min-height: 17rem; align-content: center; }
   .pane[hidden] { display: none; }

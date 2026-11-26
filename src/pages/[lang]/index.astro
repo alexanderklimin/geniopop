@@ -91,7 +91,7 @@ const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: 
   .hero .trust { grid-column: 1 / -1; }
   .hero-art { width: 100%; max-width: 400px; justify-self: center; font-family: inherit; animation: float 6s ease-in-out infinite; }
   @keyframes float { 50% { transform: translateY(-8px) rotate(-1deg); } }
-  @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } .hero-art { display: none; } }
+  @media (max-width: 900px) { .hero { grid-template-columns: minmax(0, 1fr); } .hero-art { display: none; } }
   .hero h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 0.2rem; max-width: none; }
   .hero-sub { margin: 0 0 1.2rem; color: var(--muted); font-weight: 700; font-size: 1.1rem; }
   .trust { list-style: none; padding: 0; margin: 1.4rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
