@@ -1,0 +1,79 @@
+---
+import Base from '../../../layouts/Base.astro';
+import FractionCalc from '../../../components/FractionCalc.astro';
+import { PAGES, ORDER, BASE } from '../../../data/es/fracciones.js';
+
+// Pie and bar pictures drawn from numbers (no image files)
+function pie(n: number, d: number, size = 120) {
+  const r = size / 2 - 4, c = size / 2;
+  const parts = Array.from({ length: d }, (_, i) => {
+    const a0 = (i / d) * 2 * Math.PI - Math.PI / 2, a1 = ((i + 1) / d) * 2 * Math.PI - Math.PI / 2;
+    const p = (a: number) => `${(c + r * Math.cos(a)).toFixed(2)} ${(c + r * Math.sin(a)).toFixed(2)}`;
+    return `<path d="M${c} ${c} L${p(a0)} A${r} ${r} 0 0 1 ${p(a1)} Z" fill="${i < n ? '#ff6b35' : '#fff'}" stroke="#1d2433" stroke-width="2"/>`;
+  });
+  return `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-label="${n} de ${d}">${parts.join('')}</svg>`;
+}
+function bar(n: number, d: number, w = 240, h = 36) {
+  const cw = w / d;
+  return `<svg viewBox="0 0 ${w + 4} ${h + 4}" width="${w + 4}" height="${h + 4}" role="img" aria-label="${n} de ${d}">${Array.from({ length: d }, (_, i) => `<rect x="${2 + i * cw}" y="2" width="${cw}" height="${h}" fill="${i < n ? '#ff6b35' : '#fff'}" stroke="#1d2433" stroke-width="2"/>`).join('')}</svg>`;
+}
+const names = [['1/2', 'un medio'], ['1/3', 'un tercio'], ['1/4', 'un cuarto'], ['2/5', 'dos quintos'], ['5/6', 'cinco sextos'], ['3/7', 'tres séptimos'], ['7/8', 'siete octavos'], ['4/9', 'cuatro novenos'], ['3/10', 'tres décimos'], ['5/12', 'cinco doceavos']];
+const path = BASE;
+---
+<Base lang="es" title="Fracciones: qué son, tipos, operaciones y calculadora"
+  description="Qué es una fracción, cómo se lee y se representa, fracciones propias, impropias y mixtas, y cómo sumar, restar, multiplicar, dividir y simplificar fracciones paso a paso."
+  alternates={{ es: path }} crumbs={[{ name: 'Fracciones', path }]}>
+  <h1>Fracciones</h1>
+  <p class="lead">Una fracción indica qué parte de un todo tenemos. Aquí tienes la explicación con dibujos, cómo se leen, sus tipos y una calculadora que resuelve cualquier operación paso a paso.</p>
+
+  <nav class="hubnav" aria-label="Operaciones con fracciones">
+    {ORDER.map((s) => <a href={`${BASE}${s}/`}><strong>{PAGES[s].h1}</strong><span>{PAGES[s].lead.split('. ')[0]}.</span></a>)}
+  </nav>
+
+  <section class="prose">
+    <h2>Qué es una fracción</h2>
+    <p>Si partimos una pizza en 4 trozos iguales y nos comemos 3, nos hemos comido <strong>3/4</strong> (tres cuartos) de la pizza.</p>
+    <div class="pics"><figure set:html={pie(3, 4) + '<figcaption>3/4</figcaption>'} /><figure set:html={bar(2, 5) + '<figcaption>2/5</figcaption>'} /><figure set:html={pie(5, 8) + '<figcaption>5/8</figcaption>'} /></div>
+    <ul>
+      <li>El número de abajo es el <strong>denominador</strong>: en cuántas partes iguales se divide la unidad.</li>
+      <li>El número de arriba es el <strong>numerador</strong>: cuántas de esas partes tomamos.</li>
+      <li>La raya del medio significa «dividido entre»: 3/4 es lo mismo que 3 ÷ 4 = 0,75.</li>
+    </ul>
+
+    <h2>Cómo se leen las fracciones</h2>
+    <p>Primero se dice el numerador y después el denominador como «medios», «tercios», «cuartos»… Del 11 en adelante se añade <em>-avos</em>: onceavos, doceavos, quinceavos.</p>
+    <table class="names"><tbody>{names.map(([f, n]) => <tr><td>{f}</td><td>{n}</td></tr>)}</tbody></table>
+
+    <h2>Tipos de fracciones</h2>
+    <ul>
+      <li><strong>Propias</strong>: el numerador es menor que el denominador y valen menos que 1 (3/4).</li>
+      <li><strong>Impropias</strong>: el numerador es mayor o igual que el denominador y valen 1 o más (7/4).</li>
+      <li><strong>Números mixtos</strong>: un entero y una fracción propia. 7/4 = 1 ¾, porque 7 ÷ 4 = 1 y sobran 3.</li>
+      <li><strong>Equivalentes</strong>: valen lo mismo aunque se escriban distinto (1/2 = 2/4). <a href={`${BASE}fracciones-equivalentes/`}>Ver fracciones equivalentes</a>.</li>
+      <li><strong>Irreducibles</strong>: ya no se pueden simplificar (3/4). <a href={`${BASE}simplificar-fracciones/`}>Cómo simplificar</a>.</li>
+    </ul>
+
+    <h2>Cómo comparar fracciones</h2>
+    <ul>
+      <li>Con el <strong>mismo denominador</strong>, es mayor la que tiene mayor numerador: 5/8 &gt; 3/8.</li>
+      <li>Con el <strong>mismo numerador</strong>, es mayor la que tiene menor denominador: 1/3 &gt; 1/5 (un tercio de pizza es más que un quinto).</li>
+      <li>En los demás casos, multiplica en cruz o pásalas a un denominador común: 2/3 y 3/5 → 10/15 y 9/15, así que 2/3 es mayor.</li>
+    </ul>
+  </section>
+
+  <h2>Calculadora de fracciones</h2>
+  <FractionCalc lang="es" mode="calc" op="+" a="1/2" b="1/3" />
+</Base>
+
+<style>
+  .hubnav { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); margin: 1rem 0 1.5rem; }
+  .hubnav a { display: block; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 0.9rem 1rem; color: var(--ink); text-decoration: none; }
+  .hubnav a:hover { border-color: var(--pop); }
+  .hubnav strong { display: block; color: var(--pop-dark); margin-bottom: 0.25rem; }
+  .hubnav span { font-size: 0.92rem; color: var(--muted); }
+  .pics { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: end; }
+  .pics figure { margin: 0; text-align: center; font-weight: 700; }
+  .names { border-collapse: collapse; }
+  .names td { padding: 0.3rem 1rem 0.3rem 0; border-bottom: 1px dashed var(--line); }
+  .names td:first-child { font-weight: 700; font-variant-numeric: tabular-nums; }
+</style>

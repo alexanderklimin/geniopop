@@ -1,0 +1,44 @@
+---
+// Printable fraction worksheet (operations or simplification) with answer key on page 2.
+import { generate } from '../lib/worksheet.js';
+import { fr, mixed } from '../i18n/fraction-steps.js';
+import { toMixed } from '../lib/fraction.js';
+
+interface Props { topic: 'fraction' | 'simplify'; params?: Record<string, unknown>; title: string; count?: number; seed?: number; labels: { name: string; date: string; answers: string; newSheet: string; print: string } }
+const { topic, params = {}, title, count = 12, seed = 1, labels } = Astro.props;
+const OPS = { '+': '+', '-': '−', '*': '×', '/': '÷' };
+const render = (p) => topic === 'simplify' ? `${fr(p.operands[0])} <span class="op">=</span> <span class="blank"></span>` : `${fr(p.operands[0])} <span class="op">${OPS[p.op]}</span> ${fr(p.operands[1])} <span class="op">=</span> <span class="blank"></span>`;
+const answer = (p) => { const m = toMixed(p.answer); return fr(p.answer) + (m.whole > 0 && m.n > 0 ? ` = ${mixed(m)}` : ''); };
+const problems = generate(topic, { ...params, count, seed }).problems;
+---
+<div class="sheet fsheet" data-print-area="sheet" data-fsheet data-topic={topic} data-params={JSON.stringify(params)} data-count={count}>
+  <div class="sheet-head"><strong>{title}</strong><span>{labels.name}: ____________________</span><span>{labels.date}: __________</span></div>
+  <ol class="fsheet-grid" data-problems>{problems.map((p) => <li set:html={render(p)} />)}</ol>
+  <div class="sheet-answers"><strong>{labels.answers}</strong><ol class="fsheet-key" data-answers>{problems.map((p) => <li set:html={answer(p)} />)}</ol></div>
+</div>
+<div class="actions">
+  <button type="button" class="button primary" data-print="sheet">{labels.print}</button>
+  <button type="button" class="button" data-new-fsheet>{labels.newSheet}</button>
+</div>
+
+<script>
+  import { generate } from '../lib/worksheet.js';
+  import { fr, mixed } from '../i18n/fraction-steps.js';
+  import { toMixed } from '../lib/fraction.js';
+  const OPS = { '+': '+', '-': '−', '*': '×', '/': '÷' };
+  for (const sheet of document.querySelectorAll('[data-fsheet]')) {
+    sheet.nextElementSibling?.querySelector('[data-new-fsheet]')?.addEventListener('click', () => {
+      const topic = sheet.dataset.topic, params = JSON.parse(sheet.dataset.params), count = Number(sheet.dataset.count);
+      const ps = generate(topic, { ...params, count, seed: Math.floor(Math.random() * 1e9) }).problems;
+      sheet.querySelector('[data-problems]').innerHTML = ps.map((p) => `<li>${topic === 'simplify' ? `${fr(p.operands[0])} <span class="op">=</span> <span class="blank"></span>` : `${fr(p.operands[0])} <span class="op">${OPS[p.op]}</span> ${fr(p.operands[1])} <span class="op">=</span> <span class="blank"></span>`}</li>`).join('');
+      sheet.querySelector('[data-answers]').innerHTML = ps.map((p) => { const m = toMixed(p.answer); return `<li>${fr(p.answer)}${m.whole > 0 && m.n > 0 ? ` = ${mixed(m)}` : ''}</li>`; }).join('');
+    });
+  }
+</script>
+
+<style is:global>
+  .fsheet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 1.4rem 2rem; padding-left: 1.8rem; font-size: 1.25rem; }
+  .fsheet-grid .blank { min-width: 3rem; }
+  .fsheet-key { display: grid; grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr)); gap: 0.6rem 1rem; padding-left: 1.6rem; color: var(--ink); }
+  @media print { .fsheet-grid { grid-template-columns: repeat(3, 1fr); font-size: 15pt; gap: 14mm 8mm; } }
+</style>

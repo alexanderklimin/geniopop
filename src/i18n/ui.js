@@ -22,7 +22,7 @@ export const UI = {
     home_lead: 'Practica las tablas, resuelve fracciones paso a paso e imprime fichas con soluciones. Para niños, familias y profes.',
     sections: [
       { title: 'Tablas de multiplicar', text: 'Del 1 al 12, con práctica en orden, salteada o contrarreloj, y la tabla pitagórica.', href: '/es/tablas-de-multiplicar/' },
-      { title: 'Fracciones', text: 'Calculadora de suma, resta, multiplicación y división con el procedimiento completo.' },
+      { title: 'Fracciones', text: 'Calculadora de suma, resta, multiplicación y división con el procedimiento completo.', href: '/es/fracciones/' },
       { title: 'Calculadoras', text: 'Porcentajes, números romanos, división paso a paso, mcm y mcd, potencias y raíces.' },
       { title: 'Fichas para imprimir', text: 'Elige tema, curso y cantidad: la ficha sale lista en A4 o carta, con hoja de soluciones.' },
       { title: 'Juegos y reto del día', text: 'Juegos cortos de cálculo y un acertijo nuevo cada día.' },

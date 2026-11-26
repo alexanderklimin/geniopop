@@ -1,0 +1,57 @@
+---
+import Base from '../../../layouts/Base.astro';
+import FractionCalc from '../../../components/FractionCalc.astro';
+import FracSheet from '../../../components/FracSheet.astro';
+import { PAGES, ORDER, BASE } from '../../../data/es/fracciones.js';
+import { parseFraction, solve } from '../../../lib/fraction.js';
+import { solutionHTML } from '../../../i18n/fraction-steps.js';
+
+export function getStaticPaths() {
+  return ORDER.map((slug) => ({ params: { slug } }));
+}
+const { slug } = Astro.params as { slug: string };
+const P = PAGES[slug];
+const path = `${BASE}${slug}/`;
+const example = ([a, o, b]: string[]) => { const A = parseFraction(a), B = parseFraction(b); return solutionHTML('es', A, o, B, solve(A, o, B)); };
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: P.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+const app = slug === 'calculadora-de-fracciones' ? [{ '@context': 'https://schema.org', '@type': 'WebApplication', name: P.h1, url: new URL(path, Astro.site).href, applicationCategory: 'EducationalApplication', operatingSystem: 'Any', inLanguage: 'es', offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' } }] : [];
+const labels = { name: 'Nombre', date: 'Fecha', answers: 'Soluciones', newSheet: 'Nueva ficha', print: 'Imprimir ficha' };
+---
+<Base lang="es" title={P.title} description={P.description} alternates={{ es: path }}
+  crumbs={[{ name: 'Fracciones', path: BASE }, { name: P.nav, path }]} jsonLd={[faq, ...app]}>
+  <h1>{P.h1}</h1>
+  <p class="lead">{P.lead}</p>
+  <nav class="subnav no-print" aria-label="Fracciones">
+    {ORDER.map((s) => <a href={`${BASE}${s}/`} aria-current={s === slug ? 'page' : undefined}>{PAGES[s].nav}</a>)}
+  </nav>
+
+  <FractionCalc lang="es" mode={P.calc.mode} op={P.calc.op} a={P.calc.a} b={P.calc.b} />
+
+  <section class="prose">
+    {P.sections.map((s) => (
+      <>
+        <h2>{s.h}</h2>
+        {s.p?.map((t) => <p set:html={t} />)}
+        {s.ol && <ol>{s.ol.map((t) => <li set:html={t} />)}</ol>}
+        {s.ul && <ul>{s.ul.map((t) => <li set:html={t} />)}</ul>}
+        {s.examples && s.examples.map((e) => <div class="example" set:html={example(e)} />)}
+      </>
+    ))}
+  </section>
+
+  <h2>Ejercicios para imprimir</h2>
+  <p>12 ejercicios con la hoja de soluciones en la segunda página. Pulsa «Nueva ficha» para cambiarlos.</p>
+  <FracSheet topic={P.sheet.topic} params={P.sheet.params} title={P.sheet.title} seed={ORDER.indexOf(slug) + 3} labels={labels} />
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{P.faq.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>
+
+<style>
+  .subnav { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 0.5rem; }
+  .subnav a { padding: 0.4rem 0.8rem; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); text-decoration: none; font-weight: 600; font-size: 0.92rem; }
+  .subnav a[aria-current] { background: var(--pop); border-color: var(--pop); color: #fff; }
+  .example { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 0.5rem 1.1rem; margin: 1rem 0; }
+</style>

@@ -1,0 +1,147 @@
+---
+// Fraction calculator island. mode: 'calc' (+ − × ÷), 'simplify', 'equiv'.
+// The example is solved at build time, so the worked solution is part of the page HTML.
+import { parseFraction, solve, simplifySteps } from '../lib/fraction.js';
+import { resolvePrefs } from '../lib/locale.js';
+import { formatDecimal } from '../lib/format.js';
+import { STEPS, solutionHTML, simplifyHTML, equivHTML, fr, mixed } from '../i18n/fraction-steps.js';
+
+interface Props { lang: string; mode?: 'calc' | 'simplify' | 'equiv'; op?: string; a?: string; b?: string; id?: string }
+const { lang, mode = 'calc', op = '+', a = '1/4', b = '1/6', id = 'fx' } = Astro.props;
+const L = STEPS[lang].labels;
+const A = parseFraction(a), B = parseFraction(b);
+const prefs = resolvePrefs(lang, []);
+let html = '', summary = '';
+if (mode === 'calc') {
+  const r = solve(A, op, B);
+  html = solutionHTML(lang, A, op, B, r);
+  summary = resultBlock(r.result, r.mixed);
+} else if (mode === 'simplify') {
+  const r = simplifySteps(A.value);
+  html = simplifyHTML(lang, A, r);
+  summary = resultBlock(r.result, null);
+} else {
+  html = equivHTML(lang, A, B).html;
+}
+function resultBlock(res, m) {
+  const parts = [`<div><span>${L.result}</span>${fr(res)}</div>`];
+  if (m && m.whole > 0 && m.n > 0) parts.push(`<div><span>${L.mixed}</span>${mixed(m)}</div>`);
+  if (res.d !== 1) parts.push(`<div><span>${L.decimal}</span><b class="dec">${formatDecimal(res, prefs)}</b></div>`);
+  return parts.join('');
+}
+const split = (x) => x.mixed ? { w: String(x.mixed.sign < 0 ? -x.mixed.whole : x.mixed.whole), n: String(x.mixed.n), d: String(x.mixed.d) } : { w: '', n: String(x.value.n), d: String(x.value.d) };
+const fa = split(A), fb = split(B);
+const ops = [['+', '+'], ['-', '−'], ['*', '×'], ['/', '÷']];
+---
+<section class="fx" data-fx data-mode={mode} data-lang={lang} data-labels={JSON.stringify(L)}>
+  <form class="fx-form" data-fx-form novalidate>
+    <div class="fx-in" data-part="a">
+      {mode === 'calc' && <input class="w" name="aw" value={fa.w} inputmode="numeric" aria-label={`${L.whole} 1`} placeholder="0" />}
+      <span class="stack"><input name="an" value={fa.n} inputmode="numeric" aria-label={`${L.num} 1`} /><input name="ad" value={fa.d} inputmode="numeric" aria-label={`${L.den} 1`} /></span>
+    </div>
+    {mode === 'calc' && (
+      <select name="op" class="fx-op" aria-label="operación">{ops.map(([v, s]) => <option value={v} selected={v === op}>{s}</option>)}</select>
+    )}
+    {mode === 'equiv' && <span class="fx-op static">=</span>}
+    {mode !== 'simplify' && (
+      <div class="fx-in" data-part="b">
+        {mode === 'calc' && <input class="w" name="bw" value={fb.w} inputmode="numeric" aria-label={`${L.whole} 2`} placeholder="0" />}
+        <span class="stack"><input name="bn" value={fb.n} inputmode="numeric" aria-label={`${L.num} 2`} /><input name="bd" value={fb.d} inputmode="numeric" aria-label={`${L.den} 2`} /></span>
+      </div>
+    )}
+    <button class="fx-go">{L.calc}</button>
+  </form>
+  {mode === 'calc' && <p class="fx-hint">Para un número mixto como 2 ¾, escribe el 2 en la casilla de la izquierda.</p>}
+  <p class="fx-err" data-fx-err role="alert"></p>
+  {summary && <div class="fx-result" data-fx-result set:html={summary} />}
+  <div class="fx-sol" data-fx-sol aria-live="polite">
+    <h3>{L.steps}</h3>
+    <div data-fx-steps set:html={html} />
+  </div>
+</section>
+
+<script>
+  import { parseFraction, solve, simplifySteps } from '../lib/fraction.js';
+  import { resolvePrefs } from '../lib/locale.js';
+  import { formatDecimal } from '../lib/format.js';
+  import { solutionHTML, simplifyHTML, equivHTML, fr, mixed } from '../i18n/fraction-steps.js';
+
+  for (const root of document.querySelectorAll('[data-fx]')) {
+    const mode = root.dataset.mode, lang = root.dataset.lang;
+    const L = JSON.parse(root.dataset.labels);
+    const prefs = resolvePrefs(lang, navigator.languages || []);
+    const form = root.querySelector('[data-fx-form]');
+    const err = root.querySelector('[data-fx-err]');
+    const out = root.querySelector('[data-fx-steps]');
+    const resBox = root.querySelector('[data-fx-result]');
+    const val = (n) => (form.elements[n]?.value || '').trim().replace(/[−–]/g, '-');
+
+    function read(p) {
+      const w = val(`${p}w`), n = val(`${p}n`), d = val(`${p}d`);
+      if (n === '' || d === '') throw new Error(L.errEmpty);
+      if (![w || '0', n, d].every((x) => /^-?\d{1,7}$/.test(x))) throw new Error(L.errEmpty);
+      if (Number(d) === 0) throw new Error(L.errZero);
+      const text = w && Number(w) !== 0 ? `${w} ${Math.abs(Number(n))}/${d}` : `${n}/${d}`;
+      return parseFraction(text);
+    }
+    function result(res, m) {
+      const parts = [`<div><span>${L.result}</span>${fr(res)}</div>`];
+      if (m && m.whole > 0 && m.n > 0) parts.push(`<div><span>${L.mixed}</span>${mixed(m)}</div>`);
+      if (res.d !== 1) parts.push(`<div><span>${L.decimal}</span><b class="dec">${formatDecimal(res, prefs)}</b></div>`);
+      return parts.join('');
+    }
+    // refine decimal separator of the prebuilt example for this visitor (es-MX → point)
+    root.querySelectorAll('.dec').forEach((el) => { if (prefs.decimalSep === '.') el.textContent = el.textContent.replace(',', '.'); });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      err.textContent = '';
+      try {
+        const a = read('a');
+        if (mode === 'calc') {
+          const b = read('b'), o = form.elements.op.value;
+          if (o === '/' && b.value.n === 0) throw new Error(L.errDivZero);
+          const r = solve(a, o, b);
+          out.innerHTML = solutionHTML(lang, a, o, b, r);
+          resBox.innerHTML = result(r.result, r.mixed);
+        } else if (mode === 'simplify') {
+          const r = simplifySteps(a.value);
+          out.innerHTML = simplifyHTML(lang, a, r);
+          resBox.innerHTML = result(r.result, null);
+        } else {
+          out.innerHTML = equivHTML(lang, a, read('b')).html;
+        }
+      } catch (x) {
+        err.textContent = x instanceof RangeError ? (/zero/i.test(x.message) ? L.errDivZero : L.errBig) : x.message;
+      }
+    });
+  }
+</script>
+
+<style is:global>
+  .fx { background: #fff; border: 2px solid var(--line); border-radius: 20px; padding: 1.25rem; margin: 1.5rem 0; }
+  .fx-form { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+  .fx-in { display: flex; align-items: center; gap: 0.35rem; }
+  .fx-in input { width: 4.2rem; font: inherit; font-size: 1.35rem; font-weight: 700; text-align: center; padding: 0.3rem; border: 2px solid var(--line); border-radius: 10px; }
+  .fx-in input:focus { outline: none; border-color: var(--pop); }
+  .fx-in .w { width: 3.4rem; }
+  .stack { display: inline-flex; flex-direction: column; gap: 0.3rem; }
+  .stack input:first-child { border-bottom: 3px solid var(--ink); }
+  .fx-op { font: inherit; font-size: 1.6rem; font-weight: 800; padding: 0.2rem 0.4rem; border: 2px solid var(--line); border-radius: 10px; background: #fff; }
+  .fx-op.static { border: 0; }
+  .fx-go { min-height: 3rem; padding: 0 1.4rem; border-radius: 999px; border: 0; background: var(--pop); color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
+  .fx-hint { font-size: 0.85rem; color: var(--muted); margin: 0.5rem 0 0; }
+  .fx-err { color: #b42318; font-weight: 600; min-height: 1.2em; margin: 0.5rem 0; }
+  .fx-result { display: flex; flex-wrap: wrap; gap: 1rem 2rem; padding: 0.9rem 1rem; background: var(--paper); border-radius: 14px; font-size: 1.3rem; }
+  .fx-result span:first-child { display: block; font-size: 0.8rem; color: var(--muted); font-weight: 600; }
+  .fx-sol h3 { margin: 1.25rem 0 0.5rem; }
+  .fx-problem { font-size: 1.4rem; }
+  .fx-steps li { margin-bottom: 0.9rem; line-height: 1.9; }
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 0.15em; line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .fr .nu { border-bottom: 2px solid currentColor; padding: 0 0.2em; }
+  .fr .de { padding: 0 0.2em; }
+  .int { font-variant-numeric: tabular-nums; }
+  .math { white-space: nowrap; display: inline-block; }
+  .op { margin: 0 0.15em; }
+  @media print { .fx-form, .fx-hint, .fx-err { display: none; } .fx { border: 0; padding: 0; } }
+</style>
