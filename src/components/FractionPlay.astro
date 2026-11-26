@@ -1,0 +1,87 @@
+---
+// Fraction builder: ± numerator/denominator, live pies and bar, words, decimal, percent, simplest form.
+import { pie } from '../i18n/pie.js';
+import { fractionWords } from '../i18n/fraction-words.js';
+const n = 3, d = 4;
+---
+<section class="fp" data-fp>
+  <div class="fp-ctrl">
+    <div class="fp-stack">
+      <button type="button" data-k="n" data-d="-1" aria-label="numerador menos">−</button>
+      <b data-vn>{n}</b>
+      <button type="button" data-k="n" data-d="1" aria-label="numerador más">+</button>
+    </div>
+    <span class="fp-line"></span>
+    <div class="fp-stack">
+      <button type="button" data-k="d" data-d="-1" aria-label="denominador menos">−</button>
+      <b data-vd>{d}</b>
+      <button type="button" data-k="d" data-d="1" aria-label="denominador más">+</button>
+    </div>
+    <p class="fp-labels"><span>numerador</span><span>denominador</span></p>
+  </div>
+  <div class="fp-view">
+    <div class="fp-pies" data-pies set:html={pie(n, d, { size: 150, color: '#00a99d' })} />
+    <div class="fp-bar" data-bar>{Array.from({ length: d }, (_, i) => <i class:list={{ on: i < n }}></i>)}</div>
+    <p class="fp-words" data-words>{fractionWords(n, d)}</p>
+    <p class="fp-facts"><span>= <b data-dec>0,75</b></span><span>= <b data-pct>75 %</b></span><span data-simp hidden>= <b></b></span></p>
+    <p class="fp-hint" data-hint>Toma {n} trozos de una pizza cortada en {d}.</p>
+  </div>
+</section>
+<script>
+  import { pie } from '../i18n/pie.js';
+  import { fractionWords } from '../i18n/fraction-words.js';
+  import { resolvePrefs } from '../lib/locale.js';
+  const root = document.querySelector('[data-fp]');
+  if (root) {
+    const sep = resolvePrefs('es', navigator.languages || []).decimalSep;
+    let n = 3, d = 4;
+    const g = (a, b) => (b ? g(b, a % b) : a);
+    const fmt = (x) => String(Math.round(x * 1000) / 1000).replace('.', sep);
+    const draw = () => {
+      root.querySelector("[data-vn]").textContent = String(n);
+      root.querySelector("[data-vd]").textContent = String(d);
+      const whole = Math.floor(n / d), rest = n % d;
+      const pies = [];
+      for (let i = 0; i < whole; i++) pies.push(pie(1, 1, { size: 150, color: '#00a99d' }));
+      if (rest || !whole) pies.push(pie(rest, d, { size: 150, color: '#00a99d' }));
+      root.querySelector('[data-pies]').innerHTML = pies.join('');
+      root.querySelector('[data-bar]').innerHTML = Array.from({ length: Math.max(d, n) }, (_, i) => `<i class="${i < n ? 'on' : ''}${i >= d ? ' extra' : ''}"></i>`).join('');
+      root.querySelector('[data-words]').textContent = fractionWords(n, d);
+      root.querySelector('[data-dec]').textContent = fmt(n / d);
+      root.querySelector('[data-pct]').textContent = `${fmt((n / d) * 100)} %`;
+      const k = g(n, d), simp = root.querySelector('[data-simp]');
+      simp.hidden = k === 1 || n === 0;
+      if (k > 1) simp.querySelector('b').textContent = d / k === 1 ? String(n / k) : `${n / k}/${d / k}`;
+      root.querySelector('[data-hint]').textContent = n === 0 ? 'Sin trozos: la fracción vale 0.' : n < d ? `Toma ${n} ${n === 1 ? 'trozo' : 'trozos'} de una pizza cortada en ${d}.` : n === d ? '¡La pizza entera! Numerador igual al denominador: vale 1.' : `Más de una pizza: es una fracción impropia (${whole} ${whole === 1 ? 'entera' : 'enteras'}${rest ? ` y ${rest}/${d}` : ''}).`;
+    };
+    root.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => {
+      const delta = Number(b.dataset.d);
+      if (b.dataset.k === 'n') n = Math.min(Math.max(0, n + delta), 2 * d);
+      else { d = Math.min(Math.max(1, d + delta), 12); n = Math.min(n, 2 * d); }
+      draw();
+    }));
+  }
+</script>
+<style>
+  .fp { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem 2.5rem; align-items: center; background: #fff; border: 3px solid var(--ink); border-radius: 28px; box-shadow: 8px 8px 0 var(--ink); padding: 1.5rem; margin: 0.5rem 0 2rem; }
+  .fp-ctrl { display: grid; justify-items: center; gap: 0.4rem; }
+  .fp-stack { display: flex; align-items: center; gap: 0.6rem; }
+  .fp-stack b { min-width: 2ch; text-align: center; font-size: clamp(3rem, 12vw, 4.5rem); font-weight: 900; line-height: 1; color: var(--accent-dark); }
+  .fp-stack button { width: 3rem; height: 3rem; border-radius: 50%; border: 3px solid var(--ink); background: var(--accent); color: #fff; font: inherit; font-size: 1.6rem; font-weight: 900; cursor: pointer; box-shadow: 0 3px 0 var(--ink); }
+  .fp-stack button:active { transform: translateY(3px); box-shadow: none; }
+  .fp-line { width: 7rem; height: 6px; border-radius: 3px; background: var(--ink); }
+  .fp-labels { display: none; }
+  .fp-view { display: grid; justify-items: center; gap: 0.7rem; text-align: center; }
+  .fp-pies { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+  .fp-pies :global(svg) { width: clamp(110px, 28vw, 150px); height: auto; }
+  .fp-bar { display: flex; width: min(26rem, 100%); height: 2.2rem; border: 3px solid var(--ink); border-radius: 10px; overflow: hidden; }
+  .fp-bar :global(i) { flex: 1; border-right: 2px solid var(--ink); background: #fff; }
+  .fp-bar :global(i:last-child) { border-right: 0; }
+  .fp-bar :global(i.on) { background: var(--accent); }
+  .fp-bar :global(i.extra) { background-image: repeating-linear-gradient(45deg, transparent 0 4px, rgb(0 0 0 / 12%) 4px 6px); }
+  .fp-words { margin: 0; font-size: clamp(1.5rem, 5vw, 2rem); font-weight: 900; }
+  .fp-facts { margin: 0; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; font-weight: 800; color: var(--muted); }
+  .fp-facts b { color: var(--ink); }
+  .fp-hint { margin: 0; color: var(--muted); font-weight: 700; }
+  @media (max-width: 700px) { .fp { grid-template-columns: 1fr; } }
+</style>

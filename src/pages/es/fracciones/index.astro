@@ -1,6 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import FractionCalc from '../../../components/FractionCalc.astro';
+import FractionPlay from '../../../components/FractionPlay.astro';
 import { PAGES, ORDER, BASE } from '../../../data/es/fracciones.js';
 
 // Pie and bar pictures drawn from numbers (no image files)
@@ -24,7 +25,8 @@ const path = BASE;
   description="Qué es una fracción, cómo se lee y se dibuja, tipos de fracciones y cómo sumar, restar, multiplicar, dividir y simplificar paso a paso."
   alternates={{ es: path }} crumbs={[{ name: 'Fracciones', path }]}>
   <h1>Fracciones</h1>
-  <p class="lead">Una fracción indica qué parte de un todo tenemos. Aquí tienes la explicación con dibujos, cómo se leen, sus tipos y una calculadora que resuelve cualquier operación paso a paso.</p>
+  <p class="lead">Cambia los números y mira cómo cambia la pizza.</p>
+  <FractionPlay />
 
   <nav class="hubnav" aria-label="Operaciones con fracciones">
     {ORDER.map((s) => <a href={`${BASE}${s}/`}><strong>{PAGES[s].h1}</strong><span>{PAGES[s].lead.split('. ')[0]}.</span></a>)}
