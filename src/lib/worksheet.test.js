@@ -73,3 +73,10 @@ test('powers and roots have whole answers', () => {
 test('averages are whole numbers', () => {
   for (const p of generate('average', { count: 20, seed: 4 }).problems) assert.equal(p.operands.reduce((a, b) => a + b, 0) / p.operands.length, p.answer);
 });
+
+test('prime sheet answers', () => {
+  for (const p of generate('prime', { count: 30, seed: 2 }).problems) {
+    if (p.answer === 'primo') assert.ok([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97].includes(p.operands[0]));
+    else assert.equal(p.answer.split(' · ').reduce((acc, t) => { const [b, e = 1] = t.split('^').map(Number); return acc * b ** e; }, 1), p.operands[0]);
+  }
+});

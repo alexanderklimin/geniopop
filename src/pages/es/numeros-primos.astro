@@ -1,0 +1,141 @@
+---
+import Base from '../../layouts/Base.astro';
+import { isPrime } from '../../lib/numtheory.js';
+import { generate } from '../../lib/worksheet.js';
+import { sheetHTML } from '../../i18n/sheet-render.js';
+
+const path = '/es/numeros-primos/';
+const primes1000 = Array.from({ length: 999 }, (_, i) => i + 2).filter(isPrime);
+const faqs = [
+  { q: '¿El 1 es un número primo?', a: 'No. Un número primo tiene exactamente dos divisores distintos, el 1 y él mismo. El 1 solo tiene uno, así que no es primo ni compuesto.' },
+  { q: '¿Cuál es el único número primo par?', a: 'El 2. Cualquier otro número par se puede dividir entre 2, así que tiene al menos tres divisores.' },
+  { q: '¿Cuántos números primos hay hasta el 100?', a: 'Hay 25: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89 y 97. Hasta el 1000 hay 168.' },
+  { q: '¿Hay un número primo más grande que todos?', a: 'No. Euclides demostró hace más de 2000 años que hay infinitos números primos.' },
+  { q: '¿Para qué sirven los números primos?', a: 'Para descomponer números en factores (y así calcular el mcm y el mcd o simplificar fracciones) y, fuera del colegio, para proteger la información en internet: la criptografía usa números primos enormes.' },
+];
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+const sheet = sheetHTML('es', generate('prime', { count: 18, seed: 71, max: 100 }).problems, { title: '¿Primo o compuesto?' });
+---
+<Base lang="es" title="Números primos: comprobador, criba interactiva y lista hasta 1000"
+  description="Comprueba si un número es primo y descubre sus divisores. Haz la criba de Eratóstenes paso a paso, consulta la lista de primos hasta 1000 y practica con fichas."
+  alternates={{ es: path }} crumbs={[{ name: 'Números primos', path }]} jsonLd={[faq]}>
+  <h1>Números primos</h1>
+  <p class="lead">Un número primo solo se puede dividir entre 1 y entre sí mismo. Compruébalo con cualquier número o descúbrelos tú con la criba.</p>
+
+  <section class="fx pr" data-pr>
+    <form class="gl-form" data-pr-form novalidate>
+      <input name="n" value="91" inputmode="numeric" aria-label="Número" />
+      <button class="fx-go">¿Es primo?</button>
+    </form>
+    <p class="fx-err" data-pr-err role="alert"></p>
+    <div class="fx-result" data-pr-out><div><span>Resultado</span><b>91 no es primo</b></div><div><span>Divisores</span><b>1, 7, 13, 91</b></div></div>
+    <ol class="fx-steps" data-pr-steps><li>√91 ≈ 9,5, así que basta con probar los primos hasta 9: 2, 3, 5 y 7.</li><li>91 ÷ 7 = 13, exacta: 91 = 7 × 13, así que es <strong>compuesto</strong>.</li></ol>
+  </section>
+
+  <h2>La criba de Eratóstenes</h2>
+  <p>Es el método que inventó un sabio griego hace más de 2000 años para encontrar todos los primos hasta un número. Pulsa «Siguiente paso»: cada primo tacha a todos sus múltiplos. Los que quedan sin tachar son los primos.</p>
+  <section class="sieve" data-sieve>
+    <div class="actions"><button type="button" class="button primary" data-step>Siguiente paso</button><button type="button" class="button" data-all>Hacerlo todo</button><button type="button" class="button" data-reset>Empezar de nuevo</button></div>
+    <p class="sieve-msg" data-msg aria-live="polite">El 1 no es primo: lo tachamos. Empezamos por el 2.</p>
+    <div class="sieve-grid" data-grid>{Array.from({ length: 100 }, (_, i) => i + 1).map((n) => <span data-n={n} class:list={{ one: n === 1 }}>{n}</span>)}</div>
+  </section>
+
+  <section class="prose">
+    <h2>Primos y compuestos</h2>
+    <ul>
+      <li><strong>Número primo:</strong> tiene exactamente dos divisores, el 1 y él mismo. 7 solo se divide entre 1 y 7.</li>
+      <li><strong>Número compuesto:</strong> tiene más de dos divisores. 12 se divide entre 1, 2, 3, 4, 6 y 12.</li>
+      <li>El <strong>1</strong> no es ni primo ni compuesto, y el <strong>2</strong> es el único primo par.</li>
+    </ul>
+
+    <h2>Cómo saber si un número es primo</h2>
+    <ol>
+      <li>Si es par (y no es el 2), termina en 0 o 5 (y no es el 5) o sus cifras suman un múltiplo de 3 (y no es el 3), es compuesto.</li>
+      <li>Si no, prueba a dividirlo entre los primos 7, 11, 13… hasta llegar a su raíz cuadrada.</li>
+      <li>Si ninguna división es exacta, es primo. Para 97 basta con probar hasta 9 (porque 10 × 10 = 100): 2, 3, 5 y 7 no lo dividen, así que 97 es primo.</li>
+    </ol>
+    <p>Todo número compuesto se puede escribir como producto de primos de una sola manera: es su <a href="/es/mcm-mcd/">descomposición en factores primos</a>, que se usa para calcular el mcm y el mcd y para <a href="/es/fracciones/simplificar-fracciones/">simplificar fracciones</a>.</p>
+
+    <h2>Lista de números primos hasta 1000</h2>
+    <p class="plist" data-print-area="table">{primes1000.map((p) => <span class:list={{ small: p < 100 }}>{p}</span>)}</p>
+    <div class="actions"><button type="button" class="button" data-print="table">Imprimir la lista</button></div>
+
+    <h2>Errores frecuentes</h2>
+    <ul>
+      <li>Pensar que todos los impares son primos: 9, 15, 21, 27… son compuestos.</li>
+      <li>Contar el 1 como primo.</li>
+      <li>Dar por primo el 91 o el 51: 91 = 7 × 13 y 51 = 3 × 17.</li>
+    </ul>
+  </section>
+
+  <h2>Ficha para imprimir</h2>
+  <div class="actions"><button type="button" class="button primary" data-print="sheet">Imprimir ficha</button></div>
+  <div data-print-area="sheet" set:html={sheet} />
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{faqs.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>
+
+<script>
+  import { isPrime, divisors, factorList } from '../../lib/numtheory.js';
+  const SUP = { 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
+  const pr = document.querySelector('[data-pr]');
+  pr.querySelector('[data-pr-form]').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const err = pr.querySelector('[data-pr-err]'); err.textContent = '';
+    const raw = e.target.elements.n.value.trim();
+    if (!/^\d{1,12}$/.test(raw)) { err.textContent = 'Escribe un número entero positivo (hasta 12 cifras).'; return; }
+    const n = Number(raw);
+    const out = pr.querySelector('[data-pr-out]'), st = pr.querySelector('[data-pr-steps]');
+    if (n < 2) { out.innerHTML = `<div><span>Resultado</span><b>${n} no es primo ni compuesto</b></div>`; st.innerHTML = '<li>Un primo necesita exactamente dos divisores distintos; el 0 y el 1 no los tienen.</li>'; return; }
+    const prime = isPrime(n), root = Math.floor(Math.sqrt(n));
+    const smallPrimes = []; for (let p = 2; p <= Math.min(root, 50); p++) if (isPrime(p)) smallPrimes.push(p);
+    const fl = prime ? [] : factorList(n), first = fl[0]?.[0];
+    const divs = n <= 1e9 ? divisors(n) : null;
+    out.innerHTML = `<div><span>Resultado</span><b>${prime ? `${n} es primo` : `${n} no es primo`}</b></div>${divs ? `<div><span>Divisores (${divs.length})</span><b>${divs.length > 24 ? divs.slice(0, 24).join(', ') + '…' : divs.join(', ')}</b></div>` : ''}${prime ? '' : `<div><span>Factores primos</span><b>${fl.map(([p, e]) => `${p}${e > 1 ? SUP[e] ?? `^${e}` : ''}`).join(' · ')}</b></div>`}`;
+    st.innerHTML = [
+      `√${n} ≈ ${Math.sqrt(n).toFixed(1).replace('.', ',')}, así que basta con probar los primos hasta ${root}${smallPrimes.length ? `: ${smallPrimes.slice(0, 12).join(', ')}${smallPrimes.length > 12 || root > 50 ? '…' : ''}` : ''}.`,
+      prime ? `Ninguno divide a ${n} de forma exacta, así que ${n} es <strong>primo</strong>.` : `${n} ÷ ${first} = ${n / first}, exacta: ${n} = ${first} × ${n / first}, así que es <strong>compuesto</strong>.`,
+    ].map((s) => `<li>${s}</li>`).join('');
+  });
+
+  const sv = document.querySelector('[data-sieve]');
+  const cells = [...sv.querySelectorAll('[data-n]')];
+  const msg = sv.querySelector('[data-msg]');
+  let p = 1;
+  const cell = (n) => cells[n - 1];
+  function reset() { p = 1; cells.forEach((c) => { c.className = c.dataset.n === '1' ? 'one' : ''; }); msg.textContent = 'El 1 no es primo: lo tachamos. Empezamos por el 2.'; }
+  function step() {
+    let q = p + 1;
+    while (q <= 100 && (cell(q).classList.contains('out'))) q++;
+    if (q > 10) {
+      cells.forEach((c, i) => { if (i > 0 && !c.classList.contains('out')) c.classList.add('prime'); });
+      msg.textContent = '¡Listo! Como 11 × 11 = 121 ya es mayor que 100, todos los que quedan sin tachar son primos: hay 25.';
+      p = 100; return false;
+    }
+    p = q;
+    cell(p).classList.add('prime', 'now');
+    let crossed = 0;
+    for (let m = p * p; m <= 100; m += p) if (!cell(m).classList.contains('out')) { cell(m).classList.add('out'); crossed++; }
+    msg.textContent = `El ${p} es primo. Tachamos sus múltiplos (${p * 2}, ${p * 3}, ${p * 4}…): ${crossed} números nuevos.`;
+    setTimeout(() => cell(p)?.classList.remove('now'), 600);
+    return true;
+  }
+  sv.querySelector('[data-step]').addEventListener('click', step);
+  sv.querySelector('[data-all]').addEventListener('click', () => { while (step()); });
+  sv.querySelector('[data-reset]').addEventListener('click', reset);
+</script>
+<style is:global>
+  .sieve { background: #fff; border: 2px solid var(--ink); border-radius: var(--radius); box-shadow: 6px 6px 0 var(--accent); padding: 1rem 1.1rem; }
+  .sieve .actions { margin-top: 0; }
+  .sieve-msg { font-weight: 800; min-height: 1.5em; }
+  .sieve-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; font-variant-numeric: tabular-nums; }
+  .sieve-grid span { display: grid; place-items: center; aspect-ratio: 1; border-radius: 8px; border: 2px solid var(--line); font-weight: 800; font-size: clamp(0.8rem, 2.8vw, 1.1rem); transition: background 0.25s, color 0.25s; }
+  .sieve-grid .out, .sieve-grid .one { color: #b9bccb; text-decoration: line-through; background: #f6f2ec; }
+  .sieve-grid .prime { background: var(--accent); color: #fff; border-color: var(--accent-dark); }
+  .sieve-grid .now { transform: scale(1.15); box-shadow: 0 0 0 3px var(--ink); }
+  .plist { display: flex; flex-wrap: wrap; gap: 0.2rem 0.6rem; font-variant-numeric: tabular-nums; }
+  .plist span.small { font-weight: 900; color: var(--accent-dark); }
+</style>

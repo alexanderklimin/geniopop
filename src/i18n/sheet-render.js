@@ -34,6 +34,7 @@ export function problemHTML(lang, p, { vertical = true } = {}) {
     case 'combined': return `${p.operands[0].replace(/\*/g, '×').replace(/\^(\d)/g, '<sup>$1</sup>').replace(/-/g, '−')} = ${blank}`;
     case 'power': return p.op === 'sqrt' ? `√${p.operands[0]} = ${blank}` : `${p.operands[0]}<sup>${p.operands[1]}</sup> = ${blank}`;
     case 'average': return `Promedio de ${p.operands.join(', ')} = ${blank}`;
+    case 'prime': return `${p.operands[0]}: ¿primo o compuesto? ${blank}`;
     case 'gcdLcm': return `${T[p.op]}(${p.operands.join(', ')}) = ${blank}`;
     default: return '';
   }
@@ -45,6 +46,7 @@ export function answerHTML(lang, p) {
     const m = toMixed(p.answer);
     return fr(p.answer) + (m.whole > 0 && m.n > 0 ? ` = ${mixed(m)}` : '');
   }
+  if (p.topic === 'prime') return p.answer === 'primo' ? 'primo' : `compuesto (${p.answer.replace(/\^(\d+)/g, '<sup>$1</sup>')})`;
   if (p.topic === 'div' && p.remainder) return `${p.answer}, ${T.rest} ${p.remainder}`;
   return String(p.answer);
 }

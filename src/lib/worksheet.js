@@ -4,7 +4,7 @@
 import { createRng } from './rng.js';
 import { frac, reduce, add, sub, mul, div } from './fraction.js';
 import { toRoman } from './roman.js';
-import { gcd, lcm } from './numtheory.js';
+import { gcd, lcm, isPrime, factorList } from './numtheory.js';
 import { solveExpression } from './expr.js';
 
 const range = (digits) => [digits === 1 ? 0 : 10 ** (digits - 1), 10 ** digits - 1];
@@ -133,6 +133,11 @@ const GENERATORS = {
     const last = m * n - xs.reduce((a, b) => a + b, 0);
     if (last < 0 || last > max + 10) return null;
     return { op: 'average', operands: rng.shuffle([...xs, last]), answer: m };
+  },
+  // Prime or composite? (answer: 'primo' or the factorization)
+  prime(rng, { max = 100 } = {}) {
+    const n = rng.int(2, max);
+    return { op: 'prime', operands: [n], answer: isPrime(n) ? 'primo' : factorList(n).map(([p, e]) => (e > 1 ? `${p}^${e}` : String(p))).join(' · ') };
   },
   gcdLcm(rng, { max = 60, which = 'both' } = {}) {
     const k = rng.int(2, 6);
