@@ -1,7 +1,6 @@
 {
   // Static site on Cloudflare Workers (static assets). Build: npm run build → dist/
-  // Preview only (workers_dev) until the user says "да" to launch on geniopop.com.
-  // At launch: routes [{ pattern: "geniopop.com", custom_domain: true }], workers_dev false, preview_urls false.
+  // Production on geniopop.com (launch 2026-11-26 after the user's "запускаем"). Built from GitHub by Workers Builds.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "geniopop",
   "compatibility_date": "2026-11-01",
@@ -10,5 +9,7 @@
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page"
   },
-  "workers_dev": true
+  "routes": [{ "pattern": "geniopop.com", "custom_domain": true }],
+  "workers_dev": false,
+  "preview_urls": false
 }

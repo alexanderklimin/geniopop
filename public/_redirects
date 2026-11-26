@@ -1,0 +1,2 @@
+# Only Spanish is live: send the root to /es/ (302, so it can become the language picker again when de/it launch).
+/  /es/  302
