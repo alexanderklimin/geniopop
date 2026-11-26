@@ -1,0 +1,159 @@
+---
+import Base from '../../layouts/Base.astro';
+import { angleSVG } from '../../i18n/angle-svg.js';
+import { angleType } from '../../lib/geometry.js';
+
+const path = '/es/angulos/';
+const TYPES = [
+  ['nulo', 'Ángulo nulo', 0, 'mide 0°: los dos lados coinciden.'],
+  ['agudo', 'Ángulo agudo', 45, 'mide menos de 90°.'],
+  ['recto', 'Ángulo recto', 90, 'mide exactamente 90°, como la esquina de un folio. Se marca con un cuadradito.'],
+  ['obtuso', 'Ángulo obtuso', 130, 'mide más de 90° y menos de 180°.'],
+  ['llano', 'Ángulo llano', 180, 'mide 180°: los dos lados forman una línea recta.'],
+  ['concavo', 'Ángulo cóncavo', 250, 'mide más de 180° y menos de 360°. También se llama reflejo o entrante.'],
+  ['completo', 'Ángulo completo', 360, 'mide 360°: una vuelta entera.'],
+];
+const NAMES = Object.fromEntries(TYPES.map(([k, n]) => [k, n.replace('Ángulo ', '')]));
+const sheetAngles = [35, 90, 150, 180, 72, 120, 15, 210, 90, 160, 60, 300];
+const faqs = [
+  { q: '¿Cuánto suman los ángulos de un triángulo?', a: 'Siempre 180°. Por eso un triángulo solo puede tener un ángulo recto u obtuso; los otros dos son agudos. En un cuadrilátero suman 360°.' },
+  { q: '¿Qué son los ángulos complementarios y suplementarios?', a: 'Dos ángulos son complementarios si suman 90° (30° y 60°) y suplementarios si suman 180° (130° y 50°).' },
+  { q: '¿Cómo se mide un ángulo con el transportador?', a: 'Pon el centro del transportador en el vértice, alinea la línea del 0 con uno de los lados y lee el número por donde pasa el otro lado. Usa la escala que empieza en 0 en tu lado.' },
+  { q: '¿Qué es un ángulo de 90 grados?', a: 'Un ángulo recto. Lo forman, por ejemplo, las dos agujas del reloj a las 3 en punto o las esquinas de un cuaderno.' },
+];
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+---
+<Base lang="es" title="Ángulos: tipos, cómo se miden y juego para practicar"
+  description="Mueve el ángulo y descubre si es agudo, recto, obtuso, llano o cóncavo, con su complementario y suplementario. Tipos de ángulos, cómo medirlos, juego y ficha para imprimir."
+  alternates={{ es: path }} crumbs={[{ name: 'Ángulos', path }]} jsonLd={[faq]}>
+  <h1>Ángulos</h1>
+  <p class="lead">Arrastra el lado del ángulo o mueve la barra: verás cuántos grados mide y de qué tipo es.</p>
+
+  <section class="fx ang" data-ang>
+    <div class="ang-pic" data-pic set:html={angleSVG(130, { size: 260, ticks: true })} />
+    <div class="ang-info">
+      <p class="ang-deg"><b data-deg>130</b>°</p>
+      <p class="ang-type" data-type>Ángulo obtuso</p>
+      <p class="ang-desc" data-desc>Mide más de 90° y menos de 180°.</p>
+      <input type="range" min="0" max="360" value="130" data-range aria-label="grados" />
+      <p class="ang-pairs" data-pairs>Suplementario: 50°</p>
+    </div>
+  </section>
+
+  <h2>Juego: ¿qué ángulo es?</h2>
+  <section class="fx quiz" data-quiz>
+    <div class="quiz-pic" data-qpic set:html={angleSVG(60, { size: 160, label: false })} />
+    <div class="quiz-btns">{['agudo', 'recto', 'obtuso', 'llano', 'concavo'].map((k) => <button type="button" class="button" data-ans={k}>{NAMES[k]}</button>)}</div>
+    <p class="quiz-msg" data-qmsg aria-live="polite">Aciertos seguidos: <b data-qstreak>0</b></p>
+  </section>
+
+  <section class="prose">
+    <h2>Tipos de ángulos</h2>
+    <div class="types">{TYPES.map(([k, n, d, t]) => <figure><div set:html={angleSVG(d, { size: 110 })} /><figcaption><strong>{n}</strong>: {t}</figcaption></figure>)}</div>
+
+    <h2>Parejas de ángulos</h2>
+    <ul>
+      <li><strong>Complementarios:</strong> suman 90°. El complementario de 35° es 55°.</li>
+      <li><strong>Suplementarios:</strong> suman 180°. El suplementario de 35° es 145°.</li>
+      <li><strong>Opuestos por el vértice:</strong> los que quedan enfrente cuando se cruzan dos rectas. Siempre miden lo mismo.</li>
+      <li><strong>Consecutivos y adyacentes:</strong> comparten un lado; si además suman 180°, son adyacentes.</li>
+    </ul>
+
+    <h2>Cómo medir un ángulo con el transportador</h2>
+    <ol>
+      <li>Coloca el centro del transportador justo en el vértice.</li>
+      <li>Alinea la línea del 0° con uno de los lados del ángulo.</li>
+      <li>Lee el número por donde pasa el otro lado, en la escala que empieza en 0 por tu lado.</li>
+    </ol>
+
+    <h2>Errores frecuentes</h2>
+    <ul>
+      <li>Leer la escala equivocada del transportador: un ángulo de 40° parece de 140°.</li>
+      <li>Pensar que un ángulo es más grande porque sus lados son más largos: el tamaño de un ángulo es su abertura, no la longitud de los lados.</li>
+      <li>Confundir complementario (90°) con suplementario (180°).</li>
+    </ul>
+    <p>¿Quieres calcular áreas y perímetros de figuras? Usa la <a href="/es/area-y-perimetro/">calculadora de área y perímetro</a>.</p>
+  </section>
+
+  <h2>Ficha para imprimir</h2>
+  <div class="actions"><button type="button" class="button primary" data-print="sheet">Imprimir ficha</button></div>
+  <div data-print-area="sheet">
+    <div class="ws is-frac">
+      <div class="ws-head"><strong>Clasifica los ángulos</strong><span>Nombre: ____________________</span><span>Fecha: __________</span></div>
+      <ol class="ws-grid ang-sheet">{sheetAngles.map((d) => <li><span set:html={angleSVG(d, { size: 110, label: false })} /><span>Tipo: <span class="blank"></span></span></li>)}</ol>
+      <div class="ws-answers"><strong>Soluciones</strong><ol>{sheetAngles.map((d) => <li>{d}°, {NAMES[angleType(d)]}</li>)}</ol></div>
+    </div>
+  </div>
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{faqs.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>
+
+<script>
+  import { angleSVG } from '../../i18n/angle-svg.js';
+  import { angleType, complement, supplement } from '../../lib/geometry.js';
+  const INFO = {
+    nulo: ['Ángulo nulo', 'Mide 0°: los dos lados coinciden.'], agudo: ['Ángulo agudo', 'Mide menos de 90°.'], recto: ['Ángulo recto', 'Mide exactamente 90°.'],
+    obtuso: ['Ángulo obtuso', 'Mide más de 90° y menos de 180°.'], llano: ['Ángulo llano', 'Mide 180°: forma una línea recta.'],
+    concavo: ['Ángulo cóncavo', 'Mide más de 180° y menos de 360°.'], completo: ['Ángulo completo', 'Una vuelta entera: 360°.'],
+  };
+  const root = document.querySelector('[data-ang]');
+  const range = root.querySelector('[data-range]'), pic = root.querySelector('[data-pic]');
+  function draw(d) {
+    d = Math.round(d);
+    pic.innerHTML = angleSVG(d, { size: 260, ticks: true });
+    range.value = String(d);
+    const t = angleType(d);
+    root.querySelector('[data-deg]').textContent = String(d);
+    root.querySelector('[data-type]').textContent = INFO[t][0];
+    root.querySelector('[data-desc]').textContent = INFO[t][1];
+    const c = complement(d), s = supplement(d);
+    root.querySelector('[data-pairs]').textContent = [c !== null ? `Complementario: ${c}°` : '', s !== null ? `Suplementario: ${s}°` : ''].filter(Boolean).join(' · ') || 'Mayor de 180°: no tiene complementario ni suplementario.';
+  }
+  range.addEventListener('input', () => draw(Number(range.value)));
+  let dragging = false;
+  const fromPointer = (e) => {
+    const r = pic.getBoundingClientRect();
+    const x = e.clientX - r.left - r.width / 2, y = r.height / 2 - (e.clientY - r.top);
+    let a = (Math.atan2(y, x) * 180) / Math.PI; if (a < 0) a += 360;
+    draw(a);
+  };
+  pic.addEventListener('pointerdown', (e) => { dragging = true; pic.setPointerCapture(e.pointerId); fromPointer(e); });
+  pic.addEventListener('pointermove', (e) => { if (dragging) fromPointer(e); });
+  pic.addEventListener('pointerup', () => { dragging = false; });
+
+  // quiz
+  const q = document.querySelector('[data-quiz]');
+  let ans = 60, streak = 0;
+  const pool = () => { const k = ['agudo', 'recto', 'obtuso', 'llano', 'concavo'][Math.floor(Math.random() * 5)]; return k === 'recto' ? 90 : k === 'llano' ? 180 : k === 'agudo' ? 10 + Math.floor(Math.random() * 75) : k === 'obtuso' ? 95 + Math.floor(Math.random() * 80) : 190 + Math.floor(Math.random() * 160); };
+  q.querySelectorAll('[data-ans]').forEach((b) => b.addEventListener('click', () => {
+    const ok = b.dataset.ans === angleType(ans);
+    streak = ok ? streak + 1 : 0;
+    q.querySelector('[data-qmsg]').innerHTML = `${ok ? '¡Correcto!' : `No: mide ${ans}°, es ${INFO[angleType(ans)][0].toLowerCase()}.`} Aciertos seguidos: <b>${streak}</b>`;
+    q.classList.remove('pop', 'shake'); void q.offsetWidth; q.classList.add(ok ? 'pop' : 'shake');
+    setTimeout(() => { ans = pool(); q.querySelector('[data-qpic]').innerHTML = angleSVG(ans, { size: 160, label: false }); }, ok ? 500 : 1500);
+  }));
+</script>
+<style is:global>
+  .ang { display: grid; grid-template-columns: auto 1fr; gap: 1rem 2rem; align-items: center; }
+  .ang-pic { touch-action: none; cursor: grab; max-width: 260px; }
+  .ang-pic svg { width: 100%; height: auto; }
+  .ang-deg { margin: 0; font-size: clamp(2.6rem, 10vw, 3.8rem); font-weight: 900; line-height: 1; }
+  .ang-type { margin: 0.2rem 0 0; font-size: 1.5rem; font-weight: 900; color: var(--accent-dark); }
+  .ang-desc { margin: 0.2rem 0 0.8rem; color: var(--muted); font-weight: 700; }
+  .ang input[type=range] { width: 100%; accent-color: var(--accent); height: 2rem; }
+  .ang-pairs { margin: 0.4rem 0 0; font-weight: 800; }
+  @media (max-width: 640px) { .ang { grid-template-columns: 1fr; justify-items: center; text-align: center; } }
+  .quiz { display: grid; justify-items: center; gap: 0.8rem; text-align: center; }
+  .quiz-btns { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+  .quiz-msg { margin: 0; font-weight: 800; }
+  .quiz.pop { animation: pop 0.35s; } .quiz.shake { animation: shake 0.4s; }
+  @keyframes pop { 40% { transform: scale(1.02); } }
+  @keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+  .types { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(14rem, 100%), 1fr)); gap: 0.8rem; }
+  .types figure { margin: 0; display: flex; gap: 0.6rem; align-items: center; background: #fff; border: 2px solid var(--line); border-radius: 16px; padding: 0.5rem; }
+  .types figcaption { font-size: 0.92rem; }
+  .ang-sheet li { display: grid; justify-items: start; gap: 0.2rem; }
+</style>

@@ -1,0 +1,133 @@
+---
+import Base from '../../layouts/Base.astro';
+import { figureSVG } from '../../i18n/figure-svg.js';
+import { measure, FIGURES } from '../../lib/geometry.js';
+
+const path = '/es/area-y-perimetro/';
+const NAMES = { cuadrado: 'Cuadrado', rectangulo: 'Rectángulo', triangulo: 'Triángulo', circulo: 'Círculo', trapecio: 'Trapecio', rombo: 'Rombo', paralelogramo: 'Paralelogramo' };
+const LABELS = { lado: 'Lado (l)', base: 'Base (b)', altura: 'Altura (h)', lado2: 'Lado a (opcional)', lado3: 'Lado c (opcional)', radio: 'Radio (r)', baseMayor: 'Base mayor (B)', baseMenor: 'Base menor (b)', lado1: 'Lado c (opcional)', diagonalMayor: 'Diagonal mayor (D)', diagonalMenor: 'Diagonal menor (d)' };
+const DEF = { cuadrado: { lado: 5 }, rectangulo: { base: 8, altura: 3 }, triangulo: { base: 6, altura: 4 }, circulo: { radio: 3 }, trapecio: { baseMayor: 10, baseMenor: 6, altura: 4 }, rombo: { diagonalMayor: 8, diagonalMenor: 6 }, paralelogramo: { base: 7, altura: 3 } };
+const TABLE = [
+  ['Cuadrado', 'l × l', '4 × l'], ['Rectángulo', 'b × h', '2 × (b + h)'], ['Triángulo', '(b × h) ÷ 2', 'a + b + c'], ['Círculo', 'π × r²', '2 × π × r'],
+  ['Trapecio', '(B + b) × h ÷ 2', 'B + b + c + d'], ['Rombo', '(D × d) ÷ 2', '4 × l'], ['Paralelogramo', 'b × h', '2 × (b + l)'],
+];
+const first = measure('rectangulo', { ...DEF.rectangulo });
+const faqs = [
+  { q: '¿Cuál es la diferencia entre área y perímetro?', a: 'El perímetro es la longitud del borde (lo que mide la valla de un jardín) y se da en unidades de longitud, como cm o m. El área es la superficie de dentro (el césped que cabe) y se da en unidades cuadradas, como cm² o m².' },
+  { q: '¿Cómo se calcula el área de un triángulo?', a: 'Base por altura entre dos: A = (b × h) ÷ 2. La altura es la distancia perpendicular desde la base hasta el vértice opuesto, no el lado inclinado.' },
+  { q: '¿Cuánto vale π?', a: 'Aproximadamente 3,14 (con más decimales, 3,14159…). En primaria se suele usar 3,14.' },
+  { q: '¿Por qué el área se da en cm²?', a: 'Porque cuenta cuántos cuadraditos de 1 cm de lado caben dentro de la figura.' },
+];
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+---
+<Base lang="es" title="Calculadora de área y perímetro de figuras (con fórmulas)"
+  description="Calcula el área y el perímetro del cuadrado, rectángulo, triángulo, círculo, trapecio, rombo y paralelogramo, con el dibujo a escala, la fórmula y el procedimiento."
+  alternates={{ es: path }} crumbs={[{ name: 'Área y perímetro', path }]} jsonLd={[faq]}>
+  <h1>Área y perímetro</h1>
+  <p class="lead">Elige la figura, escribe sus medidas y verás el dibujo, el área y el perímetro con la fórmula paso a paso.</p>
+
+  <section class="fx ap" data-ap data-labels={JSON.stringify(LABELS)} data-def={JSON.stringify(DEF)} data-figs={JSON.stringify(Object.fromEntries(Object.entries(FIGURES).map(([k, v]) => [k, v.dims])))}>
+    <div class="ap-figs">{Object.entries(NAMES).map(([k, n]) => <button type="button" data-fig={k} aria-pressed={k === 'rectangulo' ? 'true' : 'false'}>{n}</button>)}</div>
+    <div class="ap-body">
+      <div class="ap-pic" data-pic set:html={figureSVG('rectangulo', DEF.rectangulo)} />
+      <div>
+        <div class="ap-inputs" data-inputs>
+          <label>Base (b)<input data-k="base" value="8" inputmode="decimal" /></label>
+          <label>Altura (h)<input data-k="altura" value="3" inputmode="decimal" /></label>
+        </div>
+        <label class="ap-unit">Unidad<select data-unit><option>cm</option><option>m</option><option>mm</option><option>km</option><option value="">(sin unidad)</option></select></label>
+      </div>
+    </div>
+    <p class="fx-err" data-err role="alert"></p>
+    <div class="fx-result" data-out><div><span>Área</span><b>{first.area} cm²</b></div><div><span>Perímetro</span><b>{first.perimeter} cm</b></div></div>
+    <ol class="fx-steps" data-steps><li>Área = b × h = 8 × 3 = <strong>24 cm²</strong>.</li><li>Perímetro = 2 × (b + h) = 2 × (8 + 3) = <strong>22 cm</strong>.</li></ol>
+  </section>
+
+  <section class="prose">
+    <h2>Área y perímetro: qué es cada cosa</h2>
+    <ul>
+      <li><strong>Perímetro:</strong> la longitud del contorno. Si rodeas la figura con una cuerda, el perímetro es lo que mide la cuerda. Se da en cm, m…</li>
+      <li><strong>Área:</strong> la superficie de dentro. Cuenta cuántos cuadraditos de 1 × 1 caben. Se da en cm², m²…</li>
+    </ul>
+
+    <h2>Fórmulas de área y perímetro</h2>
+    <table class="formulas"><thead><tr><th>Figura</th><th>Área</th><th>Perímetro</th></tr></thead><tbody>{TABLE.map(([a, b, c]) => <tr><td>{a}</td><td>{b}</td><td>{c}</td></tr>)}</tbody></table>
+    <div class="actions"><button type="button" class="button" data-print="formulas">Imprimir las fórmulas</button></div>
+    <div data-print-area="formulas" class="print-only"><h2>Fórmulas de área y perímetro</h2><table class="formulas"><thead><tr><th>Figura</th><th>Área</th><th>Perímetro</th></tr></thead><tbody>{TABLE.map(([a, b, c]) => <tr><td>{a}</td><td>{b}</td><td>{c}</td></tr>)}</tbody></table></div>
+
+    <h2>Errores frecuentes</h2>
+    <ul>
+      <li>Usar el lado inclinado como altura en el triángulo o el paralelogramo: la altura es siempre perpendicular a la base.</li>
+      <li>Olvidar dividir entre 2 en el triángulo, el rombo o el trapecio.</li>
+      <li>Poner cm en un área: el área va en unidades cuadradas (cm²).</li>
+      <li>Mezclar unidades: si una medida está en m y otra en cm, pásalo todo a la misma antes de calcular.</li>
+    </ul>
+    <p>Para los ángulos de las figuras, mira la página de <a href="/es/angulos/">ángulos</a>.</p>
+  </section>
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{faqs.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>
+
+<script>
+  import { figureSVG } from '../../i18n/figure-svg.js';
+  import { measure, FIGURES } from '../../lib/geometry.js';
+  import { resolvePrefs } from '../../lib/locale.js';
+  import { formatNumber } from '../../lib/format.js';
+  const root = document.querySelector('[data-ap]');
+  const L = JSON.parse(root.dataset.labels), DEF = JSON.parse(root.dataset.def);
+  const prefs = resolvePrefs('es', navigator.languages || []);
+  const f = (x) => formatNumber(x, prefs, 2);
+  const COLORS = { cuadrado: '#7c5cff', rectangulo: '#2f80ed', triangulo: '#00a99d', circulo: '#ff4f9a', trapecio: '#ffb020', rombo: '#ff6b35', paralelogramo: '#2ebd6b' };
+  let fig = 'rectangulo';
+  const num = (s) => { const t = String(s).trim().replace(',', '.'); return t === '' ? NaN : Number(t); };
+  function buildInputs() {
+    root.querySelector('[data-inputs]').innerHTML = FIGURES[fig].dims.map((k) => `<label>${L[k]}<input data-k="${k}" value="${DEF[fig][k] ?? ''}" inputmode="decimal"></label>`).join('');
+  }
+  function run() {
+    const err = root.querySelector('[data-err]'); err.textContent = '';
+    const dims = {};
+    root.querySelectorAll('[data-k]').forEach((i) => { dims[i.dataset.k] = num(i.value); });
+    const u = root.querySelector('[data-unit]').value, u2 = u ? ` ${u}²` : '', u1 = u ? ` ${u}` : '';
+    let m;
+    try { m = measure(fig, { ...dims }); } catch { err.textContent = 'Escribe medidas mayores que 0.'; return; }
+    const D = Object.fromEntries(Object.entries(dims).map(([k, v]) => [k, Number.isNaN(v) ? 0 : v]));
+    root.querySelector('[data-pic]').innerHTML = figureSVG(fig, D, COLORS[fig], f);
+    root.querySelector('[data-out]').innerHTML = `<div><span>Área</span><b>${f(m.area)}${u2}</b></div><div><span>Perímetro</span><b>${m.perimeter !== null ? f(m.perimeter) + u1 : '—'}</b></div>`;
+    const sub = (formula) => formula.replace(/\bl\b/g, f(D.lado)).replace(/\bb\b/g, f(D.base ?? D.baseMenor)).replace(/\bh\b/g, f(D.altura)).replace(/\bB\b/g, f(D.baseMayor)).replace(/\bD\b/g, f(D.diagonalMayor)).replace(/\bd\b/g, f(fig === 'rombo' ? D.diagonalMenor : D.lado2)).replace(/\ba\b/g, f(D.lado2)).replace(/\bc\b/g, f(fig === 'trapecio' ? D.lado1 : D.lado3)).replace(/\br\b/g, f(D.radio));
+    const steps = [`Área = ${m.areaFormula} = ${sub(m.areaFormula)} = <strong>${f(m.area)}${u2}</strong>.`];
+    if (m.perimeter !== null) steps.push(`Perímetro = ${m.perimeterFormula} = ${m.perimeterFormula.includes('√') ? '…' : sub(m.perimeterFormula)} = <strong>${f(m.perimeter)}${u1}</strong>.`);
+    else steps.push('Para el perímetro, escribe también los lados que faltan (opcionales).');
+    if (fig === 'circulo') steps.push('Usamos π ≈ 3,14159. Con π ≈ 3,14 el resultado cambia un poco en los decimales.');
+    root.querySelector('[data-steps]').innerHTML = steps.map((s) => `<li>${s}</li>`).join('');
+  }
+  root.querySelectorAll('[data-fig]').forEach((b) => b.addEventListener('click', () => {
+    fig = b.dataset.fig;
+    root.querySelectorAll('[data-fig]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    buildInputs(); run();
+  }));
+  root.addEventListener('input', run);
+  root.querySelector('[data-unit]').addEventListener('change', run);
+  run();
+</script>
+<style is:global>
+  .ap-figs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+  .ap-figs button { padding: 0.45rem 0.85rem; border-radius: 999px; border: 2px solid var(--line); background: #fff; font: inherit; font-weight: 900; cursor: pointer; }
+  .ap-figs button[aria-pressed=true] { background: var(--accent); border-color: var(--ink); color: #fff; box-shadow: 0 3px 0 var(--ink); }
+  .ap-body { display: grid; grid-template-columns: auto 1fr; gap: 1rem 1.5rem; align-items: center; }
+  .ap-pic svg { max-width: 100%; height: auto; }
+  .ap-inputs { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .ap-inputs label, .ap-unit { display: grid; gap: 0.2rem; font-weight: 800; font-size: 0.85rem; color: var(--muted); }
+  .ap-inputs input { width: 8rem; font: inherit; font-size: 1.2rem; font-weight: 800; padding: 0.4rem 0.6rem; border: 2px solid var(--line); border-radius: 10px; color: var(--ink); }
+  .ap-inputs input:focus { outline: none; border-color: var(--accent); }
+  .ap-unit { margin-top: 0.6rem; }
+  .ap-unit select { font: inherit; font-weight: 800; padding: 0.4rem; border: 2px solid var(--line); border-radius: 10px; background: #fff; width: 8rem; }
+  @media (max-width: 640px) { .ap-body { grid-template-columns: 1fr; justify-items: center; } }
+  .formulas { border-collapse: collapse; width: 100%; background: #fff; border-radius: 14px; overflow: hidden; }
+  .formulas th, .formulas td { padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--line); text-align: left; }
+  .formulas th { background: var(--paper); }
+  .print-only { display: none; }
+  @media print { body[data-printing='formulas'] .print-only { display: block !important; } }
+</style>
