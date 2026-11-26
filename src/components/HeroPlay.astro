@@ -1,0 +1,199 @@
+---
+// Home "playground": four tiny interactive games. Works without JS for the first screen (static first state).
+import Icon from './Icon.astro';
+import { pie } from '../i18n/pie.js';
+import { divisionHTML } from '../i18n/division-render.js';
+import { longDivision } from '../lib/longdivision.js';
+interface Props { P: any }
+const { P } = Astro.props;
+const firstDiv = divisionHTML(longDivision(96, 4), { layout: 'galera' });
+---
+<section class="play" data-play data-t={JSON.stringify(P)}>
+  <div class="play-tabs" role="tablist">
+    {P.tabs.map(([id, label, icon], i) => (
+      <button type="button" role="tab" data-tab={id} aria-selected={i === 0 ? 'true' : 'false'} style={`--c: var(--c-${id === 'tablas' ? 'tablas' : id === 'fracciones' ? 'fracciones' : id === 'division' ? 'calc' : 'juegos'})`}>
+        <Icon name={icon} size={20} /> {label}
+      </button>
+    ))}
+  </div>
+
+  <div class="pane" data-pane="tablas" style="--c: var(--c-tablas)">
+    <div class="tb-stats"><span><Icon name="flame" size={20} /> {P.tablas.streak}: <b data-streak>0</b></span><span><Icon name="star" size={20} /> {P.tablas.best}: <b data-best>0</b></span></div>
+    <form class="tb-q" data-tb>
+      <span class="tb-ex" data-ex>7 × 8 =</span>
+      <input name="x" inputmode="numeric" maxlength="3" autocomplete="off" aria-label="respuesta" />
+      <button class="button primary">{P.tablas.check}</button>
+    </form>
+    <p class="tb-msg" data-msg aria-live="polite"></p>
+    <a class="pane-more" href="/es/tablas-de-multiplicar/">{P.tablas.more} <Icon name="arrow" size={16} /></a>
+  </div>
+
+  <div class="pane" data-pane="fracciones" hidden style="--c: var(--c-fracciones)">
+    <p class="pane-q">{P.fracciones.q}</p>
+    <div class="fr-row" data-fr>
+      <figure set:html={pie(1, 2, { color: '#00a99d' }) + '<figcaption><span class="fr"><span class="nu">1</span><span class="de">2</span></span></figcaption>'} />
+      <span class="big">+</span>
+      <figure set:html={pie(1, 3, { color: '#00a99d' }) + '<figcaption><span class="fr"><span class="nu">1</span><span class="de">3</span></span></figcaption>'} />
+      <span class="big">=</span>
+      <figure class="fr-ans" data-fr-ans><span class="big q">?</span></figure>
+    </div>
+    <div class="actions"><button type="button" class="button primary" data-reveal>{P.fracciones.reveal}</button><button type="button" class="button" data-fr-next>{P.fracciones.next}</button></div>
+    <p class="tb-msg" data-fr-msg aria-live="polite"></p>
+    <a class="pane-more" href="/es/fracciones/calculadora-de-fracciones/">{P.fracciones.more} <Icon name="arrow" size={16} /></a>
+  </div>
+
+  <div class="pane" data-pane="division" hidden style="--c: var(--c-calc)">
+    <form class="dv-form" data-dv>
+      <span>{P.division.label}</span>
+      <input name="a" value="96" inputmode="numeric" maxlength="6" aria-label="dividendo" />
+      <span class="big">÷</span>
+      <input name="b" value="4" inputmode="numeric" maxlength="2" aria-label="divisor" />
+    </form>
+    <div class="dv-out" data-dv-out set:html={firstDiv} />
+    <a class="pane-more" href="/es/division/">{P.division.more} <Icon name="arrow" size={16} /></a>
+  </div>
+
+  <div class="pane" data-pane="porcentajes" hidden style="--c: var(--c-juegos)">
+    <div class="pc-line"><b data-p>25</b> % {P.porcentajes.of} <b data-x>80</b> {P.porcentajes.is} <b class="pc-res" data-r>20</b></div>
+    <input type="range" min="0" max="100" step="5" value="25" data-pr aria-label="%" />
+    <input type="range" min="10" max="500" step="10" value="80" data-xr aria-label="cantidad" />
+    <div class="pc-bar"><i data-bar style="width:25%"></i></div>
+    <a class="pane-more" href="/es/calculadora-de-porcentajes/">{P.porcentajes.more} <Icon name="arrow" size={16} /></a>
+  </div>
+</section>
+
+<script>
+  import { pie } from '../i18n/pie.js';
+  import { add, frac, toMixed } from '../lib/fraction.js';
+  import { divisionHTML } from '../i18n/division-render.js';
+  import { longDivision } from '../lib/longdivision.js';
+  import { resolvePrefs } from '../lib/locale.js';
+
+  const root = document.querySelector('[data-play]');
+  if (root) {
+    const P = JSON.parse(root.dataset.t);
+    const $ = (s) => root.querySelector(s);
+    const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+    const prefs = resolvePrefs('es', navigator.languages || []);
+
+    // tabs
+    root.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => {
+      root.querySelectorAll('[data-tab]').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+      root.querySelectorAll('[data-pane]').forEach((p) => { p.hidden = p.dataset.pane !== b.dataset.tab; });
+      if (b.dataset.tab === 'tablas') $('[data-tb] input').focus({ preventScroll: true });
+    }));
+
+    // times tables: streak game
+    let q = [7, 8], streak = 0, best = 0;
+    try { best = Number(localStorage.getItem('gp_best') || 0); } catch {}
+    $('[data-best]').textContent = String(best);
+    const tb = $('[data-tb]'), msg = $('[data-msg]');
+    const nextQ = () => { q = [rnd(2, 9), rnd(2, 9)]; $('[data-ex]').textContent = `${q[0]} × ${q[1]} =`; tb.elements.x.value = ''; };
+    tb.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (tb.elements.x.value.trim() === '') return;
+      const ok = Number(tb.elements.x.value) === q[0] * q[1];
+      tb.classList.remove('pop', 'shake'); void tb.offsetWidth; tb.classList.add(ok ? 'pop' : 'shake');
+      if (ok) {
+        streak++; if (streak > best) { best = streak; try { localStorage.setItem('gp_best', String(best)); } catch {} }
+        msg.textContent = P.tablas.ok[rnd(0, P.tablas.ok.length - 1)]; msg.className = 'tb-msg ok';
+      } else { streak = 0; msg.textContent = `${P.tablas.bad} ${q[0]} × ${q[1]} = ${q[0] * q[1]}`; msg.className = 'tb-msg bad'; }
+      $('[data-streak]').textContent = String(streak); $('[data-best]').textContent = String(best);
+      setTimeout(() => { nextQ(); tb.elements.x.focus({ preventScroll: true }); }, ok ? 450 : 1400);
+    });
+
+    // fractions: two pies
+    let fa = frac(1, 2), fb = frac(1, 3);
+    const frHTML = (f) => `<span class="fr"><span class="nu">${f.n}</span><span class="de">${f.d}</span></span>`;
+    const drawFr = () => {
+      const figs = root.querySelectorAll('[data-fr] figure');
+      figs[0].innerHTML = pie(fa.n, fa.d, { color: '#00a99d' }) + `<figcaption>${frHTML(fa)}</figcaption>`;
+      figs[1].innerHTML = pie(fb.n, fb.d, { color: '#00a99d' }) + `<figcaption>${frHTML(fb)}</figcaption>`;
+      $('[data-fr-ans]').innerHTML = '<span class="big q">?</span>';
+      $('[data-fr-msg]').textContent = '';
+    };
+    $('[data-reveal]').addEventListener('click', () => {
+      const r = add(fa, fb), m = toMixed(r);
+      const common = r.d;
+      const pics = m.whole > 0 ? pie(1, 1, { color: '#00a99d' }) + (m.n ? pie(m.n, m.d, { color: '#00a99d' }) : '') : pie(r.n, r.d, { color: '#00a99d' });
+      $('[data-fr-ans]').innerHTML = `<div class="pies">${pics}</div><figcaption>${frHTML(r)}${m.whole > 0 && m.n ? ` = ${m.whole} ${frHTML({ n: m.n, d: m.d })}` : ''}</figcaption>`;
+      $('[data-fr-msg]').textContent = fa.d === fb.d ? `Mismo denominador: ${fa.n} + ${fb.n} = ${fa.n + fb.n} trozos de ${fa.d}.` : `Cortamos todo en trozos de 1/${common}: ${fa.n * (common / fa.d)}/${common} + ${fb.n * (common / fb.d)}/${common}.`;
+    });
+    $('[data-fr-next]').addEventListener('click', () => {
+      const pairs = [[2, 4], [3, 6], [2, 3], [4, 4], [3, 3], [2, 6], [4, 8], [3, 4], [6, 6], [2, 5]];
+      const [d1, d2] = pairs[rnd(0, pairs.length - 1)];
+      fa = frac(rnd(1, d1 - 1), d1); fb = frac(rnd(1, d2 - 1), d2);
+      if (fa.n * fb.d + fb.n * fa.d > 2 * fa.d * fb.d) fb = frac(1, d2);
+      drawFr();
+    });
+
+    // division: live long division
+    const dv = $('[data-dv]');
+    const drawDv = () => {
+      const a = dv.elements.a.value.trim(), b = dv.elements.b.value.trim();
+      if (!/^\d{1,6}$/.test(a) || !/^\d{1,2}$/.test(b) || Number(b) === 0) return;
+      $('[data-dv-out]').innerHTML = divisionHTML(longDivision(a, Number(b)), { layout: prefs.layout, sep: prefs.decimalSep });
+    };
+    dv.addEventListener('input', drawDv);
+    dv.addEventListener('submit', (e) => e.preventDefault());
+    if (prefs.layout !== 'galera') drawDv();
+
+    // percent sliders
+    const pr = $('[data-pr]'), xr = $('[data-xr]');
+    const drawPc = () => {
+      const p = Number(pr.value), x = Number(xr.value);
+      $('[data-p]').textContent = String(p); $('[data-x]').textContent = String(x);
+      $('[data-r]').textContent = String(Math.round(p * x) / 100).replace('.', prefs.decimalSep);
+      $('[data-bar]').style.width = `${p}%`;
+    };
+    pr.addEventListener('input', drawPc); xr.addEventListener('input', drawPc);
+  }
+</script>
+
+<style>
+  .play { background: #fff; border: 3px solid var(--ink); border-radius: 28px; box-shadow: 8px 8px 0 var(--ink); overflow: hidden; }
+  .play-tabs { display: flex; gap: 0.4rem; padding: 0.7rem; background: var(--paper); border-bottom: 3px solid var(--ink); overflow-x: auto; scrollbar-width: none; }
+  .play-tabs button { display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap; padding: 0.55rem 0.95rem; border-radius: 999px; border: 2px solid transparent; background: transparent; font: inherit; font-weight: 900; color: var(--ink); cursor: pointer; }
+  .play-tabs button svg { color: var(--c); }
+  .play-tabs button[aria-selected='true'] { background: var(--c); color: #fff; border-color: var(--ink); box-shadow: 0 3px 0 var(--ink); }
+  .play-tabs button[aria-selected='true'] svg { color: #fff; }
+  @media (max-width: 560px) {
+    .play-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.3rem; padding: 0.5rem; }
+    .play-tabs button { flex-direction: column; gap: 0.15rem; padding: 0.45rem 0.2rem; border-radius: 14px; font-size: 0.78rem; }
+  }
+  .pane { padding: 1.5rem 1.25rem 1.25rem; display: grid; justify-items: center; gap: 0.9rem; text-align: center; min-height: 17rem; align-content: center; }
+  .pane[hidden] { display: none; }
+  .pane-more { font-weight: 900; color: var(--c); text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; }
+  .pane .button.primary { background: var(--c); }
+  .tb-stats { display: flex; gap: 1.5rem; font-weight: 800; color: var(--muted); }
+  .tb-stats span { display: inline-flex; align-items: center; gap: 0.3rem; }
+  .tb-stats svg { color: var(--pop); }
+  .tb-stats b { color: var(--ink); font-size: 1.2rem; }
+  .tb-q { display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; justify-content: center; background: color-mix(in srgb, var(--c) 12%, #fff); padding: 0.8rem 1.2rem; border-radius: 22px; }
+  .tb-ex { font-size: clamp(2.6rem, 11vw, 4.2rem); font-weight: 900; letter-spacing: -0.02em; }
+  .tb-q input { width: 2.6ch; font: inherit; font-size: clamp(2.6rem, 11vw, 4.2rem); font-weight: 900; text-align: center; color: var(--c); border: 3px solid var(--ink); border-radius: 16px; background: #fff; }
+  .tb-q input:focus { outline: none; box-shadow: 0 0 0 4px var(--c); }
+  .tb-q.pop { animation: pop 0.35s; } .tb-q.shake { animation: shake 0.4s; }
+  @keyframes pop { 40% { transform: scale(1.06); background: #d8f6e3; } }
+  @keyframes shake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+  .tb-msg { margin: 0; min-height: 1.5em; font-weight: 900; font-size: 1.15rem; }
+  .tb-msg.ok { color: #13863f; } .tb-msg.bad { color: #c2261b; }
+  .pane-q { margin: 0; font-weight: 900; font-size: 1.25rem; }
+  .fr-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.6rem 1rem; }
+  .fr-row figure { margin: 0; display: grid; justify-items: center; gap: 0.3rem; font-size: 1.4rem; font-weight: 900; }
+  .fr-row :global(svg) { width: clamp(76px, 20vw, 110px); height: auto; }
+  .fr-ans :global(.pies) { display: flex; gap: 0.3rem; }
+  .big { font-size: 2.4rem; font-weight: 900; }
+  .big.q { display: grid; place-items: center; width: clamp(76px, 20vw, 110px); aspect-ratio: 1; border-radius: 50%; border: 3px dashed var(--ink); color: var(--c); }
+  .dv-form { display: flex; align-items: center; gap: 0.6rem; font-weight: 900; font-size: 1.3rem; flex-wrap: wrap; justify-content: center; }
+  .dv-form input { width: 5.5ch; font: inherit; font-size: 2rem; text-align: center; border: 3px solid var(--ink); border-radius: 14px; }
+  .dv-form input[name=b] { width: 3ch; }
+  .dv-out { max-width: 100%; overflow-x: auto; }
+  .dv-out :global(.ld) { font-size: 1.5rem; }
+  .pc-line { font-size: clamp(1.6rem, 6vw, 2.4rem); font-weight: 900; }
+  .pc-line b { color: var(--c); }
+  .pc-res { display: inline-block; min-width: 3ch; padding: 0 0.3em; border-radius: 12px; background: var(--c); color: #fff !important; }
+  .pane input[type=range] { width: min(26rem, 90%); accent-color: var(--c); height: 2rem; }
+  .pc-bar { width: min(26rem, 90%); height: 22px; border-radius: 999px; border: 3px solid var(--ink); overflow: hidden; background: #fff; }
+  .pc-bar i { display: block; height: 100%; background: var(--c); transition: width 0.15s; }
+</style>

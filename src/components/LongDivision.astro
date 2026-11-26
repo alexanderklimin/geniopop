@@ -60,30 +60,3 @@ const steps = DIV_TEXT[lang].steps(res, prefs.decimalSep);
     if (prefs.layout !== 'galera' || prefs.decimalSep !== ',') run();
   }
 </script>
-
-<style is:global>
-  .ld-form { display: flex; flex-wrap: wrap; align-items: end; gap: 0.75rem; }
-  .ld-form label { display: flex; flex-direction: column; font-size: 0.85rem; font-weight: 600; color: var(--muted); gap: 0.2rem; }
-  .ld-form input { width: 8rem; font: inherit; font-size: 1.3rem; font-weight: 700; color: var(--ink); padding: 0.4rem 0.6rem; border: 2px solid var(--line); border-radius: 10px; }
-  .ld-form input[name=b] { width: 5.5rem; }
-  .ld-form select { font: inherit; font-size: 1rem; padding: 0.55rem; border: 2px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); }
-  .ld-sign { font-size: 1.6rem; font-weight: 800; padding-bottom: 0.4rem; }
-  .ld-opts { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin: 0.75rem 0 0; font-size: 0.95rem; }
-  .ld-opts input { accent-color: var(--accent); }
-  .ld-out { overflow-x: auto; padding: 1rem 0; }
-  .ld { display: inline-flex; align-items: flex-start; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 1.6rem; line-height: 1.6; }
-  .ld-grid { display: grid; grid-auto-rows: 1.6em; }
-  .ld-row { display: grid; grid-template-columns: repeat(var(--n), 1.1ch); }
-  .ld-row span { text-align: center; position: relative; }
-  .ld-row .ul { border-bottom: 2px solid var(--ink); }
-  .ld-row .mi { color: var(--muted); }
-  .ld-row .pt::after { content: ','; position: absolute; right: -0.35ch; }
-  .ld-row.rest span:not(:empty) { color: var(--accent-dark); font-weight: 700; }
-  .ld-side { display: flex; flex-direction: column; border-left: 2px solid var(--ink); margin-left: 0.6ch; }
-  .ld-side .ld-dv { border-bottom: 2px solid var(--ink); padding: 0 0.6ch; }
-  .ld-side .ld-q { padding: 0 0.6ch; color: var(--accent-dark); font-weight: 700; }
-  .ld-bracket .ld-left { padding-top: 1.6em; padding-right: 0.2ch; }
-  .ld-row.brk { border-top: 2px solid var(--ink); border-left: 2px solid var(--ink); border-top-left-radius: 10px; }
-  .ld-row.quot span { color: var(--accent-dark); font-weight: 700; }
-  .rep { text-decoration: overline; }
-</style>

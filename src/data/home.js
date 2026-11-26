@@ -1,7 +1,15 @@
 // Home page blocks per language (only languages with content). Every link points to a real page.
 export const HOME = {
   es: {
-    h1: 'Matemáticas de primaria, paso a paso',
+    h1: 'Aprende mates jugando',
+    sub: 'Elige un juego y empieza. Sin registro.',
+    play: {
+      tabs: [['tablas', 'Tablas', 'grid'], ['fracciones', 'Fracciones', 'pizza'], ['division', 'División', 'divide'], ['porcentajes', 'Porcentajes', 'percent']],
+      tablas: { streak: 'Racha', best: 'Récord', ok: ['¡Bien!', '¡Genial!', '¡Eso es!', '¡Crack!', '¡Perfecto!'], bad: 'Era', check: 'OK', more: 'Más práctica con tablas' },
+      fracciones: { q: '¿Cuánta pizza hay en total?', reveal: 'Ver la respuesta', next: 'Otra', more: 'Calculadora de fracciones' },
+      division: { label: 'Divide', more: 'División paso a paso' },
+      porcentajes: { of: 'de', is: 'es', more: 'Calculadora de porcentajes' },
+    },
     lead: 'Tablas de multiplicar para practicar, calculadoras que explican cada paso como en el cuaderno y fichas para imprimir con soluciones. Gratis y sin registro.',
     demo: { title: 'Pruébalo ahora', q: [7, 8], check: 'Comprobar', ok: '¡Correcto! 7 × 8 = 56', bad: 'Casi. 7 × 8 = 56 (truco: 5, 6, 7, 8)', more: 'Practicar todas las tablas', placeholder: '?' },
     toolsTitle: 'Lo más usado',

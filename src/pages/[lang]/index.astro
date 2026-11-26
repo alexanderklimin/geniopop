@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
+import HeroPlay from '../../components/HeroPlay.astro';
 import { LIVE, t } from '../../i18n/ui.js';
 import { HOME } from '../../data/home.js';
 import { AUTHOR, authorPath } from '../../data/author.js';
@@ -19,19 +20,10 @@ const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: 
 ---
 <Base lang={lang} title={ui.home_title} description={ui.home_description} alternates={alternates} jsonLd={[site, faq]}>
   <section class="hero">
-    <div class="hero-text">
-      <p class="kicker">{ui.kicker}</p>
-      <h1>{H.h1}</h1>
-      <p class="lead">{H.lead}</p>
-      <ul class="trust">{ui.trust.map(([icon, text]) => <li><Icon name={icon} size={20} /> {text}</li>)}</ul>
-    </div>
-    <form class="demo" data-demo data-ok={H.demo.ok} data-bad={H.demo.bad} data-answer={H.demo.q[0] * H.demo.q[1]}>
-      <p class="demo-title">{H.demo.title}</p>
-      <div class="demo-q"><span>{H.demo.q[0]} × {H.demo.q[1]} =</span><input name="x" inputmode="numeric" maxlength="3" placeholder={H.demo.placeholder} aria-label={`${H.demo.q[0]} × ${H.demo.q[1]}`} /></div>
-      <button class="button primary">{H.demo.check}</button>
-      <p class="demo-msg" data-msg aria-live="polite"></p>
-      <a class="demo-more" href="/es/tablas-de-multiplicar/">{H.demo.more} <Icon name="arrow" size={18} /></a>
-    </form>
+    <h1>{H.h1}</h1>
+    <p class="hero-sub">{H.sub}</p>
+    <HeroPlay P={H.play} />
+    <ul class="trust">{ui.trust.map(([icon, text]) => <li><Icon name={icon} size={20} /> {text}</li>)}</ul>
   </section>
 
   <h2>{H.toolsTitle}</h2>
@@ -76,38 +68,15 @@ const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: 
   </section>
 </Base>
 
-<script>
-  const f = document.querySelector('[data-demo]');
-  f?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const ok = Number(f.elements.x.value) === Number(f.dataset.answer);
-    const msg = f.querySelector('[data-msg]');
-    msg.textContent = ok ? f.dataset.ok : f.dataset.bad;
-    msg.className = `demo-msg ${ok ? 'ok' : 'bad'}`;
-    f.classList.remove('pop', 'shake'); void f.offsetWidth; f.classList.add(ok ? 'pop' : 'shake');
-  });
-</script>
+
 
 <style>
-  .hero { display: grid; grid-template-columns: 1.3fr 1fr; gap: 2.5rem; align-items: center; padding-top: 0.5rem; }
-  .kicker { display: inline-block; margin: 0 0 0.8rem; padding: 0.3rem 0.85rem; border-radius: 999px; background: #fff; border: 2px solid var(--ink); font-weight: 900; font-size: 0.82rem; box-shadow: 3px 3px 0 var(--c-fichas); }
-  .hero h1 { font-size: clamp(2.1rem, 5.4vw, 3.3rem); max-width: 16ch; }
-  .trust { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.4rem; }
-  .trust li { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; }
+  .hero { padding-top: 0.25rem; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 0.2rem; max-width: none; }
+  .hero-sub { margin: 0 0 1.2rem; color: var(--muted); font-weight: 700; font-size: 1.1rem; }
+  .trust { list-style: none; padding: 0; margin: 1.4rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+  .trust li { display: flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 0.95rem; color: var(--muted); }
   .trust svg { color: var(--pop); flex-shrink: 0; }
-  .demo { background: #fff; border: 2px solid var(--ink); border-radius: var(--radius); padding: 1.3rem; box-shadow: 7px 7px 0 var(--c-tablas); display: grid; gap: 0.8rem; justify-items: center; text-align: center; }
-  .demo-title { margin: 0; font-weight: 900; color: var(--c-tablas); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.85rem; }
-  .demo-q { display: flex; align-items: center; gap: 0.6rem; font-size: clamp(2.2rem, 7vw, 3rem); font-weight: 900; background: #efeaff; border-radius: 18px; padding: 0.6rem 1rem; }
-  .demo-q input { width: 3.2ch; font: inherit; text-align: center; color: var(--c-tablas); border: 3px solid var(--ink); border-radius: 14px; background: #fff; }
-  .demo-q input:focus { outline: none; box-shadow: 0 0 0 4px var(--c-tablas); }
-  .demo .button.primary { background: var(--c-tablas); }
-  .demo-msg { margin: 0; min-height: 1.5em; font-weight: 900; }
-  .demo-msg.ok { color: #13863f; } .demo-msg.bad { color: #c2261b; }
-  .demo-more { font-weight: 900; color: var(--c-tablas); text-decoration: none; display: inline-flex; gap: 0.3rem; align-items: center; }
-  .demo.pop { animation: pop 0.35s; } .demo.shake { animation: shake 0.4s; }
-  @keyframes pop { 40% { transform: scale(1.03); } }
-  @keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
-
   .tools { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); gap: 0.9rem; }
   .tools a { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 0.8rem; align-items: center; padding: 0.9rem 1rem; border-radius: 18px; background: #fff; border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--c); color: var(--ink); text-decoration: none; transition: transform 0.12s, box-shadow 0.12s; height: 100%; }
   .tools a:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--c); }
@@ -142,5 +111,4 @@ const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: 
   .reviewer img { border-radius: 50%; object-fit: cover; border: 3px solid var(--c-fichas); }
   .reviewer small { display: block; color: var(--muted); font-weight: 700; }
   .more-legal { font-size: 0.9rem; }
-  @media (max-width: 800px) { .hero { grid-template-columns: 1fr; gap: 1.5rem; } }
 </style>
