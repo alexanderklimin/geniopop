@@ -47,6 +47,7 @@ export const COURSES = [
       { title: 'Sumas y restas de fracciones', topic: 'fraction', v: { ops: '+-', sameDen: 0, maxDen: 10 }, count: 12 },
       { title: 'Simplificar fracciones', topic: 'simplify', v: { maxDen: 12 }, count: 20 },
       { title: 'Porcentajes sencillos', topic: 'percent', v: { level: 'easy' }, count: 15 },
+      { title: 'Operaciones combinadas sin paréntesis', topic: 'combined', v: { level: 1 }, count: 15 },
     ] },
   { id: 6, slug: 'sexto-de-primaria', name: '6.º de primaria', syn: '6.º grado · 6.º básico', age: '11–12 años',
     intro: 'Sexto repasa las cuatro operaciones con fracciones y añade el mínimo común múltiplo, el máximo común divisor y más porcentajes.',
@@ -54,6 +55,7 @@ export const COURSES = [
     sheets: [
       { title: 'Multiplicación y división de fracciones', topic: 'fraction', v: { ops: '*/', sameDen: 0, maxDen: 10 }, count: 12 },
       { title: 'Operaciones con fracciones (todas)', topic: 'fraction', v: { ops: '+-*/', sameDen: 0, maxDen: 12 }, count: 12 },
+      { title: 'Operaciones combinadas con paréntesis', topic: 'combined', v: { level: 2 }, count: 15 },
       { title: 'mcm y mcd', topic: 'gcdLcm', v: { which: 'both', max: 60 }, count: 15 },
       { title: 'Porcentajes', topic: 'percent', v: { level: 'mid' }, count: 15 },
       { title: 'Números romanos hasta el 3999', topic: 'roman', v: { max: 3999, direction: 'both' }, count: 15 },

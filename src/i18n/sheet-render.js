@@ -31,6 +31,8 @@ export function problemHTML(lang, p, { vertical = true } = {}) {
     case 'simplify': return `${fr(p.operands[0])} <span class="op">=</span> ${blank}`;
     case 'roman': return p.op === 'toRoman' ? `${p.operands[0]} → ${blank} <small>${T.toRoman}</small>` : `${p.operands[0]} → ${blank} <small>${T.fromRoman}</small>`;
     case 'percent': case 'percentOf': return `${p.operands[0]} % ${T.of} ${p.operands[1]} = ${blank}`;
+    case 'combined': return `${p.operands[0].replace(/\*/g, '×').replace(/\^(\d)/g, '<sup>$1</sup>').replace(/-/g, '−')} = ${blank}`;
+    case 'power': return p.op === 'sqrt' ? `√${p.operands[0]} = ${blank}` : `${p.operands[0]}<sup>${p.operands[1]}</sup> = ${blank}`;
     case 'gcdLcm': return `${T[p.op]}(${p.operands.join(', ')}) = ${blank}`;
     default: return '';
   }

@@ -45,6 +45,12 @@ export const GEN = {
       { id: 'percent', label: 'Porcentajes', title: 'Porcentajes', controls: [
         { k: 'level', label: 'Nivel', type: 'select', options: [['easy', '10 %, 25 %, 50 %…'], ['mid', 'Cualquier múltiplo de 5 %']], def: 'easy' },
       ] },
+      { id: 'combined', label: 'Operaciones combinadas', title: 'Operaciones combinadas', controls: [
+        { k: 'level', label: 'Nivel', type: 'select', options: [[1, 'Sin paréntesis (+ − ×)'], [2, 'Con división y paréntesis'], [3, 'Con potencias y corchetes']], def: 1 },
+      ] },
+      { id: 'power', label: 'Potencias y raíces', title: 'Potencias y raíces cuadradas', controls: [
+        { k: 'kind', label: 'Tipo', type: 'select', options: [['mixed', 'Potencias y raíces'], ['pow', 'Solo potencias'], ['sqrt', 'Solo raíces cuadradas']], def: 'mixed' },
+      ] },
       { id: 'gcdLcm', label: 'mcm y mcd', title: 'mcm y mcd', controls: [
         { k: 'which', label: 'Calcular', type: 'select', options: [['both', 'mcm y mcd'], ['lcm', 'Solo mcm'], ['gcd', 'Solo mcd']], def: 'both' },
         { k: 'max', label: 'Números hasta', type: 'select', options: [[30, '30'], [60, '60'], [100, '100']], def: 60 },
@@ -67,6 +73,8 @@ export function toParams(topic, v) {
     case 'simplify': return { maxDen: n(v.maxDen), maxFactor: 6 };
     case 'roman': return { max: n(v.max), direction: v.direction };
     case 'percent': return v.level === 'mid' ? { percents: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 75, 80, 90], max: 400 } : { percents: [10, 20, 25, 50, 75], max: 200 };
+    case 'combined': return { level: n(v.level) };
+    case 'power': return { kind: v.kind };
     case 'gcdLcm': return { which: v.which, max: n(v.max) };
     default: return {};
   }

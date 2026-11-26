@@ -1,0 +1,118 @@
+---
+import Base from '../../layouts/Base.astro';
+import { generate } from '../../lib/worksheet.js';
+import { sheetHTML } from '../../i18n/sheet-render.js';
+
+const path = '/es/potencias/';
+const faqs = [
+  { q: '¿Cómo se lee 5³?', a: '«Cinco al cubo» o «cinco elevado a tres». Con exponente 2 se dice «al cuadrado»; a partir de 4, «a la cuarta», «a la quinta»…' },
+  { q: '¿Por qué cualquier número elevado a 0 da 1?', a: 'Porque al dividir dos potencias iguales los exponentes se restan: 2³ ÷ 2³ = 2⁰, y a la vez cualquier número dividido entre sí mismo es 1. La única excepción es 0⁰, que no está definido.' },
+  { q: '¿Qué significa un exponente negativo?', a: 'Que hay que dar la vuelta a la base: 2⁻³ = 1/2³ = 1/8.' },
+  { q: '¿Cuál es la diferencia entre (−2)² y −2²?', a: '(−2)² = (−2) × (−2) = 4, porque la potencia afecta al −2 entero. En −2² la potencia solo afecta al 2: −2² = −4.' },
+];
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+const sheet = sheetHTML('es', generate('power', { count: 18, seed: 77 }).problems, { title: 'Potencias y raíces cuadradas' });
+const pow2 = Array.from({ length: 10 }, (_, i) => [i + 1, 2 ** (i + 1)]);
+const pow10 = [[1, '10'], [2, '100'], [3, '1000'], [4, '10 000'], [5, '100 000'], [6, '1 000 000']];
+---
+<Base lang="es" title="Potencias: calculadora, propiedades y ejercicios"
+  description="Calcula cualquier potencia paso a paso (también con exponente 0, negativo o base fraccionaria), aprende las propiedades de las potencias con ejemplos y descarga ejercicios para imprimir."
+  alternates={{ es: path }} crumbs={[{ name: 'Potencias', path }]} jsonLd={[faq]}>
+  <h1>Potencias</h1>
+  <p class="lead">Una potencia es una multiplicación repetida: 2⁵ = 2 × 2 × 2 × 2 × 2 = 32. Calcula cualquier potencia con su desarrollo y repasa las propiedades para operar con ellas.</p>
+
+  <section class="fx pw" data-pw>
+    <form class="gl-form" data-pw-form novalidate>
+      <label>Base<input name="b" value="2" inputmode="decimal" /></label>
+      <label>Exponente<input name="e" value="5" inputmode="numeric" /></label>
+      <button class="fx-go">Calcular</button>
+    </form>
+    <p class="fx-hint">La base puede ser negativa o una fracción (por ejemplo 2/3).</p>
+    <p class="fx-err" data-pw-err role="alert"></p>
+    <div class="fx-result" data-pw-result><div><span>Resultado</span><b>32</b></div></div>
+    <ol class="fx-steps" data-pw-steps><li>2<sup>5</sup> = 2 × 2 × 2 × 2 × 2 = <strong>32</strong></li></ol>
+  </section>
+
+  <section class="prose">
+    <h2>Partes de una potencia</h2>
+    <p>En 2⁵, el 2 es la <strong>base</strong> (el número que se multiplica) y el 5 es el <strong>exponente</strong> (cuántas veces se multiplica). Ojo: 2⁵ no es 2 × 5 = 10.</p>
+
+    <h2>Propiedades de las potencias</h2>
+    <table class="props"><tbody>
+      <tr><th>Producto de igual base</th><td>a<sup>m</sup> · a<sup>n</sup> = a<sup>m+n</sup></td><td>2³ · 2² = 2⁵ = 32</td></tr>
+      <tr><th>Cociente de igual base</th><td>a<sup>m</sup> : a<sup>n</sup> = a<sup>m−n</sup></td><td>5⁴ : 5² = 5² = 25</td></tr>
+      <tr><th>Potencia de una potencia</th><td>(a<sup>m</sup>)<sup>n</sup> = a<sup>m·n</sup></td><td>(3²)³ = 3⁶ = 729</td></tr>
+      <tr><th>Potencia de un producto</th><td>(a · b)<sup>n</sup> = a<sup>n</sup> · b<sup>n</sup></td><td>(2 · 5)³ = 8 · 125 = 1000</td></tr>
+      <tr><th>Exponente 0</th><td>a<sup>0</sup> = 1</td><td>7⁰ = 1</td></tr>
+      <tr><th>Exponente 1</th><td>a<sup>1</sup> = a</td><td>9¹ = 9</td></tr>
+      <tr><th>Exponente negativo</th><td>a<sup>−n</sup> = 1 / a<sup>n</sup></td><td>2⁻³ = 1/8</td></tr>
+    </tbody></table>
+    <p>Con las sumas no hay atajo: 2³ + 2² = 8 + 4 = 12, no 2⁵.</p>
+
+    <h2>Potencias de 10</h2>
+    <p>Elevar 10 a un número es escribir un 1 seguido de tantos ceros como indica el exponente. Se usan para escribir números muy grandes de forma corta.</p>
+    <div class="sq">{pow10.map(([e, v]) => <div><span>10<sup>{e}</sup></span><b>{v}</b></div>)}</div>
+
+    <h2>Potencias de 2</h2>
+    <div class="sq">{pow2.map(([e, v]) => <div><span>2<sup>{e}</sup></span><b>{v}</b></div>)}</div>
+
+    <h2>Errores frecuentes</h2>
+    <ul>
+      <li>Multiplicar la base por el exponente: 3⁴ = 81, no 12.</li>
+      <li>Sumar los exponentes en una suma: 2³ + 2² no es 2⁵.</li>
+      <li>Confundir −3² (= −9) con (−3)² (= 9).</li>
+    </ul>
+    <p>Para la operación contraria, ve a la <a href="/es/raiz-cuadrada/">calculadora de raíz cuadrada</a>.</p>
+  </section>
+
+  <h2>Ejercicios para imprimir</h2>
+  <div class="actions"><button type="button" class="button primary" data-print="sheet">Imprimir ficha</button><a class="button" href="/es/fichas/?t=power&kind=mixed">Crear más</a></div>
+  <div data-print-area="sheet" set:html={sheet} />
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{faqs.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>
+
+<script>
+  import { powerSteps } from '../../lib/roots.js';
+  import { parseFraction } from '../../lib/fraction.js';
+  import { fr } from '../../i18n/fraction-steps.js';
+  const root = document.querySelector('[data-pw]');
+  const form = root.querySelector('[data-pw-form]');
+  const show = (f) => (f.d === 1 ? (f.n < 0 ? `(${String(f.n).replace('-', '−')})` : String(f.n)) : `(${fr(f)})`);
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const err = root.querySelector('[data-pw-err]'); err.textContent = '';
+    try {
+      const b = parseFraction(form.elements.b.value).value;
+      const ex = form.elements.e.value.trim().replace('−', '-');
+      if (!/^-?\d{1,2}$/.test(ex)) throw new RangeError('exp');
+      const r = powerSteps(b, Number(ex));
+      const base = show(b), E = Number(ex);
+      const steps = [];
+      if (E === 0) steps.push(`Cualquier número (salvo 0) elevado a 0 es 1: ${base}<sup>0</sup> = <strong>1</strong>.`);
+      else {
+        if (E < 0) steps.push(`El exponente es negativo: damos la vuelta a la base. ${base}<sup>${String(E).replace('-', '−')}</sup> = 1 / ${base}<sup>${-E}</sup>.`);
+        if (Math.abs(E) <= 10) steps.push(`${base}<sup>${Math.abs(E)}</sup> = ${Array(Math.abs(E)).fill(base).join(' × ')}.`);
+        steps.push(`Resultado: <strong>${fr(r.result)}</strong>.`);
+      }
+      root.querySelector('[data-pw-result]').innerHTML = `<div><span>Resultado</span><b>${fr(r.result)}</b></div>`;
+      root.querySelector('[data-pw-steps]').innerHTML = steps.map((s) => `<li>${s}</li>`).join('');
+    } catch (x) {
+      root.querySelector('[data-pw-result]').innerHTML = ''; root.querySelector('[data-pw-steps]').innerHTML = '';
+      err.textContent = /0⁰/.test(x.message) ? '0 elevado a 0 no está definido.' : /large|grande/i.test(x.message) ? 'El resultado es demasiado grande.' : 'Escribe una base (entero, decimal o fracción) y un exponente entero entre −64 y 64.';
+    }
+  });
+</script>
+<style>
+  .pw .gl-form label { display: flex; flex-direction: column; font-weight: 800; font-size: 0.85rem; color: var(--muted); gap: 0.2rem; }
+  .pw .gl-form input { width: 8rem; }
+  .props { border-collapse: collapse; width: 100%; background: #fff; border-radius: 14px; overflow: hidden; }
+  .props th, .props td { padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--line); text-align: left; }
+  .props th { font-weight: 800; }
+  .sq { display: grid; grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr)); gap: 0.25rem 1rem; font-variant-numeric: tabular-nums; margin: 0.5rem 0; }
+  .sq div { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--line); padding: 0.15rem 0; }
+  .sq span { color: var(--muted); font-weight: 700; }
+</style>

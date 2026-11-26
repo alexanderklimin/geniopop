@@ -1,0 +1,118 @@
+---
+import Base from '../../layouts/Base.astro';
+import { simplifyRoot, heronSteps } from '../../lib/roots.js';
+import { generate } from '../../lib/worksheet.js';
+import { sheetHTML } from '../../i18n/sheet-render.js';
+
+const path = '/es/raiz-cuadrada/';
+const squares = Array.from({ length: 20 }, (_, i) => [i + 1, (i + 1) ** 2]);
+const cubes = Array.from({ length: 10 }, (_, i) => [i + 1, (i + 1) ** 3]);
+const ex = [72, 50, 180].map((n) => ({ n, r: simplifyRoot(n) }));
+const SUP: Record<string, string> = { 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷' };
+const fact = (fs: [number, number][]) => fs.map(([p, e]) => `${p}${e > 1 ? SUP[e] ?? `^${e}` : ''}`).join(' · ');
+const faqs = [
+  { q: '¿Qué es la raíz cuadrada?', a: 'La raíz cuadrada de un número es otro número que, multiplicado por sí mismo, da el primero. √49 = 7 porque 7 × 7 = 49.' },
+  { q: '¿Tiene raíz cuadrada un número negativo?', a: 'No entre los números reales que se ven en primaria y secundaria: ningún número multiplicado por sí mismo da negativo. La raíz cúbica, en cambio, sí: ∛−8 = −2.' },
+  { q: '¿Cómo sé si un número es un cuadrado perfecto?', a: 'Si su raíz es un número entero. Los cuadrados perfectos terminan siempre en 0, 1, 4, 5, 6 o 9; si un número termina en 2, 3, 7 u 8, seguro que no lo es.' },
+  { q: '¿Cuánto es la raíz cuadrada de 2?', a: '√2 ≈ 1,41421356. No es exacta: tiene infinitos decimales que no se repiten.' },
+];
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+const heron = heronSteps(10, 4);
+const sheet = sheetHTML('es', generate('power', { kind: 'sqrt', count: 14, seed: 12 }).problems, { title: 'Raíces cuadradas exactas' });
+---
+<Base lang="es" title="Calculadora de raíz cuadrada (y cúbica) con simplificación"
+  description="Calcula la raíz cuadrada o cúbica de un número: resultado exacto o decimal y la raíz simplificada paso a paso (√72 = 6√2). Tabla de cuadrados y cubos, trucos y preguntas frecuentes."
+  alternates={{ es: path }} crumbs={[{ name: 'Raíz cuadrada', path }]} jsonLd={[faq]}>
+  <h1>Raíz cuadrada</h1>
+  <p class="lead">Escribe un número y verás su raíz cuadrada o cúbica: exacta si es un cuadrado perfecto, simplificada como en el cuaderno (√72 = 6√2) y en decimal.</p>
+
+  <section class="fx rt" data-rt>
+    <form class="gl-form" data-rt-form novalidate>
+      <input name="n" value="72" inputmode="numeric" aria-label="Número" />
+      <select name="k" class="fx-op" aria-label="Raíz"><option value="2">√ cuadrada</option><option value="3">∛ cúbica</option></select>
+      <button class="fx-go">Calcular</button>
+    </form>
+    <p class="fx-err" data-rt-err role="alert"></p>
+    <div class="fx-result" data-rt-result><div><span>Simplificada</span><b>6√2</b></div><div><span>En decimal</span><b>8,48528137</b></div></div>
+    <ol class="fx-steps" data-rt-steps>
+      <li>Descomponemos 72 en factores primos: 72 = 2³ · 3².</li>
+      <li>Cada pareja de factores iguales sale de la raíz como un solo factor: de 2³ sale un 2 (y queda un 2 dentro); de 3² sale un 3.</li>
+      <li>Fuera queda 2 · 3 = <strong>6</strong>, dentro queda <strong>2</strong>: √72 = <strong>6√2</strong>.</li>
+    </ol>
+  </section>
+
+  <section class="prose">
+    <h2>Qué es la raíz cuadrada</h2>
+    <p>Es la operación contraria a elevar al cuadrado. Si 8² = 64, entonces √64 = 8. Por eso conviene saberse de memoria los cuadrados del 1 al 15 (o al 20).</p>
+    <div class="sq" data-print-area="table">{squares.map(([n, s]) => <div><span>{n}²</span><b>{s}</b></div>)}</div>
+    <div class="actions"><button type="button" class="button primary" data-print="table">Imprimir tabla de cuadrados</button></div>
+
+    <h2>Cómo simplificar una raíz</h2>
+    <p>Se descompone el número en factores primos y se saca fuera de la raíz un factor por cada pareja de factores iguales (en la cúbica, por cada trío).</p>
+    <ul>{ex.map(({ n, r }) => <li>√{n} = √({fact(r.factors)}) = <strong>{r.outside}√{r.inside}</strong></li>)}</ul>
+
+    <h2>Cómo calcular una raíz sin calculadora</h2>
+    <ol>
+      <li><strong>Acota:</strong> √50 está entre 7 y 8, porque 7² = 49 y 8² = 64. Como 50 está muy cerca de 49, √50 ≈ 7,1.</li>
+      <li><strong>Método de Herón</strong> (el que usan las calculadoras): toma una aproximación x y calcula la media entre x y n ÷ x. Cada vuelta duplica más o menos los decimales correctos. Para √10, empezando por 3: {heron.map((h) => h.next.toFixed(6).replace('.', ',')).join(' → ')}.</li>
+    </ol>
+
+    <h2>Raíz cúbica</h2>
+    <p>La raíz cúbica busca el número que multiplicado tres veces por sí mismo da el original: ∛27 = 3, porque 3 × 3 × 3 = 27.</p>
+    <div class="sq">{cubes.map(([n, c]) => <div><span>{n}³</span><b>{c}</b></div>)}</div>
+
+    <h2>Errores frecuentes</h2>
+    <ul>
+      <li>Dividir entre 2: √16 es 4, no 8.</li>
+      <li>Separar sumas: √(9 + 16) = √25 = 5, no √9 + √16 = 7. La raíz se reparte en productos, no en sumas.</li>
+      <li>Olvidar factores al simplificar: √72 no es 2√18 «y ya»; 18 todavía tiene una pareja de 3.</li>
+    </ul>
+  </section>
+
+  <h2>Ejercicios para imprimir</h2>
+  <div class="actions"><button type="button" class="button primary" data-print="sheet">Imprimir ficha</button><a class="button" href="/es/fichas/?t=power&kind=sqrt">Crear más</a></div>
+  <div data-print-area="sheet" set:html={sheet} />
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{faqs.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>
+
+<script>
+  import { simplifyRoot } from '../../lib/roots.js';
+  import { resolvePrefs } from '../../lib/locale.js';
+  import { formatNumber } from '../../lib/format.js';
+  const SUP = { 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
+  const root = document.querySelector('[data-rt]');
+  const prefs = resolvePrefs('es', navigator.languages || []);
+  const form = root.querySelector('[data-rt-form]');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const err = root.querySelector('[data-rt-err]'); err.textContent = '';
+    const raw = form.elements.n.value.trim().replace('−', '-'), k = Number(form.elements.k.value);
+    if (!/^-?\d{1,12}$/.test(raw)) { err.textContent = 'Escribe un número entero (hasta 12 cifras).'; return; }
+    const n = Number(raw);
+    if (n < 0 && k === 2) { err.textContent = 'Un número negativo no tiene raíz cuadrada real.'; root.querySelector('[data-rt-result]').innerHTML = ''; root.querySelector('[data-rt-steps]').innerHTML = ''; return; }
+    const r = simplifyRoot(n, k);
+    const sym = k === 2 ? '√' : '∛';
+    const fact = r.factors.map(([p, e]) => `${p}${e > 1 ? SUP[e] ?? `^${e}` : ''}`).join(' · ');
+    const dec = formatNumber(r.decimal, prefs, 8);
+    const simple = r.exact ? `${r.outside}`.replace('-', '−') : r.outside === 1 ? `${sym}${r.inside}` : `${r.outside}${sym}${r.inside}`;
+    root.querySelector('[data-rt-result]').innerHTML = `<div><span>${r.exact ? 'Exacta' : 'Simplificada'}</span><b>${simple}</b></div>${r.exact ? '' : `<div><span>En decimal</span><b>${dec}</b></div>`}`;
+    const steps = [];
+    if (Math.abs(n) <= 1) steps.push(`${sym}${n} = ${n}.`);
+    else {
+      steps.push(`Descomponemos ${Math.abs(n)} en factores primos: ${Math.abs(n)} = ${fact}.`);
+      steps.push(k === 2 ? 'Por cada pareja de factores iguales sale uno fuera de la raíz; los que quedan sueltos se quedan dentro.' : 'Por cada trío de factores iguales sale uno fuera de la raíz; los que sobran se quedan dentro.');
+      steps.push(r.exact ? `No queda nada dentro: ${sym}${n} = <strong>${r.outside}</strong>, porque ${Array(k).fill(r.outside < 0 ? `(${r.outside})` : r.outside).join(' × ')} = ${n}.` : r.outside === 1 ? `No sale ningún factor: ${sym}${n} no se puede simplificar. Vale aproximadamente <strong>${dec}</strong>.` : `Fuera queda <strong>${Math.abs(r.outside)}</strong> y dentro <strong>${r.inside}</strong>: ${sym}${n} = <strong>${simple}</strong> ≈ ${dec}.`);
+    }
+    root.querySelector('[data-rt-steps]').innerHTML = steps.map((s) => `<li>${s}</li>`).join('');
+  });
+</script>
+<style>
+  .sq { display: grid; grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr)); gap: 0.25rem 1rem; font-variant-numeric: tabular-nums; margin: 0.5rem 0; }
+  .sq div { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--line); padding: 0.15rem 0; }
+  .sq span { color: var(--muted); font-weight: 700; }
+  .rt select { width: auto; font-size: 1rem; }
+</style>

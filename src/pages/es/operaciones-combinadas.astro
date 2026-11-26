@@ -1,0 +1,64 @@
+---
+import Base from '../../layouts/Base.astro';
+import ExprSolver from '../../components/ExprSolver.astro';
+import { exprHTML } from '../../i18n/expr-text.js';
+import { generate } from '../../lib/worksheet.js';
+import { sheetHTML } from '../../i18n/sheet-render.js';
+
+const path = '/es/operaciones-combinadas/';
+const faqs = [
+  { q: '¿Qué se hace primero, la multiplicación o la división?', a: 'Ninguna va antes que la otra: tienen la misma prioridad y se hacen en el orden en que aparecen, de izquierda a derecha. 12 ÷ 3 × 2 = 4 × 2 = 8.' },
+  { q: '¿Y la suma o la resta?', a: 'Lo mismo: misma prioridad, de izquierda a derecha. 10 − 4 + 2 = 6 + 2 = 8, no 10 − 6 = 4.' },
+  { q: '¿Qué significa PAPOMUDAS?', a: 'Es una regla para recordar el orden: PAréntesis, POtencias, MUltiplicaciones y Divisiones, Sumas y restas. Ojo: multiplicaciones y divisiones van juntas, igual que sumas y restas.' },
+  { q: '¿Cómo se resuelven los corchetes y las llaves?', a: 'Se empieza por el paréntesis más interior y se va hacia fuera: primero ( ), después [ ] y por último { }.' },
+  { q: '¿Un número pegado a un paréntesis es una multiplicación?', a: 'Sí. 2(3 + 4) significa 2 × (3 + 4) = 14.' },
+];
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+const ex = ['18 − 2 × (3 + 4) ÷ 7', '[20 − (2 + 3) × 2] ÷ 5', '3^2 + 4 × 5 − 6'].map((e) => ({ e, ...exprHTML('es', e) }));
+const sheets = [1, 2, 3].map((level) => ({ level, html: sheetHTML('es', generate('combined', { level, count: 12, seed: 40 + level }).problems, { title: `Operaciones combinadas · nivel ${level}` }) }));
+---
+<Base lang="es" title="Operaciones combinadas paso a paso: calculadora y jerarquía"
+  description="Resuelve operaciones combinadas con paréntesis, corchetes y potencias paso a paso, en el orden correcto (jerarquía de las operaciones, PAPOMUDAS). Explicación, ejemplos, errores frecuentes y fichas."
+  alternates={{ es: path }} crumbs={[{ name: 'Operaciones combinadas', path }]} jsonLd={[faq]}>
+  <h1>Operaciones combinadas</h1>
+  <p class="lead">Escribe una operación con sumas, restas, multiplicaciones, divisiones, potencias y paréntesis: la calculadora la resuelve paso a paso en el orden correcto y te dice qué regla usa en cada momento.</p>
+
+  <ExprSolver lang="es" example="2 + 3 × (8 − 2)^2" placeholder="Por ejemplo: 5 + 4 × (6 − 2)" button="Resolver"
+    examples={['12 ÷ 3 × 2', '10 − 4 + 2', '(15 − 3) ÷ 4 + 2 × 5', '{2 + [3 × (4 − 1)]} ÷ 11', '1/2 + 1/3 × 3']} />
+
+  <section class="prose">
+    <h2>El orden de las operaciones</h2>
+    <ol>
+      <li><strong>Paréntesis</strong> ( ), corchetes [ ] y llaves { }, de dentro hacia fuera.</li>
+      <li><strong>Potencias y raíces.</strong></li>
+      <li><strong>Multiplicaciones y divisiones</strong>, de izquierda a derecha, en el orden en que aparecen.</li>
+      <li><strong>Sumas y restas</strong>, también de izquierda a derecha.</li>
+    </ol>
+    <p>En muchos colegios de Latinoamérica se recuerda con la palabra <strong>PAPOMUDAS</strong> (paréntesis, potencias, multiplicaciones y divisiones, sumas y restas). A esta regla también se le llama <em>jerarquía de las operaciones</em>.</p>
+
+    <h2>Ejemplos resueltos</h2>
+    {ex.map((x) => <div class="example" set:html={x.html} />)}
+
+    <h2>Errores frecuentes</h2>
+    <ul>
+      <li>Hacer las operaciones de izquierda a derecha sin mirar la prioridad: 2 + 3 × 4 = 14, no 20.</li>
+      <li>Hacer siempre la multiplicación antes que la división: 12 ÷ 3 × 2 = 8, no 2.</li>
+      <li>Hacer siempre la suma antes que la resta: 10 − 4 + 2 = 8, no 4.</li>
+      <li>Aplicar la potencia al signo: −3² = −9, porque la potencia solo afecta al 3. Si quieres elevar −3, escribe (−3)² = 9.</li>
+    </ul>
+  </section>
+
+  <h2>Fichas para imprimir</h2>
+  <p>Tres niveles: sin paréntesis, con división y paréntesis, y con potencias y corchetes. Soluciones en la segunda hoja. En el <a href="/es/fichas/?t=combined&level=2">generador de fichas</a> puedes crear todas las que quieras.</p>
+  {sheets.map((s) => (
+    <>
+      <div class="actions"><button type="button" class="button primary" data-print={`sheet-${s.level}`}>Imprimir nivel {s.level}</button></div>
+      <div data-print-area={`sheet-${s.level}`} set:html={s.html} />
+    </>
+  ))}
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{faqs.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>

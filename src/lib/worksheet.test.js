@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { generate, TOPICS, PRESETS, hasCarry, hasBorrow } from './worksheet.js';
 import { fromRoman, toRoman } from './roman.js';
+import { solveExpression } from './expr.js';
 
 test('carry and borrow detection', () => {
   assert.equal(hasCarry(25, 34), false);
@@ -48,4 +49,23 @@ test('missing-factor problems are not repeated', () => {
   const ps = generate('missingFactor', { tables: [7], count: 6, seed: 8 }).problems;
   assert.equal(new Set(ps.map((p) => p.result)).size, 6);
   assert.ok(ps.every((p) => p.operands[0] * p.answer === p.result));
+});
+
+test('combined operations: whole, non-negative answers that match the solver', () => {
+  for (const level of [1, 2, 3]) {
+    const ps = generate('combined', { level, count: 20, seed: level }).problems;
+    for (const p of ps) {
+      const r = solveExpression(p.operands[0]);
+      assert.equal(r.result.d, 1, p.operands[0]);
+      assert.equal(r.result.n, p.answer, p.operands[0]);
+      assert.ok(p.answer >= 0);
+    }
+  }
+});
+
+test('powers and roots have whole answers', () => {
+  for (const p of generate('power', { count: 30, seed: 9 }).problems) {
+    if (p.op === 'sqrt') assert.equal(p.answer * p.answer, p.operands[0]);
+    else assert.equal(p.operands[0] ** p.operands[1], p.answer);
+  }
 });

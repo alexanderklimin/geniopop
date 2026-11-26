@@ -1,0 +1,58 @@
+---
+import { exprHTML, EXPR } from '../i18n/expr-text.js';
+interface Props { lang: string; example?: string; placeholder: string; button: string; examples?: string[] }
+const { lang, example = '2 + 3 × (8 − 2)^2', placeholder, button, examples = [] } = Astro.props;
+const T = EXPR[lang];
+const r = exprHTML(lang, example);
+---
+<section class="fx ex" data-ex data-lang={lang}>
+  <form class="gl-form" data-ex-form novalidate>
+    <input name="e" value={example} autocomplete="off" spellcheck="false" placeholder={placeholder} aria-label={placeholder} />
+    <button class="fx-go">{button}</button>
+  </form>
+  <div class="ex-keys" aria-hidden="true">{['×', '÷', '−', '^', '(', ')', '[', ']'].map((k) => <button type="button" data-key={k}>{k}</button>)}</div>
+  {examples.length > 0 && <p class="ex-examples">{examples.map((x) => <button type="button" data-example={x}>{x}</button>)}</p>}
+  <p class="fx-err" data-ex-err role="alert"></p>
+  <div class="fx-result" data-ex-result><div><span>{T.result}</span><b set:html={r.result} /></div>{r.decimal && <div><span>{T.decimal}</span><b set:html={r.decimal} /></div>}</div>
+  <div data-ex-steps set:html={r.html} />
+</section>
+<script>
+  import { exprHTML, exprError, EXPR } from '../i18n/expr-text.js';
+  import { resolvePrefs } from '../lib/locale.js';
+  for (const root of document.querySelectorAll('[data-ex]')) {
+    const lang = root.dataset.lang, T = EXPR[lang];
+    const sep = resolvePrefs(lang, navigator.languages || []).decimalSep;
+    const form = root.querySelector('[data-ex-form]'), input = form.elements.e;
+    const run = () => {
+      const err = root.querySelector('[data-ex-err]');
+      err.textContent = '';
+      try {
+        const r = exprHTML(lang, input.value, sep);
+        root.querySelector('[data-ex-result]').innerHTML = `<div><span>${T.result}</span><b>${r.result}</b></div>${r.decimal ? `<div><span>${T.decimal}</span><b>${r.decimal}</b></div>` : ''}`;
+        root.querySelector('[data-ex-steps]').innerHTML = r.html;
+      } catch (e) { err.textContent = exprError(lang, e); root.querySelector('[data-ex-result]').innerHTML = ''; root.querySelector('[data-ex-steps]').innerHTML = ''; }
+    };
+    form.addEventListener('submit', (e) => { e.preventDefault(); run(); });
+    root.querySelectorAll('[data-key]').forEach((b) => b.addEventListener('click', () => {
+      const s = input.selectionStart ?? input.value.length, k = b.dataset.key;
+      input.value = input.value.slice(0, s) + k + input.value.slice(input.selectionEnd ?? s);
+      input.focus(); input.setSelectionRange(s + 1, s + 1);
+    }));
+    root.querySelectorAll('[data-example]').forEach((b) => b.addEventListener('click', () => { input.value = b.dataset.example; run(); }));
+  }
+</script>
+<style is:global>
+  .ex .gl-form input { font-family: inherit; letter-spacing: 0.02em; }
+  .ex-keys { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.6rem 0 0; }
+  .ex-keys button, .ex-examples button { min-width: 2.6rem; min-height: 2.4rem; border-radius: 10px; border: 2px solid var(--line); background: #fff; font: inherit; font-weight: 900; font-size: 1.1rem; cursor: pointer; }
+  .ex-keys button:hover, .ex-examples button:hover { border-color: var(--accent); }
+  .ex-examples { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.6rem 0 0; }
+  .ex-examples button { font-size: 0.9rem; font-weight: 700; padding: 0 0.6rem; }
+  .ex-start { font-size: 1.5rem; font-weight: 800; margin: 1.2rem 0 0.4rem; }
+  .ex-steps { list-style: none; padding: 0; margin: 0; counter-reset: s; }
+  .ex-steps li { display: grid; gap: 0.1rem; padding: 0.7rem 0 0.7rem 2.6rem; position: relative; border-top: 1px dashed var(--line); }
+  .ex-steps li::before { counter-increment: s; content: counter(s); position: absolute; left: 0; top: 0.75rem; width: 1.9rem; height: 1.9rem; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 900; font-size: 0.9rem; }
+  .ex-kind { font-size: 0.85rem; font-weight: 800; color: var(--accent-dark); }
+  .ex-op { color: var(--muted); }
+  .ex-line { font-size: 1.35rem; font-weight: 800; }
+</style>

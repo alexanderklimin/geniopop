@@ -5,6 +5,7 @@ import { createRng } from './rng.js';
 import { frac, reduce, add, sub, mul, div } from './fraction.js';
 import { toRoman } from './roman.js';
 import { gcd, lcm } from './numtheory.js';
+import { solveExpression } from './expr.js';
 
 const range = (digits) => [digits === 1 ? 0 : 10 ** (digits - 1), 10 ** digits - 1];
 const digitsOf = (n) => String(n).split('').reverse().map(Number);
@@ -90,6 +91,41 @@ const GENERATORS = {
     const x = unit * rng.int(1, Math.max(1, Math.floor(max / unit)));
     return { op: 'percentOf', operands: [p, x], answer: (p * x) / 100, step };
   },
+  // Combined operations with whole, non-negative results. level 1: + − ×, 2: with ÷ and brackets, 3: with powers and [ ]
+  combined(rng, { level = 1 } = {}) {
+    const n = (lo, hi) => rng.int(lo, hi);
+    const L1 = [
+      () => `${n(2, 20)} + ${n(2, 9)} × ${n(2, 9)}`,
+      () => `${n(20, 60)} − ${n(2, 5)} × ${n(2, 6)}`,
+      () => `${n(2, 9)} × ${n(2, 9)} + ${n(2, 9)} × ${n(2, 9)}`,
+      () => `${n(2, 9)} × ${n(2, 9)} − ${n(2, 9)}`,
+    ];
+    const L2 = [
+      () => { const b = n(2, 9); return `${n(2, 30)} + ${b * n(2, 9)} : ${b}`; },
+      () => `(${n(2, 15)} + ${n(2, 15)}) × ${n(2, 6)}`,
+      () => { const c = n(2, 6); return `${c * n(2, 9)} : ${c} + ${n(2, 9)} × ${n(2, 5)}`; },
+      () => `${n(30, 80)} − (${n(2, 9)} + ${n(2, 9)}) × ${n(2, 3)}`,
+      () => { const b = n(2, 9); return `(${n(10, 40)} − ${n(2, 9)}) + ${b * n(2, 6)} : ${b}`; },
+    ];
+    const L3 = [
+      () => `${n(2, 5)}^2 + ${n(2, 9)} × ${n(2, 5)}`,
+      () => `[${n(2, 9)} + (${n(2, 9)} − ${n(1, 2)})] × ${n(2, 4)}`,
+      () => `${n(2, 3)}^3 − ${n(2, 4)} × ${n(1, 2)}`,
+      () => { const b = n(2, 5); return `${b * b * n(1, 4)} : ${b}^2 + (${n(2, 9)} − ${n(1, 2)})`; },
+    ];
+    const pool = level === 1 ? L1 : level === 2 ? [...L1, ...L2] : [...L2, ...L3];
+    const text = rng.pick(pool)();
+    const r = solveExpression(text, { mul: '×', div: ':' });
+    if (r.result.d !== 1 || r.result.n < 0) return null;
+    return { op: 'combined', operands: [text.replace(/:/g, '÷')], answer: r.result.n };
+  },
+  // Powers and square roots with whole answers
+  power(rng, { kind = 'mixed', maxBase = 10 } = {}) {
+    const k = kind === 'mixed' ? rng.pick(['pow', 'pow', 'sqrt']) : kind;
+    if (k === 'sqrt') { const r = rng.int(2, 15); return { op: 'sqrt', operands: [r * r], answer: r }; }
+    const e = rng.int(2, 4), b = rng.int(2, e === 2 ? Math.max(maxBase, 12) : e === 3 ? Math.min(maxBase, 10) : Math.min(maxBase, 5));
+    return { op: 'pow', operands: [b, e], answer: b ** e };
+  },
   gcdLcm(rng, { max = 60, which = 'both' } = {}) {
     const k = rng.int(2, 6);
     const a = k * rng.int(2, Math.floor(max / k)), b = k * rng.int(2, Math.floor(max / k));
@@ -127,5 +163,5 @@ export const PRESETS = {
   3: [{ topic: 'table', tables: [6, 7, 8, 9] }, { topic: 'add', digits: 3 }, { topic: 'sub', digits: 3 }, { topic: 'div', divisorDigits: 1, quotientDigits: 1 }, { topic: 'missingFactor', tables: [2, 3, 4, 5, 6, 7, 8, 9] }],
   4: [{ topic: 'mul', digitsA: 3, digitsB: 1 }, { topic: 'div', divisorDigits: 1, quotientDigits: 2, remainder: true }, { topic: 'fraction', ops: ['+', '-'], sameDen: true }, { topic: 'roman', max: 100 }],
   5: [{ topic: 'mul', digitsA: 3, digitsB: 2 }, { topic: 'div', divisorDigits: 2, quotientDigits: 2 }, { topic: 'fraction', ops: ['+', '-'] }, { topic: 'simplify' }, { topic: 'percent' }],
-  6: [{ topic: 'fraction', ops: ['*', '/'] }, { topic: 'fraction', ops: ['+', '-', '*', '/'], maxDen: 12 }, { topic: 'gcdLcm' }, { topic: 'percent', percents: [5, 15, 30, 40, 60] }, { topic: 'roman', max: 3999 }],
+  6: [{ topic: 'combined', level: 2 }, { topic: 'fraction', ops: ['*', '/'] }, { topic: 'fraction', ops: ['+', '-', '*', '/'], maxDen: 12 }, { topic: 'gcdLcm' }, { topic: 'percent', percents: [5, 15, 30, 40, 60] }, { topic: 'roman', max: 3999 }],
 };
