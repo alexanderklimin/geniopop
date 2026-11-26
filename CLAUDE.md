@@ -1,6 +1,6 @@
 # Math Kids — интерактивная математика для школьников на многих языках
 
-**Бренд и домен (решение пользователя 2026-11-26): GenioPop, geniopop.com** (ещё не куплен). Репозиторий `alexanderklimin/geniopop`, воркер `geniopop`, превью https://geniopop.alexander-klimin.workers.dev, deploy key /root/.ssh/geniopop_deploy, алиас `github-geniopop`. Тема шире математики (опыты, логика), поэтому имя без «math/num» и без «kids».
+**Бренд и домен (решение пользователя 2026-11-26): GenioPop, geniopop.com** (куплен 2026-11-26, NS и почта Cloudflare). Репозиторий `alexanderklimin/geniopop`, воркер `geniopop`, превью https://geniopop.alexander-klimin.workers.dev, deploy key /root/.ssh/geniopop_deploy, алиас `github-geniopop`. Тема шире математики (опыты, логика), поэтому имя без «math/num» и без «kids».
 
 Сайт для органики: тренажёры, калькуляторы с решением по шагам, генератор заданий для печати, мини-игры и задача дня, позже раздел «наука дома» (опыты).
 **Решение пользователя (2026-11-26):** не только испанский. Берём языки, где большой спрос и слабая выдача. Один движок, один домен, подпапки по языкам. Приоритет языков и данные — в research/lang_priority.md. Волна A: es, de, it. Волна B: ar, pt-BR, fr. Волна C: tr, ja, nl, ko, pl. Английский и русский не берём.

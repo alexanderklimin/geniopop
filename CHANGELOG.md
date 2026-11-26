@@ -18,3 +18,5 @@
 - Первый коммит be4dd8a запушен в alexanderklimin/geniopop (main). Дальше пользователь подключает репозиторий в Cloudflare Workers Builds.
 - Автор: Anna Ryabova (как на numeroastral), био переписано под обучение (без нумерологии и астрологии), es/de/it, страницы /es/sobre-nosotros/anna-ryabova/, /de/ueber-uns/…, /it/chi-siamo/… с Person/ProfilePage. Фото из /opt/astro-es. Тексты — черновик до утверждения Анной. Почта hola@geniopop.com.
 - Био автора пересобрано только из её собственного текста (жизнь и работа); додуманные фразы убраны. de/it — перевод испанской версии с numeroastral.
+- Пользователь купил geniopop.com (NS Cloudflare), настроил Email Routing (MX route1–3.mx.cloudflare.net) и подключил Workers Builds. geniopop.com уже отдаёт сайт (200, www → 301 на корень), везде X-Robots-Tag: noindex — индексации нет до «да» к запуску.
+- GA4 подключён: G-3SBN0VHD5T (поток geniopop.com), только на боевом хосте, Consent Mode v2 как в plantas-es, allow_google_signals и allow_ad_personalization_signals = false на всём сайте. На детских страницах (kidsPage) счётчика нет. Корень / и 404 без счётчика.

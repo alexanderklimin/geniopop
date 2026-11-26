@@ -1,5 +1,5 @@
 // Public GA4 measurement ID (not a secret). Empty keeps analytics and the consent banner off.
-export const GA_ID = '';
+export const GA_ID = 'G-3SBN0VHD5T';
 // Analytics runs only on the production host, so previews do not pollute the data.
 export const ANALYTICS_HOST = 'geniopop.com';
 export const SITE_NAME = 'GenioPop';
