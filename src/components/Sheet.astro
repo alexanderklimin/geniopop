@@ -54,10 +54,10 @@ const problems = build(tables, seed, withMissing);
 <style is:global>
   .sheet { position: relative; background: #fff; border: 2px solid var(--ink); border-radius: 6px 6px 22px 22px; padding: 1.5rem 1.4rem 1.25rem; box-shadow: 6px 6px 0 var(--accent); background-image: linear-gradient(var(--accent) 0 8px, transparent 8px); }
   .sheet-head { font-weight: 700; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; justify-content: space-between; margin-bottom: 1rem; }
-  .sheet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 0.9rem 1.5rem; padding-left: 1.6rem; font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+  .sheet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(10rem, 100%), 1fr)); gap: 0.9rem 1.5rem; padding-left: 1.6rem; font-size: 1.3rem; font-variant-numeric: tabular-nums; }
   .blank { display: inline-block; min-width: 3.2rem; border-bottom: 2px solid var(--ink); vertical-align: -0.15em; }
   .sheet-answers { margin-top: 1.25rem; font-size: 0.9rem; color: var(--muted); }
-  .sheet-key { display: grid; grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr)); gap: 0.25rem 1rem; padding: 0; list-style-position: inside; font-variant-numeric: tabular-nums; }
+  .sheet-key { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(5.5rem, 100%), 1fr)); gap: 0.25rem 1rem; padding: 0; list-style-position: inside; font-variant-numeric: tabular-nums; }
   @media print {
     .sheet { border: 0; padding: 0; box-shadow: none; background-image: none; }
     .sheet-grid { grid-template-columns: repeat(3, 1fr); font-size: 15pt; gap: 9mm 8mm; }

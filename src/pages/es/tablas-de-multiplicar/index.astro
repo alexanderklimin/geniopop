@@ -56,6 +56,6 @@ const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: 
 </Base>
 
 <style>
-  .tables-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); }
+  .tables-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr)); }
   @media print { .tables-grid { grid-template-columns: repeat(4, 1fr); gap: 4mm; font-size: 11pt; } }
 </style>

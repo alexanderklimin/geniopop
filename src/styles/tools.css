@@ -37,7 +37,7 @@
 
 /* single-line tool forms */
 .gl-form { display: flex; flex-wrap: wrap; gap: 0.75rem; }
-.gl-form input { flex: 1 1 14rem; font: inherit; font-size: 1.3rem; font-weight: 700; padding: 0.5rem 0.8rem; border: 2px solid var(--line); border-radius: 12px; }
+.gl-form input { flex: 1 1 10rem; min-width: 0; width: 100%; font: inherit; font-size: 1.3rem; font-weight: 700; padding: 0.5rem 0.8rem; border: 2px solid var(--line); border-radius: 12px; }
 .gl-form input:focus { outline: none; border-color: var(--accent); }
 
 /* long division (shared by /division/ and the home playground) */
@@ -65,3 +65,7 @@
   .ld-row.brk { border-top: 2px solid var(--ink); border-left: 2px solid var(--ink); border-top-left-radius: 10px; }
   .ld-row.quot span { color: var(--accent-dark); font-weight: 700; }
   .rep { text-decoration: overline; }
+
+/* never wider than the screen on small phones */
+.fx, .trainer, .play, .ws { max-width: 100%; }
+.fx select { max-width: 100%; }

@@ -37,8 +37,8 @@ const problems = generate(topic, { ...params, count, seed }).problems;
 </script>
 
 <style is:global>
-  .fsheet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 1.4rem 2rem; padding-left: 1.8rem; font-size: 1.25rem; }
+  .fsheet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(13rem, 100%), 1fr)); gap: 1.4rem 2rem; padding-left: 1.8rem; font-size: 1.25rem; }
   .fsheet-grid .blank { min-width: 3rem; }
-  .fsheet-key { display: grid; grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr)); gap: 0.6rem 1rem; padding-left: 1.6rem; color: var(--ink); }
+  .fsheet-key { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(8rem, 100%), 1fr)); gap: 0.6rem 1rem; padding-left: 1.6rem; color: var(--ink); }
   @media print { .fsheet-grid { grid-template-columns: repeat(3, 1fr); font-size: 15pt; gap: 14mm 8mm; } }
 </style>

@@ -44,7 +44,7 @@ const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: 
   </section>
 </Base>
 <style>
-  .courses { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 0.9rem; }
+  .courses { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(13rem, 100%), 1fr)); gap: 0.9rem; }
   .courses a { display: flex; flex-direction: column; gap: 0.15rem; padding: 1rem 1.1rem; border-radius: 18px; background: #fff; border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--accent); color: var(--ink); text-decoration: none; transition: transform 0.12s; }
   .courses a:hover { transform: translate(-2px, -2px); }
   .courses strong { font-size: 1.25rem; font-weight: 900; }

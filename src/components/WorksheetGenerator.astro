@@ -117,7 +117,8 @@ const html = sheetHTML(lang, first, { title: T.title });
   .gen-form { display: grid; gap: 1rem; }
   .gen-form label { display: flex; flex-direction: column; gap: 0.25rem; font-weight: 800; font-size: 0.9rem; color: var(--muted); }
   .gen-form select { font: inherit; font-size: 1.05rem; font-weight: 700; color: var(--ink); padding: 0.55rem 0.7rem; border: 2px solid var(--line); border-radius: 12px; background: #fff; }
-  .gen-topic select { font-size: 1.2rem; font-weight: 900; border-color: var(--ink); }
+  .gen-topic select { font-size: 1.2rem; font-weight: 900; border-color: var(--ink); width: 100%; max-width: 26rem; }
+  .gen-form label, .gen-form select { min-width: 0; max-width: 100%; }
   .gen-controls, .gen-row { display: flex; flex-wrap: wrap; gap: 0.9rem 1.2rem; }
   .gen-controls :global(label) { display: flex; flex-direction: column; gap: 0.25rem; font-weight: 800; font-size: 0.9rem; color: var(--muted); }
   .gen-controls :global(select) { font: inherit; font-size: 1.05rem; font-weight: 700; color: var(--ink); padding: 0.55rem 0.7rem; border: 2px solid var(--line); border-radius: 12px; background: #fff; }

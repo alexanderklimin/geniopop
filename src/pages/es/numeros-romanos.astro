@@ -76,10 +76,11 @@ const sheet = generate('roman', { count: 16, seed: 21, max: 100 }).problems;
   </section>
 </Base>
 <style>
-  .rm-sym { border-collapse: collapse; font-size: 1.2rem; }
-  .rm-sym th, .rm-sym td { border: 1px solid var(--line); padding: 0.4rem 0.9rem; text-align: center; background: #fff; }
+  .rm-sym { border-collapse: collapse; font-size: 1.2rem; width: 100%; max-width: 32rem; table-layout: fixed; }
+  .rm-sym th, .rm-sym td { border: 1px solid var(--line); padding: 0.4rem 0.1rem; text-align: center; background: #fff; }
+  @media (max-width: 420px) { .rm-sym { font-size: 0.95rem; } }
   .rm-sym th { color: var(--accent-dark); }
-  .rm-table { display: grid; grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); gap: 0.25rem 1rem; font-variant-numeric: tabular-nums; }
+  .rm-table { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(7.5rem, 100%), 1fr)); gap: 0.25rem 1rem; font-variant-numeric: tabular-nums; }
   .rm-table div { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--line); padding: 0.15rem 0; }
   .rm-table span { color: var(--muted); }
   @media print { .rm-table { grid-template-columns: repeat(5, 1fr); font-size: 10pt; gap: 0 6mm; } }

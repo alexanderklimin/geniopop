@@ -4,10 +4,10 @@
 .ws-head strong { font-size: 1.15rem; flex-basis: 100%; }
 .ws-grid { display: grid; gap: 1.6rem 1.8rem; padding-left: 1.8rem; margin: 0; font-size: 1.3rem; font-variant-numeric: tabular-nums; }
 .ws-grid li::marker { color: var(--muted); font-size: 0.8em; font-weight: 700; }
-.is-col .ws-grid { grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); }
-.is-line .ws-grid { grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); }
-.is-frac .ws-grid { grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 2rem; }
-.is-div .ws-grid { grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); row-gap: 7rem; }
+.is-col .ws-grid { grid-template-columns: repeat(auto-fill, minmax(min(7.5rem, 100%), 1fr)); }
+.is-line .ws-grid { grid-template-columns: repeat(auto-fill, minmax(min(12rem, 100%), 1fr)); }
+.is-frac .ws-grid { grid-template-columns: repeat(auto-fill, minmax(min(13rem, 100%), 1fr)); gap: 2rem; }
+.is-div .ws-grid { grid-template-columns: repeat(auto-fill, minmax(min(13rem, 100%), 1fr)); row-gap: 7rem; }
 .ws .blank { display: inline-block; min-width: 3.2rem; border-bottom: 2px solid var(--ink); vertical-align: -0.15em; }
 .ws small { color: var(--muted); font-size: 0.7em; }
 .col { display: inline-grid; grid-template-columns: calc(var(--w) * 1ch + 0.6ch); font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 1.35rem; line-height: 1.45; vertical-align: top; }
@@ -16,7 +16,7 @@
 .col .line { border-top: 2px solid var(--ink); height: 0.2rem; }
 .col .ans { height: 1.6em; }
 .ws-answers { margin-top: 1.5rem; padding-top: 1rem; border-top: 2px dashed var(--line); color: var(--muted); font-size: 0.95rem; }
-.ws-answers ol { display: grid; grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); gap: 0.3rem 1rem; padding-left: 1.6rem; color: var(--ink); }
+.ws-answers ol { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(7.5rem, 100%), 1fr)); gap: 0.3rem 1rem; padding-left: 1.6rem; color: var(--ink); }
 @media print {
   .ws { border: 0; padding: 0; box-shadow: none; background-image: none; margin: 0; }
   .ws-head strong { font-size: 14pt; }

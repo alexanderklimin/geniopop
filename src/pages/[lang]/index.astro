@@ -77,7 +77,7 @@ const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: 
   .trust { list-style: none; padding: 0; margin: 1.4rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
   .trust li { display: flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 0.95rem; color: var(--muted); }
   .trust svg { color: var(--pop); flex-shrink: 0; }
-  .tools { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); gap: 0.9rem; }
+  .tools { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(15.5rem, 100%), 1fr)); gap: 0.9rem; }
   .tools a { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 0.8rem; align-items: center; padding: 0.9rem 1rem; border-radius: 18px; background: #fff; border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--c); color: var(--ink); text-decoration: none; transition: transform 0.12s, box-shadow 0.12s; height: 100%; }
   .tools a:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--c); }
   .tools .ti { grid-row: 1 / 3; }
@@ -91,18 +91,18 @@ const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: 
   .tnums a:hover { transform: translateY(-2px); }
   .tnums a.wide { background: #fff; color: var(--ink); border: 2px solid var(--ink); box-shadow: 0 3px 0 var(--ink); font-size: 1rem; }
 
-  .groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1rem; }
+  .groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); gap: 1rem; }
   .grp { background: #fff; border: 2px solid var(--line); border-radius: var(--radius); padding: 1rem 1.2rem; border-top: 6px solid var(--c); }
   .grp h3 { display: flex; align-items: center; gap: 0.6rem; margin: 0 0 0.6rem; font-size: 1.2rem; }
   .grp .ti { width: 2.3rem; height: 2.3rem; border-radius: 11px; }
   .grp ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.3rem; }
   .grp a { color: var(--ink); font-weight: 700; text-decoration-color: var(--c); text-decoration-thickness: 2px; }
 
-  .courses { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr)); gap: 0.7rem; }
+  .courses { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(10.5rem, 100%), 1fr)); gap: 0.7rem; }
   .courses a { display: flex; flex-direction: column; padding: 0.8rem 1rem; border-radius: 16px; background: #fff; border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--c-fichas); color: var(--ink); text-decoration: none; }
   .courses strong { font-weight: 900; } .courses span { color: var(--muted); font-size: 0.85rem; font-weight: 700; }
 
-  .steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; counter-reset: st; }
+  .steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); gap: 1rem; counter-reset: st; }
   .steps li { position: relative; background: #fff; border: 2px solid var(--line); border-radius: var(--radius); padding: 1.1rem 1.1rem 1.1rem 3.8rem; display: grid; }
   .steps li::before { counter-increment: st; content: counter(st); position: absolute; left: 1rem; top: 1rem; width: 2.1rem; height: 2.1rem; border-radius: 50%; background: var(--pop); color: #fff; display: grid; place-items: center; font-weight: 900; }
   .steps span { color: var(--muted); }

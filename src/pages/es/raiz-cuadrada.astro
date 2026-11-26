@@ -111,7 +111,7 @@ const sheet = sheetHTML('es', generate('power', { kind: 'sqrt', count: 14, seed:
   });
 </script>
 <style>
-  .sq { display: grid; grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr)); gap: 0.25rem 1rem; font-variant-numeric: tabular-nums; margin: 0.5rem 0; }
+  .sq { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(6.5rem, 100%), 1fr)); gap: 0.25rem 1rem; font-variant-numeric: tabular-nums; margin: 0.5rem 0; }
   .sq div { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--line); padding: 0.15rem 0; }
   .sq span { color: var(--muted); font-weight: 700; }
   .rt select { width: auto; font-size: 1rem; }

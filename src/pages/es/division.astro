@@ -71,7 +71,7 @@ const sheet = [...sheet1, ...sheet2];
 </Base>
 <style>
   .example { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 0.25rem 1.1rem; display: inline-block; }
-  .div-sheet { grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); font-size: 1.25rem; row-gap: 6rem; }
+  .div-sheet { grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr)); font-size: 1.25rem; row-gap: 6rem; }
   @media print { .div-sheet { grid-template-columns: repeat(3, 1fr); row-gap: 50mm; } }
-  .sheet-key { grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)) !important; }
+  .sheet-key { grid-template-columns: repeat(auto-fill, minmax(min(9rem, 100%), 1fr)) !important; }
 </style>

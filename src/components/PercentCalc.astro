@@ -54,7 +54,7 @@ const fmt = (n: number) => String(n).replace('.', prefs.decimalSep);
 </script>
 
 <style>
-  .pc { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr)); margin: 1.5rem 0; }
+  .pc { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(19rem, 100%), 1fr)); margin: 1.5rem 0; }
   .pc-card { margin: 0; }
   .pc-q { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; font-weight: 700; font-size: 1.1rem; margin: 0; }
   .pc-q input { width: 6rem; font: inherit; font-size: 1.2rem; text-align: center; padding: 0.35rem; border: 2px solid var(--line); border-radius: 10px; }
