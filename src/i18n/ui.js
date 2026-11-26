@@ -114,6 +114,19 @@ export const SECTION_STYLE = [
   { key: 'ciencia', icon: 'flask' },
 ];
 
+// Mobile bottom bar (icons) per language; the last item opens the full topic sheet.
+export const TABBAR = {
+  es: [
+    { label: 'Inicio', href: '/es/', icon: 'home', key: 'home' },
+    { label: 'Tablas', href: '/es/tablas-de-multiplicar/', icon: 'grid', key: 'tablas' },
+    { label: 'Fracciones', href: '/es/fracciones/', icon: 'pizza', key: 'fracciones' },
+    { label: 'Fichas', href: '/es/fichas/', icon: 'sheet', key: 'fichas' },
+  ],
+  more: { es: 'Más', de: 'Mehr', it: 'Altro' },
+  close: { es: 'Cerrar', de: 'Schließen', it: 'Chiudi' },
+  allTopics: { es: 'Todos los temas', de: 'Alle Themen', it: 'Tutti gli argomenti' },
+};
+
 export const NAV = {
   es: [
     { label: 'Tablas', href: '/es/tablas-de-multiplicar/', key: 'tablas' },

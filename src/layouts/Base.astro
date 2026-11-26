@@ -7,7 +7,8 @@ import '../styles/global.css';
 import '../styles/tools.css';
 import '../styles/sheet.css';
 import { SITE_NAME } from '../data/site.js';
-import { LANG_NAMES, OG_LOCALE, LIVE, NAV, sectionOf, t } from '../i18n/ui.js';
+import { LANG_NAMES, OG_LOCALE, LIVE, NAV, TABBAR, sectionOf, t } from '../i18n/ui.js';
+import { HOME } from '../data/home.js';
 import { authorPath } from '../data/author.js';
 import { LEGAL, legalPath } from '../data/legal.js';
 
@@ -32,6 +33,8 @@ const fullTitle = branded.length > 65 ? title : branded;
 const home = `/${lang}/`;
 const section = sectionOf(Astro.url.pathname);
 const nav = NAV[lang] ?? [];
+const tabs = TABBAR[lang] ?? [];
+const groups = HOME[lang]?.groups ?? [];
 const current = Astro.url.pathname;
 const legalLike = /\/(privacidad|aviso-legal|contacto|datenschutz|impressum|kontakt|privacy|note-legali|contatti|sobre-nosotros|ueber-uns|chi-siamo)\//.test(current);
 const showRelated = lang === 'es' && current !== home && !legalLike;
@@ -128,6 +131,37 @@ if (trail.length) schemas.push({
         </div>
       </div>
     </footer>
+    {tabs.length > 0 && (
+      <>
+        <nav class="tabbar" aria-label={ui.menu}>
+          {tabs.map((x) => <a href={x.href} style={`--c: var(--c-${x.key === 'home' ? 'pop' : x.key})`} aria-current={(x.key === 'home' ? current === x.href : current.startsWith(x.href)) ? 'page' : undefined}><i><Icon name={x.icon} size={22} /></i><span>{x.label}</span></a>)}
+          <button type="button" data-sheet-open aria-expanded="false" aria-controls="topic-sheet" style="--c: var(--c-juegos)"><i class="dots"><b></b><b></b><b></b></i><span>{TABBAR.more[lang]}</span></button>
+        </nav>
+        <div class="tsheet" id="topic-sheet" hidden>
+          <div class="tsheet-panel" role="dialog" aria-modal="true" aria-label={TABBAR.allTopics[lang]}>
+            <div class="tsheet-head"><strong>{TABBAR.allTopics[lang]}</strong><button type="button" data-sheet-close aria-label={TABBAR.close[lang]}><Icon name="close" size={24} /></button></div>
+            {groups.map((g) => (
+              <section style={`--c: var(--c-${g.c})`}>
+                <h3><span class="tsheet-ic"><Icon name={g.icon} size={18} /></span>{g.title}</h3>
+                <ul>{g.links.filter(([, h]) => g.c !== 'tablas' || !/tabla-del-/.test(h)).map(([l, h]) => <li><a href={h} aria-current={current === h ? 'page' : undefined}>{l}</a></li>)}</ul>
+                {g.c === 'tablas' && lang === 'es' && <ul class="tsheet-nums">{Array.from({ length: 12 }, (_, i) => i + 1).map((n) => <li><a href={`/es/tablas-de-multiplicar/tabla-del-${n}/`} aria-current={current === `/es/tablas-de-multiplicar/tabla-del-${n}/` ? 'page' : undefined}>×{n}</a></li>)}</ul>}
+              </section>
+            ))}
+            <section style="--c: var(--c-fichas)"><h3><span class="tsheet-ic"><Icon name="sheet" size={18} /></span>Fichas</h3><ul><li><a href="/es/fichas/">Generador de fichas</a></li></ul></section>
+          </div>
+        </div>
+        <script is:inline>
+          (function () {
+            var sheet = document.getElementById('topic-sheet'), open = document.querySelector('[data-sheet-open]');
+            if (!sheet || !open) return;
+            function set(v) { sheet.hidden = !v; open.setAttribute('aria-expanded', String(v)); document.documentElement.style.overflow = v ? 'hidden' : ''; }
+            open.addEventListener('click', function () { set(sheet.hidden); });
+            sheet.addEventListener('click', function (e) { if (e.target === sheet || e.target.closest('[data-sheet-close]')) set(false); });
+            document.addEventListener('keydown', function (e) { if (e.key === 'Escape') set(false); });
+          })();
+        </script>
+      </>
+    )}
     <Analytics lang={lang} />
     <script is:inline>
       // [data-print="name"] prints only the matching [data-print-area="name"] (and its answers page)
