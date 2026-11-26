@@ -1,0 +1,25 @@
+---
+import Base from '../../layouts/Base.astro';
+import { LIVE, t } from '../../i18n/ui.js';
+
+export function getStaticPaths() {
+  return LIVE.map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params as { lang: string };
+const ui = t(lang);
+const alternates = Object.fromEntries(LIVE.map((l) => [l, `/${l}/`]));
+---
+<Base lang={lang} title={ui.home_title} description={ui.home_description} alternates={alternates}>
+  <h1>{ui.home_h1}</h1>
+  <p class="lead">{ui.home_lead}</p>
+  <ul class="cards">
+    {ui.sections.map((s) => (
+      <li class="card">
+        <h2>{s.title}</h2>
+        <p>{s.text}</p>
+        <span class="tag">{ui.soon}</span>
+      </li>
+    ))}
+  </ul>
+</Base>

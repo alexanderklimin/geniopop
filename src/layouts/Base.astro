@@ -1,0 +1,97 @@
+---
+import Analytics from '../components/Analytics.astro';
+import { SITE_NAME } from '../data/site.js';
+import { LANG_NAMES, OG_LOCALE, t } from '../i18n/ui.js';
+
+interface Props {
+  lang: string;               // 'es' | 'de' | 'it'
+  title: string;
+  description: string;
+  alternates?: Record<string, string>; // hreflang → path of the same page in other languages
+  xDefault?: string;          // path for hreflang x-default (the language picker)
+  noindex?: boolean;
+  kidsPage?: boolean;         // child-directed page: no third-party trackers, ads with TFAT later
+}
+
+const { lang, title, description, alternates = {}, xDefault = '/', noindex = false, kidsPage = false } = Astro.props;
+const ui = t(lang);
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const absolute = (path: string) => new URL(path, Astro.site).href;
+const branded = `${title} | ${SITE_NAME}`;
+const fullTitle = branded.length > 65 ? title : branded;
+const home = `/${lang}/`;
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#ff6b35" />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    {Object.entries(alternates).map(([l, p]) => <link rel="alternate" hreflang={l} href={absolute(p)} />)}
+    {Object.keys(alternates).length > 0 && <link rel="alternate" hreflang="x-default" href={absolute(xDefault)} />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:locale" content={OG_LOCALE[lang]} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+  </head>
+  <body data-kids={kidsPage ? '1' : undefined}>
+    <a class="skip" href="#main">{ui.skip}</a>
+    <header class="site-header">
+      <div class="wrap bar">
+        <a class="brand" href={home} aria-label={`${SITE_NAME}, ${ui.home}`}>Genio<span>Pop</span></a>
+        <nav class="langs" aria-label={ui.language}>
+          {Object.entries(alternates).map(([l, p]) => (
+            <a href={p} hreflang={l} lang={l} aria-current={l === lang ? 'true' : undefined}>{l.toUpperCase()}</a>
+          ))}
+        </nav>
+      </div>
+    </header>
+    <main id="main" class="wrap">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="wrap">
+        <p>{ui.footerNote}</p>
+        <p class="footer-langs">{Object.entries(alternates).map(([l, p]) => <a href={p} hreflang={l} lang={l}>{LANG_NAMES[l]}</a>)}</p>
+      </div>
+    </footer>
+    {!kidsPage && <Analytics lang={lang} />}
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --pop: #ff6b35; --pop-dark: #c8461a; --ink: #1d2433; --muted: #5a6475; --paper: #fffaf5; --card: #fff; --line: #f0e2d6;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    color: var(--ink); background: var(--paper); line-height: 1.55;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap { width: min(100% - 2rem, 68rem); margin-inline: auto; }
+  .skip { position: absolute; left: -999px; }
+  .skip:focus { left: 1rem; top: 1rem; z-index: 30; background: #fff; padding: 0.5rem 1rem; }
+  .site-header { background: #fff; border-bottom: 1px solid var(--line); }
+  .bar { display: flex; align-items: center; justify-content: space-between; min-height: 3.75rem; gap: 1rem; }
+  .brand { font-weight: 800; font-size: 1.35rem; color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
+  .brand span { color: var(--pop); }
+  .langs { display: flex; gap: 0.25rem; }
+  .langs a { padding: 0.45rem 0.6rem; border-radius: 8px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+  .langs a[aria-current] { background: var(--paper); color: var(--pop-dark); }
+  main { padding-block: 2rem 3rem; }
+  h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.15; margin: 0 0 0.75rem; }
+  a { color: var(--pop-dark); }
+  .lead { font-size: 1.15rem; color: var(--muted); max-width: 40rem; margin: 0 0 2rem; }
+  .cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); padding: 0; list-style: none; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 1.1rem 1.2rem; }
+  .card h2 { font-size: 1.15rem; margin: 0 0 0.35rem; }
+  .card p { margin: 0; color: var(--muted); }
+  .tag { display: inline-block; margin-top: 0.6rem; font-size: 0.8rem; font-weight: 700; color: var(--pop-dark); background: var(--paper); border-radius: 999px; padding: 0.15rem 0.6rem; }
+  .site-footer { border-top: 1px solid var(--line); background: #fff; color: var(--muted); font-size: 0.92rem; padding-block: 1.25rem; }
+  .footer-langs { display: flex; gap: 1rem; }
+</style>

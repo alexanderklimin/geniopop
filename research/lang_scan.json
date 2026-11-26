@@ -1,0 +1,1010 @@
+{
+ "es": [
+  {
+   "concept": "table",
+   "k": "tablas de multiplicar",
+   "v": 1220000,
+   "hi": 0.4
+  },
+  {
+   "concept": "table_game",
+   "k": "juegos de tablas de multiplicar",
+   "v": 33100,
+   "hi": 0.71
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "calculadora de fracciones",
+   "v": 18100,
+   "hi": 1.72
+  },
+  {
+   "concept": "math_games",
+   "k": "juegos de matematicas",
+   "v": 27100,
+   "hi": 0.67
+  },
+  {
+   "concept": "worksheets",
+   "k": "fichas de matematicas para imprimir",
+   "v": 590,
+   "hi": 0
+  },
+  {
+   "concept": "roman",
+   "k": "numeros romanos",
+   "v": 450000,
+   "hi": 0.02
+  },
+  {
+   "concept": "division",
+   "k": "division",
+   "v": 450000,
+   "hi": 2.33
+  },
+  {
+   "concept": "percent",
+   "k": "calculadora de porcentajes",
+   "v": 60500,
+   "hi": 1.15
+  },
+  {
+   "concept": "grade2",
+   "k": "matematicas segundo grado",
+   "v": 0,
+   "hi": 0
+  }
+ ],
+ "pt": [
+  {
+   "concept": "table",
+   "k": "tabuada",
+   "v": 368000,
+   "hi": 0.8
+  },
+  {
+   "concept": "table_game",
+   "k": "jogo da tabuada",
+   "v": 6600,
+   "hi": 0.37
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "calculadora de fração",
+   "v": 2900,
+   "hi": 0.42
+  },
+  {
+   "concept": "math_games",
+   "k": "jogos de matematica",
+   "v": 33100,
+   "hi": 0.19
+  },
+  {
+   "concept": "worksheets",
+   "k": "atividades de matematica para imprimir",
+   "v": 880,
+   "hi": 0.92
+  },
+  {
+   "concept": "roman",
+   "k": "numeros romanos",
+   "v": 450000,
+   "hi": 0.02
+  },
+  {
+   "concept": "division",
+   "k": "continhas de dividir",
+   "v": 27100,
+   "hi": 0.7
+  },
+  {
+   "concept": "percent",
+   "k": "calculadora de porcentagem",
+   "v": 74000,
+   "hi": 0.16
+  },
+  {
+   "concept": "grade2",
+   "k": "atividades de matemática 2 ano",
+   "v": 33100,
+   "hi": 1.01
+  }
+ ],
+ "en": [
+  {
+   "concept": "table",
+   "k": "multiplication table",
+   "v": 550000,
+   "hi": 2.64
+  },
+  {
+   "concept": "table_game",
+   "k": "times tables games",
+   "v": 246000,
+   "hi": 2.09
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "fraction calculator",
+   "v": 673000,
+   "hi": 1.56
+  },
+  {
+   "concept": "math_games",
+   "k": "math games",
+   "v": 823000,
+   "hi": 1.89
+  },
+  {
+   "concept": "worksheets",
+   "k": "math worksheets",
+   "v": 90500,
+   "hi": 2.19
+  },
+  {
+   "concept": "roman",
+   "k": "roman numerals",
+   "v": 1000000,
+   "hi": 2.21
+  },
+  {
+   "concept": "division",
+   "k": "long division",
+   "v": 135000,
+   "hi": 2.22
+  },
+  {
+   "concept": "percent",
+   "k": "percentage calculator",
+   "v": 1830000,
+   "hi": 0.55
+  },
+  {
+   "concept": "grade2",
+   "k": "2nd grade math",
+   "v": 0,
+   "hi": 0
+  }
+ ],
+ "de": [
+  {
+   "concept": "table",
+   "k": "einmaleins",
+   "v": 33100,
+   "hi": 2.48
+  },
+  {
+   "concept": "table_game",
+   "k": "einmaleins spiele",
+   "v": 18100,
+   "hi": 2.32
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "bruchrechner",
+   "v": 27100,
+   "hi": 2.19
+  },
+  {
+   "concept": "math_games",
+   "k": "mathe spiele",
+   "v": 2400,
+   "hi": 1.66
+  },
+  {
+   "concept": "worksheets",
+   "k": "mathe arbeitsblätter",
+   "v": 1600,
+   "hi": 2.19
+  },
+  {
+   "concept": "roman",
+   "k": "römische zahlen",
+   "v": 135000,
+   "hi": 1.44
+  },
+  {
+   "concept": "division",
+   "k": "schriftliche division",
+   "v": 49500,
+   "hi": 2.19
+  },
+  {
+   "concept": "percent",
+   "k": "prozentrechner",
+   "v": 301000,
+   "hi": 2.19
+  },
+  {
+   "concept": "grade2",
+   "k": "mathe 2 klasse",
+   "v": 0,
+   "hi": 0
+  }
+ ],
+ "fr": [
+  {
+   "concept": "table",
+   "k": "table de multiplication",
+   "v": 201000,
+   "hi": 1.61
+  },
+  {
+   "concept": "table_game",
+   "k": "jeux table de multiplication",
+   "v": 12100,
+   "hi": 0.72
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "calculatrice fraction",
+   "v": 4400,
+   "hi": 1.42
+  },
+  {
+   "concept": "math_games",
+   "k": "jeux de maths",
+   "v": 12100,
+   "hi": 3.13
+  },
+  {
+   "concept": "worksheets",
+   "k": "fiches maths à imprimer",
+   "v": 0,
+   "hi": 0
+  },
+  {
+   "concept": "roman",
+   "k": "chiffres romains",
+   "v": 90500,
+   "hi": 2.19
+  },
+  {
+   "concept": "division",
+   "k": "division posée",
+   "v": 4400,
+   "hi": 0
+  },
+  {
+   "concept": "percent",
+   "k": "calcul pourcentage",
+   "v": 90500,
+   "hi": 21.9
+  },
+  {
+   "concept": "grade2",
+   "k": "maths ce1",
+   "v": 2900,
+   "hi": 0.96
+  }
+ ],
+ "it": [
+  {
+   "concept": "table",
+   "k": "tabelline",
+   "v": 74000,
+   "hi": 5.63
+  },
+  {
+   "concept": "table_game",
+   "k": "giochi tabelline",
+   "v": 8100,
+   "hi": 0.95
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "calcolatrice frazioni",
+   "v": 5400,
+   "hi": 0.14
+  },
+  {
+   "concept": "math_games",
+   "k": "giochi di matematica",
+   "v": 14800,
+   "hi": 2.1
+  },
+  {
+   "concept": "worksheets",
+   "k": "schede matematica",
+   "v": 1900,
+   "hi": 0
+  },
+  {
+   "concept": "roman",
+   "k": "numeri romani",
+   "v": 49500,
+   "hi": 0
+  },
+  {
+   "concept": "division",
+   "k": "divisioni in colonna",
+   "v": 14800,
+   "hi": 2.05
+  },
+  {
+   "concept": "percent",
+   "k": "calcolo percentuale",
+   "v": 90500,
+   "hi": 0
+  },
+  {
+   "concept": "grade2",
+   "k": "matematica seconda elementare",
+   "v": 1000,
+   "hi": 0
+  }
+ ],
+ "pl": [
+  {
+   "concept": "table",
+   "k": "tabliczka mnożenia",
+   "v": 135000,
+   "hi": 1.12
+  },
+  {
+   "concept": "table_game",
+   "k": "tabliczka mnożenia gra",
+   "v": 2900,
+   "hi": 0.5
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "kalkulator ułamków",
+   "v": 3600,
+   "hi": 0.56
+  },
+  {
+   "concept": "math_games",
+   "k": "gry matematyczne",
+   "v": 3600,
+   "hi": 0.72
+  },
+  {
+   "concept": "worksheets",
+   "k": "karty pracy matematyka",
+   "v": 590,
+   "hi": 0.63
+  },
+  {
+   "concept": "roman",
+   "k": "liczby rzymskie",
+   "v": 27100,
+   "hi": 0.55
+  },
+  {
+   "concept": "division",
+   "k": "dzielenie pisemne",
+   "v": 14800,
+   "hi": 0.91
+  },
+  {
+   "concept": "percent",
+   "k": "kalkulator procentów",
+   "v": 40500,
+   "hi": 0.13
+  },
+  {
+   "concept": "grade2",
+   "k": "matematyka klasa 2",
+   "v": 1300,
+   "hi": 0.75
+  }
+ ],
+ "nl": [
+  {
+   "concept": "table",
+   "k": "tafels",
+   "v": 12100,
+   "hi": 1.79
+  },
+  {
+   "concept": "table_game",
+   "k": "tafels oefenen",
+   "v": 49500,
+   "hi": 3.08
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "breuken rekenmachine",
+   "v": 3600,
+   "hi": 1.4
+  },
+  {
+   "concept": "math_games",
+   "k": "rekenspelletjes",
+   "v": 33100,
+   "hi": 2.71
+  },
+  {
+   "concept": "worksheets",
+   "k": "rekenen werkbladen",
+   "v": 1300,
+   "hi": 3.06
+  },
+  {
+   "concept": "roman",
+   "k": "romeinse cijfers",
+   "v": 27100,
+   "hi": 0.06
+  },
+  {
+   "concept": "division",
+   "k": "staartdeling",
+   "v": 5400,
+   "hi": 4.66
+  },
+  {
+   "concept": "percent",
+   "k": "procenten berekenen",
+   "v": 14800,
+   "hi": 1.72
+  },
+  {
+   "concept": "grade2",
+   "k": "rekenen groep 4",
+   "v": 2400,
+   "hi": 2.34
+  }
+ ],
+ "tr": [
+  {
+   "concept": "table",
+   "k": "çarpım tablosu",
+   "v": 450000,
+   "hi": 0.68
+  },
+  {
+   "concept": "table_game",
+   "k": "çarpım tablosu oyunu",
+   "v": 33100,
+   "hi": 0.22
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "kesir hesaplama",
+   "v": 390,
+   "hi": 0
+  },
+  {
+   "concept": "math_games",
+   "k": "matematik oyunları",
+   "v": 33100,
+   "hi": 0.2
+  },
+  {
+   "concept": "worksheets",
+   "k": "matematik çalışma kağıdı",
+   "v": 390,
+   "hi": 0.37
+  },
+  {
+   "concept": "roman",
+   "k": "romen rakamları",
+   "v": 60500,
+   "hi": 0
+  },
+  {
+   "concept": "division",
+   "k": "bölme işlemi",
+   "v": 27100,
+   "hi": 0.77
+  },
+  {
+   "concept": "percent",
+   "k": "yüzde hesaplama",
+   "v": 673000,
+   "hi": 0.38
+  },
+  {
+   "concept": "grade2",
+   "k": "2. sınıf matematik",
+   "v": 18100,
+   "hi": 0.81
+  }
+ ],
+ "id": [
+  {
+   "concept": "table",
+   "k": "tabel perkalian",
+   "v": 33100,
+   "hi": 0
+  },
+  {
+   "concept": "table_game",
+   "k": "permainan perkalian",
+   "v": 590,
+   "hi": 0.15
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "kalkulator pecahan",
+   "v": 4400,
+   "hi": 0.32
+  },
+  {
+   "concept": "math_games",
+   "k": "permainan matematika",
+   "v": 27100,
+   "hi": 0.37
+  },
+  {
+   "concept": "worksheets",
+   "k": "soal matematika kelas 2",
+   "v": 14800,
+   "hi": 0.65
+  },
+  {
+   "concept": "roman",
+   "k": "angka romawi",
+   "v": 246000,
+   "hi": 0
+  },
+  {
+   "concept": "division",
+   "k": "pembagian bersusun",
+   "v": 5400,
+   "hi": 0.64
+  },
+  {
+   "concept": "percent",
+   "k": "kalkulator persen",
+   "v": 12100,
+   "hi": 0
+  },
+  {
+   "concept": "grade2",
+   "k": "latihan matematika sd",
+   "v": 20,
+   "hi": 0
+  }
+ ],
+ "vi": [
+  {
+   "concept": "table",
+   "k": "bảng cửu chương",
+   "v": 40500,
+   "hi": 0.65
+  },
+  {
+   "concept": "table_game",
+   "k": "trò chơi bảng cửu chương",
+   "v": 260,
+   "hi": 0.3
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "tính phân số",
+   "v": 720,
+   "hi": 0.66
+  },
+  {
+   "concept": "math_games",
+   "k": "trò chơi toán",
+   "v": 720,
+   "hi": 0.72
+  },
+  {
+   "concept": "worksheets",
+   "k": "bài tập toán lớp 2",
+   "v": 5400,
+   "hi": 0.53
+  },
+  {
+   "concept": "roman",
+   "k": "số la mã",
+   "v": 22200,
+   "hi": 0.01
+  },
+  {
+   "concept": "division",
+   "k": "phép chia",
+   "v": 2900,
+   "hi": 0
+  },
+  {
+   "concept": "percent",
+   "k": "tính phần trăm",
+   "v": 22200,
+   "hi": 0
+  },
+  {
+   "concept": "grade2",
+   "k": "toán lớp 2",
+   "v": 14800,
+   "hi": 0.53
+  }
+ ],
+ "ar": [
+  {
+   "concept": "table",
+   "k": "جدول الضرب",
+   "v": 301000,
+   "hi": 2.1
+  },
+  {
+   "concept": "table_game",
+   "k": "لعبة جدول الضرب",
+   "v": 2400,
+   "hi": 0.58
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "حاسبة الكسور",
+   "v": 260,
+   "hi": 0
+  },
+  {
+   "concept": "math_games",
+   "k": "العاب رياضيات",
+   "v": 2400,
+   "hi": 0.56
+  },
+  {
+   "concept": "worksheets",
+   "k": "اوراق عمل رياضيات",
+   "v": 1300,
+   "hi": 0
+  },
+  {
+   "concept": "roman",
+   "k": "الارقام الرومانية",
+   "v": 18100,
+   "hi": 0
+  },
+  {
+   "concept": "division",
+   "k": "القسمة المطولة",
+   "v": 3600,
+   "hi": 0
+  },
+  {
+   "concept": "percent",
+   "k": "حساب النسبة المئوية",
+   "v": 27100,
+   "hi": 0.02
+  },
+  {
+   "concept": "grade2",
+   "k": "رياضيات الصف الثاني",
+   "v": 1300,
+   "hi": 0
+  }
+ ],
+ "ja": [
+  {
+   "concept": "table",
+   "k": "九九",
+   "v": 60500,
+   "hi": 2.13
+  },
+  {
+   "concept": "table_game",
+   "k": "九九 ゲーム",
+   "v": 6600,
+   "hi": 1.23
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "分数 計算機",
+   "v": 22200,
+   "hi": 0
+  },
+  {
+   "concept": "math_games",
+   "k": "算数 ゲーム",
+   "v": 12100,
+   "hi": 1.34
+  },
+  {
+   "concept": "worksheets",
+   "k": "算数 プリント",
+   "v": 12100,
+   "hi": 3.56
+  },
+  {
+   "concept": "roman",
+   "k": "ローマ数字",
+   "v": 60500,
+   "hi": 0
+  },
+  {
+   "concept": "division",
+   "k": "割り算 筆算",
+   "v": 22200,
+   "hi": 5.21
+  },
+  {
+   "concept": "percent",
+   "k": "パーセント 計算",
+   "v": 40500,
+   "hi": 0
+  },
+  {
+   "concept": "grade2",
+   "k": "小学2年 算数",
+   "v": 210,
+   "hi": 0
+  }
+ ],
+ "ko": [
+  {
+   "concept": "table",
+   "k": "구구단",
+   "v": 12100,
+   "hi": 10.7
+  },
+  {
+   "concept": "table_game",
+   "k": "구구단 게임",
+   "v": 880,
+   "hi": 2.56
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "분수 계산기",
+   "v": 8100,
+   "hi": 0
+  },
+  {
+   "concept": "math_games",
+   "k": "수학 게임",
+   "v": 3600,
+   "hi": 0.32
+  },
+  {
+   "concept": "worksheets",
+   "k": "수학 학습지",
+   "v": 390,
+   "hi": 1.99
+  },
+  {
+   "concept": "roman",
+   "k": "로마 숫자",
+   "v": 22200,
+   "hi": 0
+  },
+  {
+   "concept": "division",
+   "k": "나눗셈",
+   "v": 1300,
+   "hi": 0
+  },
+  {
+   "concept": "percent",
+   "k": "퍼센트 계산기",
+   "v": 40500,
+   "hi": 2.02
+  },
+  {
+   "concept": "grade2",
+   "k": "초등 2학년 수학",
+   "v": 480,
+   "hi": 2.99
+  }
+ ],
+ "uk": [
+  {
+   "concept": "table",
+   "k": "таблиця множення",
+   "v": 74000,
+   "hi": 0.1
+  },
+  {
+   "concept": "table_game",
+   "k": "таблиця множення гра",
+   "v": 210,
+   "hi": 0.29
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "калькулятор дробів",
+   "v": 6600,
+   "hi": 0.38
+  },
+  {
+   "concept": "math_games",
+   "k": "математичні ігри",
+   "v": 720,
+   "hi": 0.93
+  },
+  {
+   "concept": "worksheets",
+   "k": "математика 2 клас завдання",
+   "v": 480,
+   "hi": 2.68
+  },
+  {
+   "concept": "roman",
+   "k": "римські цифри",
+   "v": 14800,
+   "hi": 0
+  },
+  {
+   "concept": "division",
+   "k": "ділення в стовпчик",
+   "v": 14800,
+   "hi": 1.99
+  },
+  {
+   "concept": "percent",
+   "k": "калькулятор відсотків",
+   "v": 9900,
+   "hi": 0
+  },
+  {
+   "concept": "grade2",
+   "k": "математика 2 клас",
+   "v": 5400,
+   "hi": 1.08
+  }
+ ],
+ "ro": [
+  {
+   "concept": "table",
+   "k": "tabla inmultirii",
+   "v": 12100,
+   "hi": 0.6
+  },
+  {
+   "concept": "table_game",
+   "k": "jocuri tabla inmultirii",
+   "v": 480,
+   "hi": 0.49
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "calculator fractii",
+   "v": 210,
+   "hi": 0
+  },
+  {
+   "concept": "math_games",
+   "k": "jocuri matematice",
+   "v": 1300,
+   "hi": 0.49
+  },
+  {
+   "concept": "worksheets",
+   "k": "fise matematica",
+   "v": 170,
+   "hi": 0
+  },
+  {
+   "concept": "roman",
+   "k": "cifre romane",
+   "v": 12100,
+   "hi": 0
+  },
+  {
+   "concept": "division",
+   "k": "impartirea",
+   "v": 1300,
+   "hi": 0.21
+  },
+  {
+   "concept": "percent",
+   "k": "calculator procente",
+   "v": 14800,
+   "hi": 0
+  },
+  {
+   "concept": "grade2",
+   "k": "matematica clasa 2",
+   "v": 590,
+   "hi": 0.57
+  }
+ ],
+ "cs": [
+  {
+   "concept": "table",
+   "k": "násobilka",
+   "v": 6600,
+   "hi": 0.65
+  },
+  {
+   "concept": "table_game",
+   "k": "násobilka procvičování",
+   "v": 320,
+   "hi": 1.18
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "kalkulačka zlomky",
+   "v": 720,
+   "hi": 0
+  },
+  {
+   "concept": "math_games",
+   "k": "matematické hry",
+   "v": 1000,
+   "hi": 0.51
+  },
+  {
+   "concept": "worksheets",
+   "k": "pracovní listy matematika",
+   "v": 90,
+   "hi": 5.68
+  },
+  {
+   "concept": "roman",
+   "k": "římské číslice",
+   "v": 8100,
+   "hi": 0
+  },
+  {
+   "concept": "division",
+   "k": "písemné dělení",
+   "v": 720,
+   "hi": 0
+  },
+  {
+   "concept": "percent",
+   "k": "výpočet procent",
+   "v": 14800,
+   "hi": 0
+  },
+  {
+   "concept": "grade2",
+   "k": "matematika 2 třída",
+   "v": 480,
+   "hi": 0.76
+  }
+ ],
+ "hu": [
+  {
+   "concept": "table",
+   "k": "szorzótábla",
+   "v": 14800,
+   "hi": 1.66
+  },
+  {
+   "concept": "table_game",
+   "k": "szorzótábla játék",
+   "v": 720,
+   "hi": 1.09
+  },
+  {
+   "concept": "fraction_calc",
+   "k": "törtek számológép",
+   "v": 70,
+   "hi": 0
+  },
+  {
+   "concept": "math_games",
+   "k": "matematikai játékok",
+   "v": 390,
+   "hi": 0.6
+  },
+  {
+   "concept": "worksheets",
+   "k": "matek feladatlapok",
+   "v": 1600,
+   "hi": 0.72
+  },
+  {
+   "concept": "roman",
+   "k": "római számok",
+   "v": 14800,
+   "hi": 0.33
+  },
+  {
+   "concept": "division",
+   "k": "írásbeli osztás",
+   "v": 720,
+   "hi": 1.53
+  },
+  {
+   "concept": "percent",
+   "k": "százalékszámítás",
+   "v": 27100,
+   "hi": 0.06
+  },
+  {
+   "concept": "grade2",
+   "k": "matek 2 osztály",
+   "v": 210,
+   "hi": 1.22
+  }
+ ]
+}

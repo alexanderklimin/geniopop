@@ -1,0 +1,35 @@
+---
+// One 404 for all languages (Workers serves /404.html for any missing path); texts in all live languages.
+import { LIVE, t } from '../i18n/ui.js';
+---
+<!doctype html>
+<html lang="mul">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>404 · GenioPop</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <style>
+      body { margin: 0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: #fffaf5; color: #1d2433; }
+      main { max-width: 40rem; margin: 0 auto; padding: 3rem 1rem; }
+      section { margin-bottom: 1.5rem; }
+      h1 { font-size: 3rem; margin: 0 0 1rem; color: #ff6b35; }
+      h2 { margin: 0 0 0.25rem; font-size: 1.2rem; }
+      p { margin: 0 0 0.25rem; color: #5a6475; }
+      a { color: #c8461a; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>404</h1>
+      {LIVE.map((l) => { const ui = t(l); return (
+        <section lang={l}>
+          <h2>{ui.notFoundTitle}</h2>
+          <p>{ui.notFoundText}</p>
+          <a href={`/${l}/`}>{ui.backHome}</a>
+        </section>
+      ); })}
+    </main>
+  </body>
+</html>

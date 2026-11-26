@@ -1,0 +1,231 @@
+{
+ "de": [
+  {
+   "k": "1x1",
+   "v": 74000,
+   "hi": 2.75
+  },
+  {
+   "k": "1x1 üben",
+   "v": 880,
+   "hi": 2.18
+  },
+  {
+   "k": "einmaleins",
+   "v": 33100,
+   "hi": 2.48
+  },
+  {
+   "k": "einmaleins üben",
+   "v": 2400,
+   "hi": 2.19
+  },
+  {
+   "k": "kleines einmaleins",
+   "v": 1900,
+   "hi": 1.86
+  },
+  {
+   "k": "1x1 spiele",
+   "v": 3600,
+   "hi": 1.86
+  },
+  {
+   "k": "einmaleins tabelle",
+   "v": 5400,
+   "hi": 2.19
+  },
+  {
+   "k": "bruchrechnen",
+   "v": 27100,
+   "hi": 2.19
+  },
+  {
+   "k": "brüche kürzen",
+   "v": 6600,
+   "hi": 2.13
+  },
+  {
+   "k": "prozentrechnung",
+   "v": 40500,
+   "hi": 2.19
+  },
+  {
+   "k": "prozentrechner",
+   "v": 301000,
+   "hi": 2.19
+  },
+  {
+   "k": "römische zahlen",
+   "v": 135000,
+   "hi": 1.44
+  },
+  {
+   "k": "römische zahlen umrechnen",
+   "v": 3600,
+   "hi": 0
+  },
+  {
+   "k": "schriftlich dividieren",
+   "v": 49500,
+   "hi": 2.19
+  },
+  {
+   "k": "schriftliche division",
+   "v": 49500,
+   "hi": 2.19
+  },
+  {
+   "k": "kgv berechnen",
+   "v": 2400,
+   "hi": 1.78
+  },
+  {
+   "k": "ggt berechnen",
+   "v": 880,
+   "hi": 0
+  },
+  {
+   "k": "arbeitsblätter mathe",
+   "v": 1600,
+   "hi": 2.19
+  },
+  {
+   "k": "mathe arbeitsblätter grundschule",
+   "v": 140,
+   "hi": 1.5
+  },
+  {
+   "k": "mathe spiele",
+   "v": 2400,
+   "hi": 1.66
+  },
+  {
+   "k": "kopfrechnen",
+   "v": 2900,
+   "hi": 2.19
+  },
+  {
+   "k": "punkt vor strich",
+   "v": 2400,
+   "hi": 3.19
+  },
+  {
+   "k": "wurzel ziehen",
+   "v": 1900,
+   "hi": 2.17
+  }
+ ],
+ "it": [
+  {
+   "k": "tabelline",
+   "v": 74000,
+   "hi": 5.63
+  },
+  {
+   "k": "tabelline da stampare",
+   "v": 8100,
+   "hi": 0
+  },
+  {
+   "k": "tabellina del 7",
+   "v": 22200,
+   "hi": 0
+  },
+  {
+   "k": "giochi tabelline",
+   "v": 8100,
+   "hi": 0.95
+  },
+  {
+   "k": "tavola pitagorica",
+   "v": 27100,
+   "hi": 0.14
+  },
+  {
+   "k": "frazioni",
+   "v": 9900,
+   "hi": 0
+  },
+  {
+   "k": "calcolatrice frazioni",
+   "v": 5400,
+   "hi": 0.14
+  },
+  {
+   "k": "frazioni equivalenti",
+   "v": 8100,
+   "hi": 0
+  },
+  {
+   "k": "numeri romani",
+   "v": 49500,
+   "hi": 0
+  },
+  {
+   "k": "convertitore numeri romani",
+   "v": 2900,
+   "hi": 0
+  },
+  {
+   "k": "divisioni in colonna",
+   "v": 14800,
+   "hi": 2.05
+  },
+  {
+   "k": "divisioni a due cifre",
+   "v": 9900,
+   "hi": 1.6
+  },
+  {
+   "k": "mcm e mcd",
+   "v": 3600,
+   "hi": 0
+  },
+  {
+   "k": "minimo comune multiplo",
+   "v": 18100,
+   "hi": 7.43
+  },
+  {
+   "k": "calcolo percentuale",
+   "v": 90500,
+   "hi": 0
+  },
+  {
+   "k": "percentuale",
+   "v": 18100,
+   "hi": 0
+  },
+  {
+   "k": "schede matematica",
+   "v": 1900,
+   "hi": 0
+  },
+  {
+   "k": "schede didattiche matematica",
+   "v": 590,
+   "hi": 0
+  },
+  {
+   "k": "esercizi matematica prima elementare",
+   "v": 1900,
+   "hi": 1.59
+  },
+  {
+   "k": "giochi matematica",
+   "v": 14800,
+   "hi": 2.1
+  },
+  {
+   "k": "espressioni",
+   "v": 14800,
+   "hi": 1.42
+  },
+  {
+   "k": "radice quadrata",
+   "v": 14800,
+   "hi": 0
+  }
+ ]
+}

@@ -1,0 +1,5 @@
+# Preview: keep everything out of search engines until launch ("да" from the user).
+/*
+  X-Robots-Tag: noindex
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
