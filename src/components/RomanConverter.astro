@@ -1,0 +1,44 @@
+---
+import { convert, ROMAN } from '../i18n/roman-text.js';
+interface Props { lang: string; example?: string; placeholder: string; button: string }
+const { lang, example = '2026', placeholder, button } = Astro.props;
+const r = convert(lang, example);
+---
+<section class="fx rm" data-rm data-lang={lang}>
+  <form class="gl-form" data-rm-form novalidate>
+    <input name="v" value={example} autocapitalize="characters" autocomplete="off" placeholder={placeholder} aria-label={placeholder} />
+    <button class="fx-go">{button}</button>
+  </form>
+  <p class="fx-err" data-rm-err role="alert"></p>
+  <p class="rm-out" data-rm-out>{r.result}</p>
+  <div data-rm-steps set:html={r.html} />
+</section>
+<script>
+  import { convert } from '../i18n/roman-text.js';
+  for (const root of document.querySelectorAll('[data-rm]')) {
+    const lang = root.dataset.lang;
+    const form = root.querySelector('[data-rm-form]');
+    const run = () => {
+      const err = root.querySelector('[data-rm-err]');
+      err.innerHTML = '';
+      try {
+        const r = convert(lang, form.elements.v.value);
+        root.querySelector('[data-rm-out]').textContent = r.result;
+        root.querySelector('[data-rm-steps]').innerHTML = r.html;
+      } catch (e) {
+        err.innerHTML = e.html || '';
+        root.querySelector('[data-rm-out]').textContent = '—';
+        root.querySelector('[data-rm-steps]').innerHTML = '';
+      }
+    };
+    form.addEventListener('submit', (e) => { e.preventDefault(); run(); });
+    form.elements.v.addEventListener('input', () => { if (form.elements.v.value.trim()) run(); });
+  }
+</script>
+<style is:global>
+  .rm-out { font-size: clamp(2rem, 8vw, 3rem); font-weight: 800; color: var(--pop-dark); margin: 0.25rem 0; letter-spacing: 0.04em; }
+  .rm-parts { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .rm-parts li { display: flex; flex-direction: column; align-items: center; background: var(--paper); border-radius: 12px; padding: 0.4rem 0.8rem; min-width: 4rem; }
+  .rm-parts b { font-size: 1.3rem; }
+  .rm-parts span { font-size: 0.85rem; color: var(--muted); }
+</style>

@@ -1,0 +1,66 @@
+---
+import { PERCENT, runMode } from '../i18n/percent-modes.js';
+import { resolvePrefs } from '../lib/locale.js';
+interface Props { lang: string }
+const { lang } = Astro.props;
+const P = PERCENT[lang];
+const prefs = resolvePrefs(lang, []);
+const fmt = (n: number) => String(n).replace('.', prefs.decimalSep);
+---
+<div class="pc" data-pc data-lang={lang}>
+  {P.modes.map((m) => {
+    const r = runMode(lang, m.id, m.ex[0], m.ex[1], prefs);
+    return (
+      <form class="fx pc-card" data-mode={m.id} novalidate>
+        <p class="pc-q">
+          {m.sentence[0] && <span>{m.sentence[0]}</span>}
+          <input name="a" value={fmt(m.ex[0])} inputmode="decimal" aria-label={m.sentence[0] || m.sentence[1]} />
+          <span>{m.sentence[1]}</span>
+          <input name="b" value={fmt(m.ex[1])} inputmode="decimal" aria-label={m.sentence[1]} />
+          <span>{m.sentence[2]}</span>
+        </p>
+        <p class="pc-r"><span class="pc-eq">=</span> <b data-out>{r.result}</b></p>
+        <ol class="pc-steps" data-steps>{r.steps.map((s) => <li set:html={s} />)}</ol>
+        <p class="fx-err" data-err role="alert"></p>
+      </form>
+    );
+  })}
+</div>
+
+<script>
+  import { PERCENT, runMode } from '../i18n/percent-modes.js';
+  import { resolvePrefs } from '../lib/locale.js';
+  for (const root of document.querySelectorAll('[data-pc]')) {
+    const lang = root.dataset.lang;
+    const prefs = resolvePrefs(lang, navigator.languages || []);
+    const num = (s) => { const t = s.trim().replace(/\s/g, '').replace(',', '.'); return /^-?\d+(\.\d+)?$/.test(t) ? Number(t) : NaN; };
+    for (const form of root.querySelectorAll('form')) {
+      const update = () => {
+        const a = num(form.elements.a.value), b = num(form.elements.b.value);
+        const err = form.querySelector('[data-err]');
+        err.textContent = '';
+        if (Number.isNaN(a) || Number.isNaN(b)) { err.textContent = PERCENT[lang].err; return; }
+        try {
+          const r = runMode(lang, form.dataset.mode, a, b, prefs);
+          form.querySelector('[data-out]').textContent = r.result;
+          form.querySelector('[data-steps]').innerHTML = r.steps.map((s) => `<li>${s}</li>`).join('');
+        } catch { form.querySelector('[data-out]').textContent = '—'; form.querySelector('[data-steps]').innerHTML = ''; }
+      };
+      form.addEventListener('input', update);
+      form.addEventListener('submit', (e) => { e.preventDefault(); update(); });
+      if (prefs.decimalSep === '.') update(); // re-render the examples with this visitor's decimal point
+    }
+  }
+</script>
+
+<style>
+  .pc { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr)); margin: 1.5rem 0; }
+  .pc-card { margin: 0; }
+  .pc-q { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; font-weight: 700; font-size: 1.1rem; margin: 0; }
+  .pc-q input { width: 6rem; font: inherit; font-size: 1.2rem; text-align: center; padding: 0.35rem; border: 2px solid var(--line); border-radius: 10px; }
+  .pc-q input:focus { outline: none; border-color: var(--pop); }
+  .pc-r { font-size: 1.8rem; font-weight: 800; margin: 0.6rem 0 0.3rem; color: var(--pop-dark); }
+  .pc-eq { color: var(--muted); }
+  .pc-steps { font-size: 0.95rem; color: var(--muted); padding-left: 1.2rem; margin: 0; }
+  .pc-steps strong { color: var(--ink); }
+</style>

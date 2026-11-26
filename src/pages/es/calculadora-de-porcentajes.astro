@@ -1,0 +1,74 @@
+---
+import Base from '../../layouts/Base.astro';
+import PercentCalc from '../../components/PercentCalc.astro';
+import { generate } from '../../lib/worksheet.js';
+
+const path = '/es/calculadora-de-porcentajes/';
+const faqs = [
+  { q: '¿Cómo se calcula el porcentaje de un número?', a: 'Se multiplica el número por el porcentaje y se divide entre 100. El 15 % de 80 es 80 × 15 ÷ 100 = 12.' },
+  { q: '¿Cómo saco qué porcentaje es un número de otro?', a: 'Divide la parte entre el total y multiplica por 100. 12 de 80 es 12 ÷ 80 × 100 = 15 %.' },
+  { q: '¿Cómo calculo un descuento?', a: 'Calcula el porcentaje del precio y réstalo, o multiplica directamente: un 25 % de descuento es pagar el 75 %, es decir, multiplicar por 0,75.' },
+  { q: '¿Cómo quito el IVA de un precio?', a: 'Divide el precio final entre 1 más la tasa en decimal. Con IVA del 21 %, divide entre 1,21; con 16 %, entre 1,16. No restes el porcentaje al precio final: el impuesto se calculó sobre el precio sin impuesto.' },
+  { q: '¿Subir un 20 % y luego bajar un 20 % deja el precio igual?', a: 'No. 100 + 20 % = 120, y 120 − 20 % = 96. La bajada se calcula sobre una cantidad mayor, así que se pierde más de lo que se ganó.' },
+];
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+const sheet = generate('percent', { count: 12, seed: 11, percents: [10, 20, 25, 50, 75, 5, 15], max: 400 }).problems;
+const iva = [['España', '21 %'], ['México', '16 %'], ['Argentina', '21 %'], ['Colombia', '19 %'], ['Chile', '19 %'], ['Perú (IGV)', '18 %'], ['Ecuador', '15 %']];
+---
+<Base lang="es" title="Calculadora de porcentajes con explicación paso a paso"
+  description="Calcula el porcentaje de un número, qué porcentaje es una cantidad de otra, aumentos, descuentos, variación porcentual y precios sin IVA. Cada resultado viene con la explicación paso a paso."
+  alternates={{ es: path }} crumbs={[{ name: 'Calculadora de porcentajes', path }]} jsonLd={[faq]}>
+  <h1>Calculadora de porcentajes</h1>
+  <p class="lead">Elige la pregunta que necesitas, cambia los números y el resultado se calcula al momento, con la explicación debajo. Sirve para tareas del colegio, descuentos, propinas e impuestos.</p>
+
+  <PercentCalc lang="es" />
+
+  <section class="prose">
+    <h2>Qué es un porcentaje</h2>
+    <p>«Por ciento» significa «de cada cien». El 15 % de algo son 15 partes de cada 100, es decir, la fracción 15/100 o el decimal 0,15. Por eso todos los cálculos se reducen a multiplicar o dividir entre 100.</p>
+    <table class="pct"><thead><tr><th>Porcentaje</th><th>Fracción</th><th>Decimal</th><th>Truco</th></tr></thead><tbody>
+      <tr><td>50 %</td><td>1/2</td><td>0,5</td><td>la mitad</td></tr>
+      <tr><td>25 %</td><td>1/4</td><td>0,25</td><td>la mitad de la mitad</td></tr>
+      <tr><td>75 %</td><td>3/4</td><td>0,75</td><td>tres cuartos</td></tr>
+      <tr><td>10 %</td><td>1/10</td><td>0,1</td><td>quitar una cifra (o mover la coma)</td></tr>
+      <tr><td>20 %</td><td>1/5</td><td>0,2</td><td>el doble del 10 %</td></tr>
+      <tr><td>5 %</td><td>1/20</td><td>0,05</td><td>la mitad del 10 %</td></tr>
+      <tr><td>1 %</td><td>1/100</td><td>0,01</td><td>mover la coma dos lugares</td></tr>
+    </tbody></table>
+
+    <h2>Cálculo mental de porcentajes</h2>
+    <ul>
+      <li>El <strong>10 %</strong> de 340 es 34. A partir de ahí, el 20 % es 68, el 5 % es 17 y el 15 % es 34 + 17 = 51.</li>
+      <li>El <strong>porcentaje se puede dar la vuelta</strong>: el 8 % de 25 es lo mismo que el 25 % de 8, es decir, 2.</li>
+    </ul>
+
+    <h2>IVA: tasa general por país</h2>
+    <p>La tasa general del impuesto al valor agregado (IVA) que suele aplicarse a la mayoría de productos. Algunos productos tienen tasas reducidas o están exentos.</p>
+    <table class="pct"><tbody>{iva.map(([c, v]) => <tr><td>{c}</td><td>{v}</td></tr>)}</tbody></table>
+
+    <h2>Errores frecuentes</h2>
+    <ul>
+      <li>Quitar el IVA restando el porcentaje al precio final: con el 21 %, 121 − 21 % = 95,59, pero el precio sin IVA es 100.</li>
+      <li>Sumar porcentajes seguidos: dos descuentos del 10 % no son un 20 %, sino un 19 % (se paga 0,9 × 0,9 = 0,81).</li>
+      <li>Confundir «puntos porcentuales» y «por ciento»: pasar del 10 % al 15 % es subir 5 puntos, pero un 50 % más.</li>
+    </ul>
+  </section>
+
+  <h2>Ejercicios para imprimir</h2>
+  <div class="sheet" data-print-area="sheet">
+    <div class="sheet-head"><strong>Porcentajes</strong><span>Nombre: ____________________</span><span>Fecha: __________</span></div>
+    <ol class="sheet-grid pct-sheet">{sheet.map((p) => <li>{p.operands[0]} % de {p.operands[1]} = <span class="blank"></span></li>)}</ol>
+    <div class="sheet-answers"><strong>Soluciones</strong><ol class="sheet-key">{sheet.map((p) => <li>{p.answer}</li>)}</ol></div>
+  </div>
+  <div class="actions"><button type="button" class="button primary" data-print="sheet">Imprimir ficha</button></div>
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{faqs.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>
+<style>
+  .pct { border-collapse: collapse; margin: 0.5rem 0 1rem; }
+  .pct th, .pct td { padding: 0.35rem 1rem 0.35rem 0; border-bottom: 1px dashed var(--line); text-align: left; }
+  .pct-sheet { grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); font-size: 1.15rem; }
+</style>

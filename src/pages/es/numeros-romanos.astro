@@ -1,0 +1,86 @@
+---
+import Base from '../../layouts/Base.astro';
+import RomanConverter from '../../components/RomanConverter.astro';
+import { toRoman, romanTable } from '../../lib/roman.js';
+import { generate } from '../../lib/worksheet.js';
+
+const path = '/es/numeros-romanos/';
+const t100 = romanTable(1, 100);
+const big = [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1500, 2000, 3000];
+const years = [1492, 1810, 1900, 1999, 2000, 2010, 2020, 2024, 2025, 2026];
+const faqs = [
+  { q: '¿Cómo se escribe el 4 en números romanos?', a: 'IV: un 1 delante del 5 significa 5 − 1. En algunos relojes aparece IIII, pero la forma correcta es IV.' },
+  { q: '¿Existe el cero en números romanos?', a: 'No. Los romanos no tenían un símbolo para el cero; por eso los números romanos empiezan en I.' },
+  { q: '¿Cuál es el número romano más grande?', a: 'Con los siete símbolos normales, 3999 (MMMCMXCIX). Para números mayores se usaba una raya encima, que multiplica por 1000: V con raya es 5000.' },
+  { q: '¿Cómo se escribe 2026 en números romanos?', a: 'MMXXVI: MM = 2000, XX = 20 y VI = 6.' },
+  { q: '¿Para qué se usan hoy los números romanos?', a: 'Para los siglos (siglo XXI), los nombres de reyes y papas (Felipe VI), los capítulos de libros, las esferas de algunos relojes y las fechas en monumentos y créditos de películas.' },
+];
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+const sheet = generate('roman', { count: 16, seed: 21, max: 100 }).problems;
+---
+<Base lang="es" title="Números romanos: convertidor, tabla del 1 al 100 y reglas"
+  description="Convierte números a números romanos y al revés con la explicación paso a paso. Tabla del 1 al 100, centenas y millares, años, las reglas para escribirlos bien y ejercicios para imprimir."
+  alternates={{ es: path }} crumbs={[{ name: 'Números romanos', path }]} jsonLd={[faq]}>
+  <h1>Números romanos</h1>
+  <p class="lead">Escribe un número (del 1 al 3999) o un número romano: el convertidor detecta el sentido y explica cómo se forma. Si el número romano está mal escrito, te dice cuál es la forma correcta.</p>
+
+  <RomanConverter lang="es" example="2026" placeholder="Por ejemplo: 1987 o XLIV" button="Convertir" />
+
+  <section class="prose">
+    <h2>Los siete símbolos</h2>
+    <table class="rm-sym"><tbody>
+      <tr>{['I', 'V', 'X', 'L', 'C', 'D', 'M'].map((s) => <th>{s}</th>)}</tr>
+      <tr>{[1, 5, 10, 50, 100, 500, 1000].map((v) => <td>{v}</td>)}</tr>
+    </tbody></table>
+
+    <h2>Reglas para escribirlos</h2>
+    <ol>
+      <li><strong>Suma:</strong> un símbolo a la derecha de otro igual o mayor se suma. VI = 5 + 1 = 6; XV = 10 + 5 = 15.</li>
+      <li><strong>Resta:</strong> I, X y C delante de un símbolo mayor se restan, pero solo en seis casos: IV (4), IX (9), XL (40), XC (90), CD (400) y CM (900).</li>
+      <li><strong>Repetición:</strong> I, X, C y M se pueden repetir hasta tres veces seguidas (III = 3, XXX = 30). V, L y D nunca se repiten.</li>
+      <li><strong>Por posiciones:</strong> se escriben los millares, luego las centenas, las decenas y las unidades. 1987 = M + CM + LXXX + VII.</li>
+    </ol>
+
+    <h2>Errores frecuentes</h2>
+    <ul>
+      <li>IIII en lugar de IV, o VIIII en lugar de IX.</li>
+      <li>Restar de más: 99 no es IC, sino XCIX (90 + 9). 49 no es IL, sino XLIX.</li>
+      <li>Repetir V, L o D: 10 es X, no VV.</li>
+    </ul>
+  </section>
+
+  <h2>Tabla de números romanos del 1 al 100</h2>
+  <div class="actions"><button type="button" class="button primary" data-print="table">Imprimir la tabla</button></div>
+  <div class="rm-table" data-print-area="table">
+    {t100.map(([n, r]) => <div><span>{n}</span><b>{r}</b></div>)}
+  </div>
+
+  <section class="prose">
+    <h2>Centenas y millares</h2>
+    <div class="rm-table small">{big.map((n) => <div><span>{n}</span><b>{toRoman(n)}</b></div>)}</div>
+    <h2>Años en números romanos</h2>
+    <div class="rm-table small">{years.map((n) => <div><span>{n}</span><b>{toRoman(n)}</b></div>)}</div>
+  </section>
+
+  <h2>Ejercicios para imprimir</h2>
+  <div class="sheet" data-print-area="sheet">
+    <div class="sheet-head"><strong>Números romanos</strong><span>Nombre: ____________________</span><span>Fecha: __________</span></div>
+    <ol class="sheet-grid">{sheet.map((p) => <li>{p.operands[0]} = <span class="blank"></span></li>)}</ol>
+    <div class="sheet-answers"><strong>Soluciones</strong><ol class="sheet-key">{sheet.map((p) => <li>{p.answer}</li>)}</ol></div>
+  </div>
+  <div class="actions"><button type="button" class="button primary" data-print="sheet">Imprimir ficha</button></div>
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{faqs.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>
+<style>
+  .rm-sym { border-collapse: collapse; font-size: 1.2rem; }
+  .rm-sym th, .rm-sym td { border: 1px solid var(--line); padding: 0.4rem 0.9rem; text-align: center; background: #fff; }
+  .rm-sym th { color: var(--pop-dark); }
+  .rm-table { display: grid; grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); gap: 0.25rem 1rem; font-variant-numeric: tabular-nums; }
+  .rm-table div { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--line); padding: 0.15rem 0; }
+  .rm-table span { color: var(--muted); }
+  @media print { .rm-table { grid-template-columns: repeat(5, 1fr); font-size: 10pt; gap: 0 6mm; } }
+</style>

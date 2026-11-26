@@ -18,8 +18,13 @@ const alternates = Object.fromEntries(LIVE.map((l) => [l, `/${l}/`]));
       <li class="card">
         <h2>{s.href ? <a href={s.href}>{s.title}</a> : s.title}</h2>
         <p>{s.text}</p>
-        {!s.href && <span class="tag">{ui.soon}</span>}
+        {s.links && <p class="card-links">{s.links.map(([t, h]) => <a href={h}>{t}</a>)}</p>}
+        {!s.href && !s.links && <span class="tag">{ui.soon}</span>}
       </li>
     ))}
   </ul>
 </Base>
+<style>
+  .card-links { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; margin-top: 0.6rem !important; }
+  .card-links a { font-weight: 700; }
+</style>
