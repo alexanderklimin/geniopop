@@ -1,0 +1,100 @@
+---
+import Base from '../../layouts/Base.astro';
+import { ordinal, alternatives, apocope, abbreviation } from '../../lib/ordinal-es.js';
+
+const path = '/es/numeros-ordinales/';
+const rows = Array.from({ length: 100 }, (_, i) => i + 1);
+const bigs = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
+const faqs = [
+  { q: '¿Se dice undécimo o decimoprimero?', a: 'Las dos formas son correctas según la RAE: undécimo y decimoprimero, duodécimo y decimosegundo. Undécimo y duodécimo son las tradicionales.' },
+  { q: '¿Es correcto «onceavo piso»?', a: 'No. Onceavo, doceavo o treceavo son partitivos: sirven para fracciones (un onceavo = 1/11). Para el orden se dice undécimo piso, duodécimo piso, decimotercer piso.' },
+  { q: '¿Cuándo se dice primer y tercer?', a: 'Delante de un sustantivo masculino singular, primero y tercero pierden la -o: el primer día, el tercer puesto, el vigésimo primer aniversario. En femenino no cambian: la primera vez, la tercera fila.' },
+  { q: '¿Cómo se abrevian los ordinales?', a: 'Con el número, un punto y la letra final volada: 1.º (primero), 1.ª (primera), 1.er (primer), 3.er (tercer). El punto es obligatorio.' },
+  { q: '¿Cómo se dice el ordinal de 21?', a: 'Vigésimo primero (o vigesimoprimero, en una sola palabra). En femenino, vigésima primera (o vigesimoprimera).' },
+];
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+---
+<Base lang="es" title="Números ordinales del 1 al 100 (y hasta 1000): lista y convertidor"
+  description="Números ordinales en español: convertidor de número a ordinal en masculino y femenino, lista del 1 al 100, abreviaturas (1.º, 1.ª, 1.er) y los errores más comunes."
+  alternates={{ es: path }} crumbs={[{ name: 'Números ordinales', path }]} jsonLd={[faq]}>
+  <h1>Números ordinales</h1>
+  <p class="lead">Los ordinales dicen la posición: primero, segundo, tercero… Escribe un número y te decimos cómo se escribe su ordinal.</p>
+
+  <section class="fx od" data-od>
+    <form class="gl-form" data-od-form novalidate>
+      <input name="n" value="21" inputmode="numeric" maxlength="4" aria-label="Número (1–1000)" />
+      <button class="fx-go">Ver ordinal</button>
+    </form>
+    <p class="fx-err" data-od-err role="alert"></p>
+    <div class="od-out" data-od-out>
+      <div><span>Masculino</span><b>{ordinal(21)}</b><small>{abbreviation(21)}</small></div>
+      <div><span>Femenino</span><b>{ordinal(21, 'f')}</b><small>{abbreviation(21, 'f')}</small></div>
+      <div><span>Delante de un nombre masculino</span><b>{apocope(21)}</b><small>{abbreviation(21, 'm', true)}</small></div>
+    </div>
+    <p class="od-alt" data-od-alt>También es correcto: {alternatives(21).join(', ')} / {alternatives(21, 'f').join(', ')}.</p>
+    <p class="od-ex" data-od-ex>Ejemplo: «el <strong>{apocope(21)}</strong> puesto», «la <strong>{ordinal(21, 'f')}</strong> fila».</p>
+  </section>
+
+  <h2>Números ordinales del 1 al 100</h2>
+  <div class="actions"><button type="button" class="button primary" data-print="table">Imprimir la lista</button></div>
+  <div class="ord" data-print-area="table">{rows.map((n) => <div><span>{n}.º</span><b>{ordinal(n)}</b></div>)}</div>
+
+  <section class="prose">
+    <h2>Centenas y el milésimo</h2>
+    <div class="ord small">{bigs.map((n) => <div><span>{n}.º</span><b>{ordinal(n)}</b></div>)}</div>
+
+    <h2>Cómo se forman</h2>
+    <ul>
+      <li><strong>Del 1 al 10</strong> hay que aprenderlos: primero, segundo, tercero, cuarto, quinto, sexto, séptimo, octavo, noveno y décimo.</li>
+      <li><strong>11 y 12</strong> tienen dos formas: undécimo o decimoprimero, duodécimo o decimosegundo.</li>
+      <li><strong>Del 13 al 19</strong> se escriben en una palabra: decimotercero, decimocuarto… decimonoveno.</li>
+      <li><strong>Desde el 20</strong> se nombra la decena y después la unidad: vigésimo primero, trigésimo quinto, cuadragésimo octavo. También vale juntarlas: vigesimoprimero.</li>
+      <li><strong>Las centenas</strong> van delante: centésimo vigésimo, ducentésimo, quingentésimo.</li>
+      <li><strong>En femenino</strong> cambia la terminación de cada palabra: vigésima primera, centésima décima.</li>
+    </ul>
+
+    <h2>Ordinales y partitivos: no los confundas</h2>
+    <p>Los <strong>ordinales</strong> indican el orden (el undécimo piso, la duodécima edición). Los <strong>partitivos</strong> indican partes de un todo (un onceavo, dos doceavos) y se usan con <a href="/es/fracciones/">fracciones</a>. Decir «el onceavo piso» es un error muy extendido: lo correcto es «el undécimo piso».</p>
+
+    <h2>Dónde se usan</h2>
+    <ul>
+      <li>Puestos en una carrera o un concurso: primer puesto, segunda posición.</li>
+      <li>Pisos y plantas: tercer piso, quinta planta.</li>
+      <li>Cursos: 1.º de primaria, 3.er grado, 4.º básico.</li>
+      <li>Aniversarios y ediciones: quincuagésimo aniversario, vigésima edición.</li>
+      <li>Con los siglos y los reyes, en cambio, a partir del 10 se suele usar el cardinal: siglo XXI (veintiuno), Alfonso XIII (trece).</li>
+    </ul>
+  </section>
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{faqs.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>
+<script>
+  import { ordinal, alternatives, apocope, abbreviation } from '../../lib/ordinal-es.js';
+  const root = document.querySelector('[data-od]');
+  root.querySelector('[data-od-form]').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const err = root.querySelector('[data-od-err]'); err.textContent = '';
+    const n = Number(e.target.elements.n.value.trim());
+    if (!Number.isInteger(n) || n < 1 || n > 1000) { err.textContent = 'Escribe un número entero del 1 al 1000.'; root.querySelector('[data-od-out]').innerHTML = ''; root.querySelector('[data-od-alt]').textContent = ''; root.querySelector('[data-od-ex]').textContent = ''; return; }
+    const ap = apocope(n);
+    root.querySelector('[data-od-out]').innerHTML = `<div><span>Masculino</span><b>${ordinal(n)}</b><small>${abbreviation(n)}</small></div><div><span>Femenino</span><b>${ordinal(n, 'f')}</b><small>${abbreviation(n, 'f')}</small></div>${ap ? `<div><span>Delante de un nombre masculino</span><b>${ap}</b><small>${abbreviation(n, 'm', true)}</small></div>` : ''}`;
+    const alt = alternatives(n), altF = alternatives(n, 'f');
+    root.querySelector('[data-od-alt]').textContent = alt.length ? `También es correcto: ${alt.join(', ')} / ${altF.join(', ')}.` : '';
+    root.querySelector('[data-od-ex]').innerHTML = `Ejemplo: «el <strong>${ap ?? ordinal(n)}</strong> puesto», «la <strong>${ordinal(n, 'f')}</strong> fila».`;
+  });
+</script>
+<style is:global>
+  .od-out { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); gap: 0.6rem; margin-top: 0.6rem; }
+  .od-out div { display: grid; gap: 0.1rem; padding: 0.8rem 1rem; border-radius: 16px; background: var(--accent-soft); }
+  .od-out span { font-size: 0.8rem; font-weight: 800; color: var(--muted); }
+  .od-out b { font-size: 1.4rem; font-weight: 900; }
+  .od-out small { font-weight: 800; color: var(--accent-dark); }
+  .od-alt, .od-ex { color: var(--muted); font-weight: 700; margin: 0.6rem 0 0; }
+  .ord { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); gap: 0.2rem 1.2rem; }
+  .ord div { display: flex; gap: 0.6rem; padding: 0.2rem 0; border-bottom: 1px dashed var(--line); }
+  .ord span { min-width: 3rem; color: var(--muted); font-weight: 800; font-variant-numeric: tabular-nums; }
+  @media print { .ord { grid-template-columns: repeat(3, 1fr); font-size: 9pt; gap: 0 5mm; } }
+</style>

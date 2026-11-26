@@ -145,7 +145,7 @@ export const NAV = {
 export function sectionOf(pathname) {
   if (/\/(tablas-de-multiplicar|tabla-pitagorica)\//.test(pathname)) return 'tablas';
   if (/\/fracciones\//.test(pathname)) return 'fracciones';
-  if (/\/(division|calculadora-de-porcentajes|numeros-romanos|mcm-mcd|operaciones-combinadas|raiz-cuadrada|potencias|sumas-y-restas-llevando|multiplicaciones|calculadora-de-promedio|numeros-primos)\//.test(pathname)) return 'calc';
+  if (/\/(division|calculadora-de-porcentajes|numeros-romanos|mcm-mcd|operaciones-combinadas|raiz-cuadrada|potencias|sumas-y-restas-llevando|multiplicaciones|calculadora-de-promedio|numeros-primos|numeros-ordinales|regla-de-tres)\//.test(pathname)) return 'calc';
   if (/\/fichas\//.test(pathname)) return 'fichas';
   return 'home';
 }
