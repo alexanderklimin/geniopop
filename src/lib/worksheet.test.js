@@ -80,3 +80,11 @@ test('prime sheet answers', () => {
     else assert.equal(p.answer.split(' · ').reduce((acc, t) => { const [b, e = 1] = t.split('^').map(Number); return acc * b ** e; }, 1), p.operands[0]);
   }
 });
+
+test('rule of three answers', () => {
+  for (const p of generate('rule3', { count: 30, seed: 3 }).problems) {
+    const [a, b, c] = p.operands;
+    assert.equal(p.answer, p.kind === 'direct' ? (b * c) / a : (a * b) / c);
+    assert.ok(Number.isInteger(p.answer));
+  }
+});

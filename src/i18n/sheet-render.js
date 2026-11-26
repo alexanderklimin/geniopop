@@ -35,6 +35,7 @@ export function problemHTML(lang, p, { vertical = true } = {}) {
     case 'power': return p.op === 'sqrt' ? `√${p.operands[0]} = ${blank}` : `${p.operands[0]}<sup>${p.operands[1]}</sup> = ${blank}`;
     case 'average': return `Promedio de ${p.operands.join(', ')} = ${blank}`;
     case 'prime': return `${p.operands[0]}: ¿primo o compuesto? ${blank}`;
+    case 'rule3': return p.kind === 'direct' ? `Si ${p.operands[0]} cuadernos cuestan ${p.operands[1]}, ¿cuánto cuestan ${p.operands[2]}? ${blank}` : `Si ${p.operands[0]} pintores tardan ${p.operands[1]} días, ¿cuánto tardan ${p.operands[2]}? ${blank}`;
     case 'gcdLcm': return `${T[p.op]}(${p.operands.join(', ')}) = ${blank}`;
     default: return '';
   }

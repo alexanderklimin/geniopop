@@ -1,0 +1,113 @@
+---
+import Base from '../../layouts/Base.astro';
+import { generate } from '../../lib/worksheet.js';
+import { sheetHTML } from '../../i18n/sheet-render.js';
+
+const path = '/es/regla-de-tres/';
+const faqs = [
+  { q: '¿Cómo se hace una regla de tres simple?', a: 'Se escriben los dos datos que se conocen en una fila (A → B) y el tercero debajo (C → x). Si la proporción es directa, x = B × C ÷ A; si es inversa, x = A × B ÷ C.' },
+  { q: '¿Cómo sé si es directa o inversa?', a: 'Piensa qué pasa si una cantidad se duplica. Si la otra también se duplica (más cuadernos, más dinero), es directa. Si la otra se reduce a la mitad (más pintores, menos días), es inversa.' },
+  { q: '¿Se pueden calcular porcentajes con una regla de tres?', a: 'Sí: si 100 % son 80, ¿cuánto es el 15 %? x = 80 × 15 ÷ 100 = 12. Para eso también tienes la calculadora de porcentajes.' },
+  { q: '¿Qué es una regla de tres compuesta?', a: 'La que tiene más de dos magnitudes, por ejemplo obreros, horas y días. Se resuelve igual, pero combinando varias proporciones directas o inversas.' },
+];
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+const sheet = sheetHTML('es', generate('rule3', { count: 10, seed: 33 }).problems, { title: 'Regla de tres' });
+---
+<Base lang="es" title="Regla de tres simple directa e inversa: calculadora paso a paso"
+  description="Calculadora de regla de tres simple, directa e inversa, con el procedimiento explicado y el método de reducción a la unidad. Cómo saber cuál usar, ejemplos y ejercicios."
+  alternates={{ es: path }} crumbs={[{ name: 'Regla de tres', path }]} jsonLd={[faq]}>
+  <h1>Regla de tres</h1>
+  <p class="lead">Si conoces tres datos de una proporción, la regla de tres te da el cuarto. Escribe los números y elige si es directa o inversa.</p>
+
+  <section class="fx r3" data-r3>
+    <div class="r3-kind" role="radiogroup">
+      <label><input type="radio" name="kind" value="direct" checked /> <span>Directa <small>más → más</small></span></label>
+      <label><input type="radio" name="kind" value="inverse" /> <span>Inversa <small>más → menos</small></span></label>
+    </div>
+    <div class="r3-grid">
+      <input name="a" value="3" inputmode="decimal" aria-label="A" /><span class="arr">→</span><input name="b" value="24" inputmode="decimal" aria-label="B" />
+      <input name="c" value="5" inputmode="decimal" aria-label="C" /><span class="arr">→</span><b class="x" data-x>40</b>
+    </div>
+    <p class="fx-err" data-r3-err role="alert"></p>
+    <ol class="fx-steps" data-r3-steps>
+      <li>Es directa: si una cantidad aumenta, la otra aumenta en la misma proporción.</li>
+      <li>x = 24 × 5 ÷ 3 = 120 ÷ 3 = <strong>40</strong>.</li>
+      <li>Reducción a la unidad: 1 vale 24 ÷ 3 = 8, así que 5 valen 8 × 5 = 40.</li>
+    </ol>
+  </section>
+
+  <section class="prose">
+    <h2>¿Directa o inversa?</h2>
+    <p>Haz la prueba del doble: imagina que la primera cantidad se duplica.</p>
+    <ul>
+      <li><strong>Directa:</strong> la otra también se duplica. Si 3 cuadernos cuestan 24, 6 cuadernos cuestan 48. Pasa con precios, recetas, distancias a la misma velocidad o mapas a escala.</li>
+      <li><strong>Inversa:</strong> la otra se reduce a la mitad. Si 4 pintores tardan 6 días, 8 pintores tardan 3. Pasa con trabajadores y tiempo, velocidad y tiempo para el mismo camino, o personas y raciones de una misma tarta.</li>
+    </ul>
+
+    <h2>Cómo se resuelve</h2>
+    <p>Se colocan los datos en dos filas, con cada magnitud en su columna:</p>
+    <table class="r3t"><tbody><tr><td>A</td><td>→</td><td>B</td></tr><tr><td>C</td><td>→</td><td>x</td></tr></tbody></table>
+    <ul>
+      <li><strong>Directa:</strong> se multiplica en cruz y se divide entre el que queda: x = B × C ÷ A.</li>
+      <li><strong>Inversa:</strong> se multiplica en línea y se divide entre el que queda: x = A × B ÷ C.</li>
+    </ul>
+    <p>Si te cuesta recordar las fórmulas, usa la <strong>reducción a la unidad</strong>: calcula primero cuánto vale 1 (en la directa, dividiendo; en la inversa, multiplicando) y después pasa a la cantidad que te piden.</p>
+
+    <h2>Errores frecuentes</h2>
+    <ul>
+      <li>Usar la regla directa en un problema inverso: si 4 pintores tardan 6 días, 8 pintores no tardan 12.</li>
+      <li>Mezclar unidades: si una fila está en horas y la otra en minutos, primero hay que pasarlo todo a la misma unidad.</li>
+      <li>Aplicarla cuando no hay proporción: si un niño de 8 años mide 1,30 m, a los 16 no medirá 2,60 m.</li>
+    </ul>
+    <p>Los porcentajes también son una regla de tres: para cálculos de descuentos, IVA o aumentos, prueba la <a href="/es/calculadora-de-porcentajes/">calculadora de porcentajes</a>.</p>
+  </section>
+
+  <h2>Problemas para imprimir</h2>
+  <div class="actions"><button type="button" class="button primary" data-print="sheet">Imprimir ficha</button></div>
+  <div data-print-area="sheet" set:html={sheet} />
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{faqs.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>
+<script>
+  import { resolvePrefs } from '../../lib/locale.js';
+  import { formatNumber } from '../../lib/format.js';
+  const root = document.querySelector('[data-r3]');
+  const prefs = resolvePrefs('es', navigator.languages || []);
+  const f = (x) => formatNumber(x, prefs, 4);
+  const num = (s) => { const t = String(s).trim().replace(/\s/g, '').replace(',', '.'); return /^-?\d+(\.\d+)?$/.test(t) ? Number(t) : NaN; };
+  function run() {
+    const err = root.querySelector('[data-r3-err]'); err.textContent = '';
+    const el = (n) => root.querySelector(`[name=${n}]`);
+    const a = num(el('a').value), b = num(el('b').value), c = num(el('c').value);
+    const kind = root.querySelector('[name=kind]:checked').value;
+    if ([a, b, c].some(Number.isNaN)) { err.textContent = 'Escribe los tres números.'; root.querySelector('[data-x]').textContent = '?'; return; }
+    if ((kind === 'direct' && a === 0) || (kind === 'inverse' && c === 0)) { err.textContent = 'No se puede dividir entre 0.'; root.querySelector('[data-x]').textContent = '?'; return; }
+    const x = kind === 'direct' ? (b * c) / a : (a * b) / c;
+    const unit = kind === 'direct' ? b / a : a * b;
+    root.querySelector('[data-x]').textContent = f(x);
+    root.querySelector('[data-r3-steps]').innerHTML = kind === 'direct'
+      ? `<li>Es directa: si una cantidad aumenta, la otra aumenta en la misma proporción.</li><li>x = ${f(b)} × ${f(c)} ÷ ${f(a)} = ${f(b * c)} ÷ ${f(a)} = <strong>${f(x)}</strong>.</li><li>Reducción a la unidad: 1 vale ${f(b)} ÷ ${f(a)} = ${f(unit)}, así que ${f(c)} valen ${f(unit)} × ${f(c)} = ${f(x)}.</li>`
+      : `<li>Es inversa: si una cantidad aumenta, la otra disminuye en la misma proporción.</li><li>x = ${f(a)} × ${f(b)} ÷ ${f(c)} = ${f(a * b)} ÷ ${f(c)} = <strong>${f(x)}</strong>.</li><li>Reducción a la unidad: con 1 harían falta ${f(a)} × ${f(b)} = ${f(unit)}; con ${f(c)}, ${f(unit)} ÷ ${f(c)} = ${f(x)}.</li>`;
+  }
+  root.addEventListener('input', run); root.addEventListener('change', run);
+  if (prefs.decimalSep !== ',') run();
+</script>
+<style is:global>
+  .r3-kind { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+  .r3-kind input { position: absolute; opacity: 0; }
+  .r3-kind span { display: inline-grid; padding: 0.5rem 1rem; border-radius: 14px; border: 2px solid var(--line); background: #fff; font-weight: 900; cursor: pointer; }
+  .r3-kind small { font-weight: 700; color: var(--muted); font-size: 0.8rem; }
+  .r3-kind input:checked + span { background: var(--accent); border-color: var(--ink); color: #fff; box-shadow: 0 3px 0 var(--ink); }
+  .r3-kind input:checked + span small { color: #fff; }
+  .r3-kind input:focus-visible + span { outline: 3px solid var(--ink); }
+  .r3-grid { display: grid; grid-template-columns: minmax(0, 8rem) auto minmax(0, 8rem); gap: 0.6rem 0.8rem; align-items: center; }
+  .r3-grid input { width: 100%; font: inherit; font-size: 1.6rem; font-weight: 800; text-align: center; padding: 0.4rem; border: 2px solid var(--line); border-radius: 12px; }
+  .r3-grid input:focus { outline: none; border-color: var(--accent); }
+  .r3-grid .arr { font-size: 1.6rem; font-weight: 900; color: var(--muted); }
+  .r3-grid .x { font-size: 1.9rem; font-weight: 900; text-align: center; color: #fff; background: var(--accent); border: 2px solid var(--ink); border-radius: 12px; padding: 0.35rem; box-shadow: 0 3px 0 var(--ink); }
+  .r3t { border-collapse: collapse; font-size: 1.3rem; font-weight: 800; }
+  .r3t td { padding: 0.2rem 0.8rem; }
+</style>

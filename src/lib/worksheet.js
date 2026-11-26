@@ -139,6 +139,14 @@ const GENERATORS = {
     const n = rng.int(2, max);
     return { op: 'prime', operands: [n], answer: isPrime(n) ? 'primo' : factorList(n).map(([p, e]) => (e > 1 ? `${p}^${e}` : String(p))).join(' · ') };
   },
+  // Rule of three with whole answers: kind 'direct' (a→b, c→x = b·c/a) or 'inverse' (x = a·b/c)
+  rule3(rng, { kind = 'mixed' } = {}) {
+    const k = kind === 'mixed' ? rng.pick(['direct', 'inverse']) : kind;
+    if (k === 'direct') { const unit = rng.int(2, 12), a = rng.int(2, 8), c = rng.int(2, 12); if (a === c) return null; return { op: 'rule3', kind: k, operands: [a, a * unit, c], answer: c * unit }; }
+    const total = rng.pick([12, 24, 36, 48, 60, 72, 120]), divs = [2, 3, 4, 6, 8, 12].filter((d) => total % d === 0);
+    const a = rng.pick(divs), c = rng.pick(divs); if (a === c) return null;
+    return { op: 'rule3', kind: k, operands: [a, total / a, c], answer: total / c };
+  },
   gcdLcm(rng, { max = 60, which = 'both' } = {}) {
     const k = rng.int(2, 6);
     const a = k * rng.int(2, Math.floor(max / k)), b = k * rng.int(2, Math.floor(max / k));
