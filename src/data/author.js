@@ -26,6 +26,7 @@ export const AUTHOR = {
     ],
     experience: 'Docente en un colegio, diez años en el sector tecnológico y cofundadora de <a href="https://inana.show/" rel="me noopener">Inana Show</a>, un espectáculo de ciencia para niños en Chile.',
     role: 'En GenioPop revisa que cada explicación se entienda a la edad para la que está pensada, que los ejemplos sean claros y que los experimentos sean seguros. Los cálculos de las calculadoras se comprueban con pruebas automáticas.',
+    family: 'Como madre de dos hijos, Anna estudia con ellos constantemente y busca tareas y explicaciones que de verdad funcionen. Por eso mira GenioPop con ojos de madre: si un niño lo entiende, si le resulta interesante y si se puede imprimir enseguida.',
     headings: { education: 'Formación', experience: 'Experiencia', role: 'Su papel en GenioPop', about: 'Sobre nosotros' },
   },
   de: {
@@ -44,6 +45,7 @@ export const AUTHOR = {
     ],
     experience: 'Lehrerin an einer Schule, zehn Jahre in der IT-Branche und Mitgründerin von <a href="https://inana.show/" rel="me noopener">Inana Show</a>, einer Wissenschaftsshow für Kinder in Chile.',
     role: 'Bei GenioPop prüft sie, ob jede Erklärung für das jeweilige Alter verständlich ist, ob die Beispiele klar sind und ob die Experimente sicher sind. Die Ergebnisse der Rechner werden mit automatischen Tests überprüft.',
+    family: 'Als Mutter von zwei Söhnen lernt Anna ständig mit ihren Kindern und sucht Aufgaben und Erklärungen, die wirklich funktionieren. Deshalb schaut sie mit den Augen einer Mutter auf GenioPop: Versteht ein Kind das, macht es Spaß, und kann man es sofort ausdrucken?',
     headings: { education: 'Ausbildung', experience: 'Erfahrung', role: 'Ihre Rolle bei GenioPop', about: 'Über uns' },
   },
   it: {
@@ -62,6 +64,7 @@ export const AUTHOR = {
     ],
     experience: 'Insegnante in una scuola, dieci anni nel settore tecnologico e cofondatrice di <a href="https://inana.show/" rel="me noopener">Inana Show</a>, uno spettacolo di scienza per bambini in Cile.',
     role: 'Su GenioPop verifica che ogni spiegazione sia comprensibile per l’età a cui è rivolta, che gli esempi siano chiari e che gli esperimenti siano sicuri. I risultati delle calcolatrici sono controllati con test automatici.',
+    family: 'Da mamma di due figli, Anna studia continuamente con loro e cerca esercizi e spiegazioni che funzionino davvero. Per questo guarda GenioPop con gli occhi di un genitore: un bambino lo capisce? È interessante? Si può stampare subito?',
     headings: { education: 'Formazione', experience: 'Esperienza', role: 'Il suo ruolo su GenioPop', about: 'Chi siamo' },
   },
 };

@@ -110,7 +110,7 @@ export function generate(topic, { count = 20, seed = 1, ...params } = {}) {
   for (let tries = 0; out.length < count && tries < count * 200; tries++) {
     const p = gen(rng, params);
     if (!p) continue;
-    const key = JSON.stringify(p.operands);
+    const key = JSON.stringify([p.operands, p.result ?? null]); // missingFactor: same operands, different result
     // allow repeats only when the topic has too few distinct problems
     if (seen.has(key) && tries < count * 50) continue;
     seen.add(key);

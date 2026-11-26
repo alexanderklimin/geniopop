@@ -16,9 +16,9 @@ const alternates = Object.fromEntries(LIVE.map((l) => [l, `/${l}/`]));
   <ul class="cards">
     {ui.sections.map((s) => (
       <li class="card">
-        <h2>{s.title}</h2>
+        <h2>{s.href ? <a href={s.href}>{s.title}</a> : s.title}</h2>
         <p>{s.text}</p>
-        <span class="tag">{ui.soon}</span>
+        {!s.href && <span class="tag">{ui.soon}</span>}
       </li>
     ))}
   </ul>

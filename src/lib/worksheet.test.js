@@ -43,3 +43,9 @@ test('every preset builds a sheet', () => {
     }
   }
 });
+
+test('missing-factor problems are not repeated', () => {
+  const ps = generate('missingFactor', { tables: [7], count: 6, seed: 8 }).problems;
+  assert.equal(new Set(ps.map((p) => p.result)).size, 6);
+  assert.ok(ps.every((p) => p.operands[0] * p.answer === p.result));
+});

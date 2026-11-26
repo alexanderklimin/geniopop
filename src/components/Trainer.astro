@@ -1,0 +1,197 @@
+---
+// Multiplication trainer (island, vanilla JS). Progress only in localStorage, nothing is sent anywhere.
+import { TRAINER } from '../i18n/trainer.js';
+
+interface Props { lang: string; tables?: number[]; fixed?: boolean; mul?: string }
+const { lang, tables = [2, 3, 4, 5, 6, 7, 8, 9], fixed = false, mul = '×' } = Astro.props;
+const t = TRAINER[lang];
+const choices = Array.from({ length: 12 }, (_, i) => i + 1);
+---
+<section class="trainer" data-trainer data-lang={lang} data-mul={mul} data-fixed={fixed ? '1' : undefined} data-tables={JSON.stringify(tables)} data-t={JSON.stringify(t)} aria-label={t.title}>
+  <div class="tr-setup" data-setup>
+    {!fixed && (
+      <fieldset class="tr-tables">
+        <legend>{t.pick}</legend>
+        <div class="tr-chips">
+          {choices.map((n) => (
+            <label class="chip"><input type="checkbox" value={n} checked={tables.includes(n)} /><span>{n}</span></label>
+          ))}
+        </div>
+      </fieldset>
+    )}
+    <div class="tr-modes" role="radiogroup">
+      {Object.entries(t.modes).map(([k, label], i) => (
+        <label class="mode"><input type="radio" name={`mode-${fixed ? tables[0] : 'all'}`} value={k} checked={i === (fixed ? 0 : 1)} /><span>{label}</span></label>
+      ))}
+    </div>
+    <button type="button" class="btn btn-main" data-start>{t.start}</button>
+    <p class="tr-msg" data-msg aria-live="polite"></p>
+  </div>
+
+  <div class="tr-stage" data-stage hidden>
+    <div class="tr-top"><span data-progress></span><span data-timer></span></div>
+    <form class="tr-q" data-form autocomplete="off">
+      <label class="tr-question" for={`ans-${fixed ? tables[0] : 'all'}`} data-question></label>
+      <input id={`ans-${fixed ? tables[0] : 'all'}`} class="tr-input" data-input inputmode="numeric" pattern="[0-9]*" maxlength="3" aria-label={t.answer} />
+      <button class="btn btn-main" data-check>{t.check}</button>
+    </form>
+    <p class="tr-feedback" data-feedback aria-live="assertive"></p>
+    <button type="button" class="btn btn-ghost" data-stop>{t.stop}</button>
+  </div>
+
+  <div class="tr-result" data-result hidden>
+    <p class="tr-score" data-score></p>
+    <div data-review></div>
+    <button type="button" class="btn btn-main" data-again>{t.again}</button>
+  </div>
+
+  <p class="tr-note"><span data-mastered></span> {t.privacy} <button type="button" class="link" data-reset>{t.reset}</button></p>
+</section>
+
+<script>
+  import { questions, recordAnswer, pickWeighted, mastered, factKey } from '../lib/tables.js';
+  import { createRng } from '../lib/rng.js';
+
+  const KEY = 'gp_tables_v1';
+  const load = () => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { return {}; } };
+  const save = (s) => { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch {} };
+
+  for (const root of document.querySelectorAll('[data-trainer]')) {
+    const t = JSON.parse(root.dataset.t);
+    const mul = root.dataset.mul;
+    const $ = (s) => root.querySelector(s);
+    const setup = $('[data-setup]'), stage = $('[data-stage]'), result = $('[data-result]');
+    const input = $('[data-input]'), feedback = $('[data-feedback]');
+    let stats = load();
+    let queue = [], current = null, done = 0, right = 0, mistakes = [], mode = 'shuffle', endAt = 0, timerId = 0, pool = [], waiting = false, shownAt = 0;
+    const rng = createRng(Date.now());
+
+    const selected = () => root.dataset.fixed ? JSON.parse(root.dataset.tables)
+      : [...root.querySelectorAll('.tr-tables input:checked')].map((i) => Number(i.value));
+
+    function showMastered() {
+      const tabs = selected();
+      const facts = tabs.flatMap((a) => Array.from({ length: 10 }, (_, i) => factKey(Math.min(a, i + 1), Math.max(a, i + 1))));
+      const uniq = [...new Set(facts)];
+      $('[data-mastered]').textContent = uniq.length ? `${t.mastered}: ${uniq.filter((k) => mastered(stats[k])).length} ${t.of} ${uniq.length}.` : '';
+    }
+
+    function ask() {
+      if (mode === 'timed') current = pickWeighted(pool, stats, rng);
+      else current = queue[done];
+      $('[data-question]').textContent = `${current.a} ${mul} ${current.b} =`;
+      $('[data-progress]').textContent = mode === 'timed' ? `${t.score}: ${right}` : `${done + 1} ${t.of} ${queue.length}`;
+      input.value = '';
+      feedback.textContent = '';
+      feedback.className = 'tr-feedback';
+      waiting = false;
+      shownAt = performance.now();
+      input.focus();
+    }
+
+    function start() {
+      const tabs = selected();
+      if (!tabs.length) { $('[data-msg]').textContent = t.pickOne; return; }
+      $('[data-msg]').textContent = '';
+      mode = root.querySelector('.tr-modes input:checked').value;
+      done = 0; right = 0; mistakes = [];
+      $('[data-timer]').textContent = '';
+      if (mode === 'order') queue = questions(tabs, { mode: 'order', from: 1, to: 10 });
+      else if (mode === 'shuffle') {
+        const all = questions(tabs, { mode: 'mixed', from: 1, to: 10, seed: rng.int(1, 1e9) });
+        // weak facts first when there are many: keep 20, weighted
+        queue = all.length <= 20 ? all : [...all].sort((x, y) => weightOf(y) - weightOf(x) || rng.next() - 0.5).slice(0, 20).sort(() => rng.next() - 0.5);
+      } else {
+        pool = questions(tabs, { mode: 'mixed', from: 1, to: 10, seed: rng.int(1, 1e9) });
+        endAt = performance.now() + 60000;
+        tick();
+        timerId = setInterval(tick, 250);
+      }
+      setup.hidden = true; result.hidden = true; stage.hidden = false;
+      ask();
+    }
+
+    const weightOf = (q) => { const s = stats[q.key]; return s ? s.wrong * 2 - s.right : 1; };
+
+    function tick() {
+      const left = Math.max(0, Math.ceil((endAt - performance.now()) / 1000));
+      $('[data-timer]').textContent = `${t.time}: ${left} s`;
+      if (left <= 0) finish();
+    }
+
+    function finish() {
+      clearInterval(timerId);
+      stage.hidden = true; result.hidden = false;
+      const total = mode === 'timed' ? right + mistakes.length : queue.length;
+      $('[data-score]').textContent = `${t.score}: ${right} ${t.of} ${total}`;
+      const box = $('[data-review]');
+      box.textContent = '';
+      const uniq = [...new Map(mistakes.map((q) => [q.key, q])).values()];
+      if (uniq.length) {
+        const h = document.createElement('p'); h.textContent = `${t.review}:`; box.append(h);
+        const ul = document.createElement('ul'); ul.className = 'tr-list';
+        for (const q of uniq) { const li = document.createElement('li'); li.textContent = `${q.a} ${mul} ${q.b} = ${q.answer}`; ul.append(li); }
+        box.append(ul);
+      } else if (total > 0) {
+        const p = document.createElement('p'); p.textContent = t.perfect; box.append(p);
+      }
+      showMastered();
+      $('[data-again]').focus();
+    }
+
+    $('[data-form]').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (waiting) return;
+      const value = input.value.trim();
+      if (value === '') { input.focus(); return; }
+      const ok = Number(value) === current.answer;
+      stats = recordAnswer(stats, current.key, ok, performance.now() - shownAt);
+      save(stats);
+      if (ok) { right++; feedback.textContent = t.right[rng.int(0, t.right.length - 1)]; feedback.className = 'tr-feedback ok'; }
+      else { mistakes.push(current); feedback.textContent = `${t.wrong} ${current.a} ${mul} ${current.b} = ${current.answer}`; feedback.className = 'tr-feedback bad'; }
+      waiting = true;
+      done++;
+      const delay = ok ? 600 : 1800;
+      setTimeout(() => {
+        if (mode === 'timed') { if (performance.now() < endAt) ask(); }
+        else if (done >= queue.length) finish();
+        else ask();
+      }, delay);
+    });
+
+    $('[data-start]').addEventListener('click', start);
+    $('[data-again]').addEventListener('click', () => { result.hidden = true; setup.hidden = false; });
+    $('[data-stop]').addEventListener('click', () => { if (mode !== 'timed') queue = queue.slice(0, done); finish(); });
+    $('[data-reset]').addEventListener('click', () => { stats = {}; save(stats); showMastered(); });
+    root.querySelectorAll('.tr-tables input').forEach((i) => i.addEventListener('change', showMastered));
+    showMastered();
+  }
+</script>
+
+<style>
+  .trainer { background: #fff; border: 2px solid var(--line); border-radius: 20px; padding: 1.25rem; margin: 1.5rem 0; }
+  .trainer fieldset { border: 0; padding: 0; margin: 0 0 1rem; }
+  .trainer legend { font-weight: 700; margin-bottom: 0.5rem; }
+  .tr-chips, .tr-modes { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+  .chip input, .mode input { position: absolute; opacity: 0; }
+  .chip span, .mode span { display: inline-flex; align-items: center; justify-content: center; min-width: 2.75rem; min-height: 2.75rem; padding: 0 0.85rem; border-radius: 999px; border: 2px solid var(--line); font-weight: 700; cursor: pointer; }
+  .chip input:checked + span, .mode input:checked + span { background: var(--pop); border-color: var(--pop); color: #fff; }
+  .chip input:focus-visible + span, .mode input:focus-visible + span { outline: 3px solid var(--ink); }
+  .btn { min-height: 3rem; padding: 0 1.4rem; border-radius: 999px; border: 2px solid var(--pop); font: inherit; font-weight: 800; cursor: pointer; }
+  .btn-main { background: var(--pop); color: #fff; }
+  .btn-ghost { background: transparent; color: var(--pop-dark); margin-top: 0.75rem; }
+  .tr-top { display: flex; justify-content: space-between; color: var(--muted); font-weight: 600; }
+  .tr-q { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.75rem; margin: 1rem 0; }
+  .tr-question { font-size: clamp(2rem, 9vw, 3.2rem); font-weight: 800; }
+  .tr-input { width: 5.5ch; font-size: clamp(2rem, 9vw, 3.2rem); font-weight: 800; text-align: center; border: 3px solid var(--line); border-radius: 14px; padding: 0.1rem 0.25rem; }
+  .tr-input:focus { outline: none; border-color: var(--pop); }
+  .tr-feedback { min-height: 1.6em; text-align: center; font-weight: 700; font-size: 1.15rem; margin: 0; }
+  .tr-feedback.ok { color: #1c7c3c; }
+  .tr-feedback.bad { color: #b42318; }
+  .tr-score { font-size: 1.6rem; font-weight: 800; margin: 0 0 0.5rem; }
+  .tr-list { columns: 2; padding-left: 1.2rem; }
+  .tr-msg { color: #b42318; min-height: 1.2em; margin: 0.5rem 0 0; }
+  .tr-note { font-size: 0.85rem; color: var(--muted); margin: 1rem 0 0; }
+  .link { background: none; border: 0; padding: 0; color: var(--pop-dark); text-decoration: underline; font: inherit; cursor: pointer; }
+  @media print { .trainer { display: none; } }
+</style>

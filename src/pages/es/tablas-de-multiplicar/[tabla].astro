@@ -1,0 +1,73 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Trainer from '../../../components/Trainer.astro';
+import TableList from '../../../components/TableList.astro';
+import Sheet from '../../../components/Sheet.astro';
+import { TABLES } from '../../../data/es/tablas.js';
+
+export function getStaticPaths() {
+  return Object.keys(TABLES).map((n) => ({ params: { tabla: `tabla-del-${n}` }, props: { n: Number(n) } }));
+}
+
+const { n } = Astro.props as { n: number };
+const d = TABLES[n];
+const hub = '/es/tablas-de-multiplicar/';
+const path = `${hub}tabla-del-${n}/`;
+const prev = n > 0 ? n - 1 : null, next = n < 12 ? n + 1 : null;
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: d.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+const title = n <= 1 || n === 10 ? `Tabla del ${n}: explicación, práctica y ficha para imprimir` : `Tabla del ${n}: trucos para aprenderla y ficha para imprimir`;
+const description = `La tabla del ${n} completa (${n} × 1 = ${n} … ${n} × 10 = ${n * 10}), ${d.trick.length > 1 ? 'trucos para memorizarla' : 'explicación'}, práctica interactiva y ficha para imprimir con soluciones.`;
+---
+<Base lang="es" title={title} description={description} alternates={{ es: path }}
+  crumbs={[{ name: 'Tablas de multiplicar', path: hub }, { name: `Tabla del ${n}`, path }]} jsonLd={[faq]} kidsPage>
+  <h1>Tabla del {n}</h1>
+  <p class="lead">{d.intro}</p>
+
+  <div class="top">
+    <div data-print-area="table"><TableList n={n} from={0} to={12} big /></div>
+    <div class="top-side">
+      <div class="actions"><button type="button" class="button primary" data-print="table">Imprimir la tabla del {n}</button></div>
+      {d.hard.length > 0 && (
+        <div class="hard">
+          <h2>Las que más cuestan</h2>
+          <ul>{d.hard.map(([a, b]) => <li>{a} × {b} = <strong>{a * b}</strong></li>)}</ul>
+        </div>
+      )}
+    </div>
+  </div>
+
+  <section class="prose">
+    <h2>{n <= 1 || n === 10 ? `Cómo funciona la tabla del ${n}` : `Trucos para aprender la tabla del ${n}`}</h2>
+    {d.trick.map((p) => <p>{p}</p>)}
+    <h2>Error frecuente</h2>
+    <p>{d.mistake}</p>
+  </section>
+
+  <h2>Practica la tabla del {n}</h2>
+  <Trainer lang="es" tables={[n]} fixed />
+
+  <h2>Ficha de la tabla del {n} para imprimir</h2>
+  <p>{n === 0 ? '20 multiplicaciones' : '14 multiplicaciones y 6 de «¿qué número falta?»'}, con soluciones en la segunda página.</p>
+  <Sheet tables={[n]} title={`Tabla del ${n}`} seed={n + 1}
+    labels={{ name: 'Nombre', date: 'Fecha', answers: 'Soluciones', newSheet: 'Nueva ficha', print: 'Imprimir ficha' }} />
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{d.faq.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+
+  <nav class="pager no-print" aria-label="Otras tablas">
+    {prev !== null ? <a class="button" href={`${hub}tabla-del-${prev}/`}>← Tabla del {prev}</a> : <span></span>}
+    <a class="button" href={hub}>Todas las tablas</a>
+    {next !== null ? <a class="button" href={`${hub}tabla-del-${next}/`}>Tabla del {next} →</a> : <span></span>}
+  </nav>
+</Base>
+
+<style>
+  .top { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: flex-start; }
+  .top-side { flex: 1 1 16rem; }
+  .hard { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 0.25rem 1.1rem 0.5rem; }
+  .hard h2 { margin-top: 0.75rem; font-size: 1.15rem; }
+  .hard ul { padding-left: 1.2rem; font-size: 1.2rem; }
+  .pager { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-top: 2.5rem; }
+</style>

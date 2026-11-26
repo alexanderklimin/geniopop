@@ -1,0 +1,61 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Trainer from '../../../components/Trainer.astro';
+import TableList from '../../../components/TableList.astro';
+import Sheet from '../../../components/Sheet.astro';
+import { HUB } from '../../../data/es/tablas.js';
+
+const path = '/es/tablas-de-multiplicar/';
+const tables = Array.from({ length: 12 }, (_, i) => i + 1);
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: HUB.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+---
+<Base lang="es" title="Tablas de multiplicar del 1 al 12: practicar e imprimir"
+  description="Tablas de multiplicar del 1 al 12 para practicar en orden, salteadas o contrarreloj, con trucos para memorizarlas y fichas para imprimir con soluciones. Gratis y sin registro."
+  alternates={{ es: path }} crumbs={[{ name: 'Tablas de multiplicar', path }]} jsonLd={[faq]} kidsPage>
+  <h1>Tablas de multiplicar del 1 al 12</h1>
+  <p class="lead">Practica las tablas en orden, salteadas o contrarreloj. El entrenador recuerda qué multiplicaciones te cuestan y te las vuelve a preguntar. Debajo tienes todas las tablas y una ficha para imprimir.</p>
+
+  <Trainer lang="es" />
+
+  <h2>Todas las tablas de multiplicar</h2>
+  <div class="actions"><button type="button" class="button primary" data-print="table">Imprimir las tablas</button><a class="button" href="/es/tabla-pitagorica/">Tabla pitagórica</a></div>
+  <div class="tables-grid" data-print-area="table">
+    {tables.map((n) => <TableList n={n} heading={`Tabla del ${n}`} href={`${path}tabla-del-${n}/`} />)}
+  </div>
+  <p>¿Buscas la <a href={`${path}tabla-del-0/`}>tabla del 0</a>? Es la más corta: todo da 0.</p>
+
+  <section class="prose">
+    <h2>En qué orden aprenderlas</h2>
+    <p>No hace falta empezar por la del 1 y terminar por la del 10. Va mejor empezar por las fáciles, porque cada tabla aprendida resuelve parte de las siguientes: 3 × 7 es lo mismo que 7 × 3.</p>
+    <ol>
+      {HUB.order.map((s) => <li><strong>{s.tables.map((n, i) => <>{i > 0 && (i === s.tables.length - 1 ? ' y ' : ', ')}<a href={`${path}tabla-del-${n}/`}>{n}</a></>)}.</strong> {s.text}</li>)}
+    </ol>
+    <p>Con las tablas del 1 al 10 hay 100 multiplicaciones, pero si quitas las del 1 y del 10 y las que se repiten al cambiar el orden, quedan solo 36 que hay que memorizar de verdad.</p>
+
+    <h2>Cómo practicar en casa</h2>
+    <ul>
+      <li><strong>Primero entender, después memorizar.</strong> 4 × 3 son cuatro grupos de tres: con fichas, botones o dibujos se ve enseguida.</li>
+      <li><strong>Poco y a menudo.</strong> De 5 a 10 minutos al día rinden más que una sesión larga el fin de semana.</li>
+      <li><strong>En orden y luego salteadas.</strong> Recitar la tabla ayuda al principio; preguntar salteado comprueba que de verdad se sabe.</li>
+      <li><strong>Las difíciles, más veces.</strong> El entrenador lo hace solo: las que fallas o tardas en responder aparecen con más frecuencia.</li>
+    </ul>
+
+    <h2>Errores frecuentes</h2>
+    <ul>{HUB.mistakes.map((m) => <li>{m}</li>)}</ul>
+  </section>
+
+  <h2>Ficha para imprimir: tablas del 2 al 9</h2>
+  <p>20 ejercicios salteados, con una segunda página de soluciones. Pulsa «Nueva ficha» para cambiar los ejercicios.</p>
+  <Sheet tables={[2, 3, 4, 5, 6, 7, 8, 9]} title="Tablas de multiplicar del 2 al 9" seed={29}
+    labels={{ name: 'Nombre', date: 'Fecha', answers: 'Soluciones', newSheet: 'Nueva ficha', print: 'Imprimir ficha' }} />
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{HUB.faq.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>
+
+<style>
+  .tables-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); }
+  @media print { .tables-grid { grid-template-columns: repeat(4, 1fr); gap: 4mm; font-size: 11pt; } }
+</style>

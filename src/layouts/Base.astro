@@ -1,7 +1,7 @@
 ---
 import Analytics from '../components/Analytics.astro';
 import { SITE_NAME } from '../data/site.js';
-import { LANG_NAMES, OG_LOCALE, t } from '../i18n/ui.js';
+import { LANG_NAMES, OG_LOCALE, LIVE, t } from '../i18n/ui.js';
 
 interface Props {
   lang: string;               // 'es' | 'de' | 'it'
@@ -10,16 +10,27 @@ interface Props {
   alternates?: Record<string, string>; // hreflang → path of the same page in other languages
   xDefault?: string;          // path for hreflang x-default (the language picker)
   noindex?: boolean;
-  kidsPage?: boolean;         // child-directed page: no third-party trackers, ads with TFAT later
+  crumbs?: { name: string; path: string }[]; // breadcrumb trail after the language home
+  jsonLd?: Record<string, unknown>[];
+  kidsPage?: boolean;         // child-directed page: ads only with TFAT (later); GA4 runs with Google signals/ad personalization off site-wide (CLAUDE.md allows this)
 }
 
-const { lang, title, description, alternates = {}, xDefault = '/', noindex = false, kidsPage = false } = Astro.props;
+const { lang, title, description, alternates = {}, xDefault = '/', noindex = false, kidsPage = false, crumbs = [], jsonLd = [] } = Astro.props;
 const ui = t(lang);
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const absolute = (path: string) => new URL(path, Astro.site).href;
 const branded = `${title} | ${SITE_NAME}`;
 const fullTitle = branded.length > 65 ? title : branded;
 const home = `/${lang}/`;
+// hreflang only when the page really exists in more than one language
+const multi = Object.keys(alternates).length > 1;
+const switcher = LIVE.map((l) => [l, alternates[l] ?? `/${l}/`]);
+const trail = crumbs.length ? [{ name: ui.home, path: home }, ...crumbs] : [];
+const schemas = [...jsonLd];
+if (trail.length) schemas.push({
+  '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+  itemListElement: trail.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: absolute(c.path) })),
+});
 ---
 <!doctype html>
 <html lang={lang}>
@@ -30,8 +41,8 @@ const home = `/${lang}/`;
     <meta name="description" content={description} />
     <meta name="theme-color" content="#ff6b35" />
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
-    {Object.entries(alternates).map(([l, p]) => <link rel="alternate" hreflang={l} href={absolute(p)} />)}
-    {Object.keys(alternates).length > 0 && <link rel="alternate" hreflang="x-default" href={absolute(xDefault)} />}
+    {multi && Object.entries(alternates).map(([l, p]) => <link rel="alternate" hreflang={l} href={absolute(p)} />)}
+    {multi && <link rel="alternate" hreflang="x-default" href={absolute(xDefault)} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE_NAME} />
@@ -39,6 +50,7 @@ const home = `/${lang}/`;
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    {schemas.map((schema) => <script is:inline type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, '\\u003c')} />)}
   </head>
   <body data-kids={kidsPage ? '1' : undefined}>
     <a class="skip" href="#main">{ui.skip}</a>
@@ -46,22 +58,37 @@ const home = `/${lang}/`;
       <div class="wrap bar">
         <a class="brand" href={home} aria-label={`${SITE_NAME}, ${ui.home}`}>Genio<span>Pop</span></a>
         <nav class="langs" aria-label={ui.language}>
-          {Object.entries(alternates).map(([l, p]) => (
+          {switcher.map(([l, p]) => (
             <a href={p} hreflang={l} lang={l} aria-current={l === lang ? 'true' : undefined}>{l.toUpperCase()}</a>
           ))}
         </nav>
       </div>
     </header>
     <main id="main" class="wrap">
+      {trail.length > 0 && (
+        <nav class="crumbs" aria-label="breadcrumb">
+          {trail.map((c, i) => i < trail.length - 1 ? <><a href={c.path}>{c.name}</a><span aria-hidden="true"> › </span></> : <span aria-current="page">{c.name}</span>)}
+        </nav>
+      )}
       <slot />
     </main>
     <footer class="site-footer">
       <div class="wrap">
         <p>{ui.footerNote}</p>
-        <p class="footer-langs">{Object.entries(alternates).map(([l, p]) => <a href={p} hreflang={l} lang={l}>{LANG_NAMES[l]}</a>)}</p>
+        <p class="footer-langs">{switcher.map(([l, p]) => <a href={p} hreflang={l} lang={l}>{LANG_NAMES[l]}</a>)}</p>
       </div>
     </footer>
-    {!kidsPage && <Analytics lang={lang} />}
+    <Analytics lang={lang} />
+    <script is:inline>
+      // [data-print="table"|"sheet"] prints only that part of the page
+      document.addEventListener('click', function (e) {
+        var b = e.target.closest && e.target.closest('[data-print]');
+        if (!b) return;
+        document.body.setAttribute('data-printing', b.getAttribute('data-print'));
+        window.print();
+      });
+      window.addEventListener('afterprint', function () { document.body.removeAttribute('data-printing'); });
+    </script>
   </body>
 </html>
 
@@ -94,4 +121,22 @@ const home = `/${lang}/`;
   .tag { display: inline-block; margin-top: 0.6rem; font-size: 0.8rem; font-weight: 700; color: var(--pop-dark); background: var(--paper); border-radius: 999px; padding: 0.15rem 0.6rem; }
   .site-footer { border-top: 1px solid var(--line); background: #fff; color: var(--muted); font-size: 0.92rem; padding-block: 1.25rem; }
   .footer-langs { display: flex; gap: 1rem; }
+  .crumbs { font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem; }
+  .crumbs a { color: var(--muted); }
+  h2 { font-size: 1.45rem; margin: 2.25rem 0 0.75rem; line-height: 1.25; }
+  .prose { max-width: 44rem; }
+  .prose li { margin-bottom: 0.35rem; }
+  .faq dt { font-weight: 700; margin-top: 1rem; }
+  .faq dd { margin: 0.25rem 0 0; color: var(--ink); }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1rem 0; }
+  .button { display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0 1.2rem; border-radius: 999px; border: 2px solid var(--pop); background: #fff; color: var(--pop-dark); font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+  .button.primary { background: var(--pop); color: #fff; }
+  @media print {
+    .site-header, .site-footer, .crumbs, .actions, .no-print, .consent { display: none !important; }
+    body { background: #fff; }
+    main { padding: 0; }
+    body[data-printing] main > *:not([data-print-area]) { display: none !important; }
+    body[data-printing="table"] main [data-print-area]:not([data-print-area="table"]),
+    body[data-printing="sheet"] main [data-print-area]:not([data-print-area="sheet"]) { display: none !important; }
+  }
 </style>

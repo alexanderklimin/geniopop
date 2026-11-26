@@ -1,0 +1,66 @@
+---
+// Printable worksheet for multiplication tables: problems + answer key on a second page.
+// Built at build time (seeded) so it is real content; "new sheet" regenerates in the browser.
+import { generate } from '../lib/worksheet.js';
+
+interface Props { tables: number[]; title: string; labels: { name: string; date: string; answers: string; newSheet: string; print: string }; mul?: string; seed?: number }
+const { tables, title, labels, mul = '×', seed = 1 } = Astro.props;
+const withMissing = !tables.includes(0);
+const build = (tables: number[], seed: number, withMissing: boolean) => {
+  const a = generate('table', { tables, to: 10, count: withMissing ? 14 : 20, seed }).problems;
+  const b = withMissing ? generate('missingFactor', { tables, to: 10, count: 6, seed: seed + 7 }).problems : [];
+  return [...a, ...b];
+}
+const problems = build(tables, seed, withMissing);
+---
+<div class="sheet" data-print-area="sheet" data-sheet data-tables={JSON.stringify(tables)} data-mul={mul} data-missing={withMissing ? '1' : undefined}>
+  <div class="sheet-head"><strong>{title}</strong><span>{labels.name}: ____________________</span><span>{labels.date}: __________</span></div>
+  <ol class="sheet-grid" data-problems>
+    {problems.map((p) => <li>{p.operands[1] === null ? <>{p.operands[0]} {mul} <span class="blank"></span> = {p.result}</> : <>{p.operands[0]} {mul} {p.operands[1]} = <span class="blank"></span></>}</li>)}
+  </ol>
+  <div class="sheet-answers">
+    <strong>{labels.answers}</strong>
+    <ol class="sheet-key" data-answers>{problems.map((p) => <li>{p.answer}</li>)}</ol>
+  </div>
+</div>
+<div class="actions">
+  <button type="button" class="button primary" data-print="sheet">{labels.print}</button>
+  <button type="button" class="button" data-new-sheet>{labels.newSheet}</button>
+</div>
+
+<script>
+  import { generate } from '../lib/worksheet.js';
+  for (const sheet of document.querySelectorAll('[data-sheet]')) {
+    const btn = sheet.nextElementSibling?.querySelector('[data-new-sheet]');
+    btn?.addEventListener('click', () => {
+      const tables = JSON.parse(sheet.dataset.tables), mul = sheet.dataset.mul, missing = !!sheet.dataset.missing;
+      const seed = Math.floor(Math.random() * 1e9);
+      const a = generate('table', { tables, to: 10, count: missing ? 14 : 20, seed }).problems;
+      const b = missing ? generate('missingFactor', { tables, to: 10, count: 6, seed: seed + 7 }).problems : [];
+      const all = [...a, ...b];
+      const list = sheet.querySelector('[data-problems]'), key = sheet.querySelector('[data-answers]');
+      list.textContent = ''; key.textContent = '';
+      for (const p of all) {
+        const li = document.createElement('li');
+        const blank = '<span class="blank"></span>';
+        li.innerHTML = p.operands[1] === null ? `${p.operands[0]} ${mul} ${blank} = ${p.result}` : `${p.operands[0]} ${mul} ${p.operands[1]} = ${blank}`;
+        list.append(li);
+        const k = document.createElement('li'); k.textContent = String(p.answer); key.append(k);
+      }
+    });
+  }
+</script>
+
+<style is:global>
+  .sheet { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 1.25rem; }
+  .sheet-head { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; justify-content: space-between; margin-bottom: 1rem; }
+  .sheet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 0.9rem 1.5rem; padding-left: 1.6rem; font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+  .blank { display: inline-block; min-width: 3.2rem; border-bottom: 2px solid var(--ink); vertical-align: -0.15em; }
+  .sheet-answers { margin-top: 1.25rem; font-size: 0.9rem; color: var(--muted); }
+  .sheet-key { display: grid; grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr)); gap: 0.25rem 1rem; padding: 0; list-style-position: inside; font-variant-numeric: tabular-nums; }
+  @media print {
+    .sheet { border: 0; padding: 0; }
+    .sheet-grid { grid-template-columns: repeat(3, 1fr); font-size: 15pt; gap: 9mm 8mm; }
+    .sheet-answers { break-before: page; color: #000; }
+  }
+</style>

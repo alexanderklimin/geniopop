@@ -1,0 +1,24 @@
+---
+// One multiplication table as a list: 7 × 0 = 0 … 7 × 12 = 84 (11 and 12 shown lighter as extension).
+interface Props { n: number; to?: number; from?: number; mul?: string; href?: string; heading?: string; big?: boolean }
+const { n, from = 1, to = 10, mul = '×', href, heading, big = false } = Astro.props;
+const rows = Array.from({ length: to - from + 1 }, (_, i) => from + i);
+---
+<div class:list={['tlist', { big }]}>
+  {heading && (href ? <h3><a href={href}>{heading}</a></h3> : <h3>{heading}</h3>)}
+  <ol>
+    {rows.map((b) => <li class:list={{ ext: b > 10 || b === 0 }}><span>{n} {mul} {b}</span><b>{n * b}</b></li>)}
+  </ol>
+</div>
+<style>
+  .tlist { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 0.9rem 1.1rem; }
+  .tlist h3 { margin: 0 0 0.4rem; font-size: 1.1rem; }
+  .tlist h3 a { color: var(--ink); text-decoration-color: var(--pop); }
+  .tlist ol { list-style: none; margin: 0; padding: 0; font-variant-numeric: tabular-nums; }
+  .tlist li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.1rem 0; border-bottom: 1px dashed var(--line); }
+  .tlist li:last-child { border-bottom: 0; }
+  .tlist li b { color: var(--pop-dark); }
+  .tlist li.ext { color: var(--muted); }
+  .tlist.big { font-size: 1.35rem; max-width: 22rem; }
+  @media print { .tlist { border: 0; break-inside: avoid; } }
+</style>

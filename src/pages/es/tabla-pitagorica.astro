@@ -1,0 +1,90 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const path = '/es/tabla-pitagorica/';
+const N = 12;
+const rows = Array.from({ length: N }, (_, r) => r + 1);
+---
+<Base lang="es" title="Tabla pitagórica interactiva del 1 al 12 para imprimir"
+  description="Tabla pitagórica del 1 al 10 y del 1 al 12: toca una casilla para ver la multiplicación, descubre sus patrones (simetría, cuadrados) e imprímela en blanco o completa."
+  alternates={{ es: path }} crumbs={[{ name: 'Tablas de multiplicar', path: '/es/tablas-de-multiplicar/' }, { name: 'Tabla pitagórica', path }]} kidsPage>
+  <h1>Tabla pitagórica</h1>
+  <p class="lead">Toda la multiplicación del 1 al 12 en un solo cuadro. Toca una casilla para ver qué multiplicación es; la fila y la columna se iluminan.</p>
+
+  <div class="actions">
+    <label class="button"><input type="checkbox" data-size checked /> Hasta el 12</label>
+    <label class="button"><input type="checkbox" data-blank /> En blanco para rellenar</label>
+    <button type="button" class="button primary" data-print="table">Imprimir</button>
+  </div>
+  <p class="readout" data-readout aria-live="polite">7 × 8 = 56</p>
+
+  <div class="pg-wrap" data-print-area="table">
+    <table class="pg" data-pg>
+      <thead><tr><th scope="col">×</th>{rows.map((c) => <th scope="col" data-c={c} class:list={{ x: c > 10 }}>{c}</th>)}</tr></thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr class:list={{ x: r > 10 }}>
+            <th scope="row" data-r={r}>{r}</th>
+            {rows.map((c) => <td data-r={r} data-c={c} class:list={{ sq: r === c, x: c > 10 }} tabindex="0">{r * c}</td>)}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <section class="prose">
+    <h2>Cómo se lee</h2>
+    <p>Busca el primer número en la columna de la izquierda y el segundo en la fila de arriba. Donde se cruzan está el resultado: la fila del 7 y la columna del 8 se cruzan en 56, así que 7 × 8 = 56.</p>
+    <h2>Patrones que se descubren</h2>
+    <ul>
+      <li><strong>Es simétrica.</strong> La mitad de arriba es igual que la de abajo, porque 3 × 8 = 8 × 3. Por eso, de las 100 casillas del 1 al 10, hay muchas menos multiplicaciones distintas de las que parece.</li>
+      <li><strong>La diagonal son los cuadrados:</strong> 1, 4, 9, 16, 25, 36, 49, 64, 81, 100. Están marcados en otro color.</li>
+      <li><strong>La fila del 5</strong> alterna terminaciones en 5 y en 0; <strong>la del 9</strong> sube en las decenas y baja en las unidades (9, 18, 27, 36…).</li>
+      <li><strong>Las filas pares</strong> (2, 4, 6, 8, 10, 12) solo tienen resultados pares.</li>
+    </ul>
+    <h2>¿Por qué se llama «pitagórica»?</h2>
+    <p>Se atribuye tradicionalmente a Pitágoras y a su escuela, en la antigua Grecia, aunque no hay pruebas de que la inventara él. En muchos países se llama simplemente «tabla de multiplicar» o «tabla de doble entrada».</p>
+    <p>Para practicar cada tabla por separado, ve a las <a href="/es/tablas-de-multiplicar/">tablas de multiplicar</a> con el entrenador.</p>
+  </section>
+</Base>
+
+<script>
+  const table = document.querySelector('[data-pg]');
+  const readout = document.querySelector('[data-readout]');
+  const size = document.querySelector('[data-size]');
+  const blank = document.querySelector('[data-blank]');
+  function mark(td) {
+    table.querySelectorAll('.on').forEach((el) => el.classList.remove('on', 'hit'));
+    const r = td.dataset.r, c = td.dataset.c;
+    table.querySelectorAll(`[data-r="${r}"], [data-c="${c}"]`).forEach((el) => el.classList.add('on'));
+    td.classList.add('hit');
+    readout.textContent = `${r} × ${c} = ${Number(r) * Number(c)}`;
+  }
+  table.addEventListener('click', (e) => { const td = e.target.closest('td'); if (td) mark(td); });
+  table.addEventListener('focusin', (e) => { const td = e.target.closest('td'); if (td) mark(td); });
+  table.addEventListener('mouseover', (e) => { const td = e.target.closest('td'); if (td) mark(td); });
+  size.addEventListener('change', () => table.classList.toggle('to10', !size.checked));
+  blank.addEventListener('change', () => table.classList.toggle('blank', blank.checked));
+</script>
+
+<style>
+  .readout { font-size: 1.6rem; font-weight: 800; min-height: 1.4em; margin: 0.5rem 0; }
+  .pg-wrap { overflow-x: auto; }
+  .pg { border-collapse: collapse; font-variant-numeric: tabular-nums; background: #fff; }
+  .pg th, .pg td { width: 2.6rem; height: 2.4rem; text-align: center; border: 1px solid var(--line); }
+  .pg th { background: var(--paper); color: var(--pop-dark); }
+  .pg td { cursor: pointer; }
+  .pg td.sq { background: #fff1e8; font-weight: 700; }
+  .pg .on { background: #ffe2d1; }
+  .pg td.hit { background: var(--pop); color: #fff; font-weight: 800; }
+  .pg.to10 .x { display: none; }
+  .pg.blank td { color: transparent; }
+  .actions input { margin-right: 0.4rem; accent-color: var(--pop); }
+  @media print {
+    .readout { display: none; }
+    .pg { margin: 0 auto; font-size: 12pt; }
+    .pg th, .pg td { width: 13mm; height: 11mm; }
+    .pg .on, .pg td.hit { background: none; color: inherit; }
+    .pg.blank td { color: transparent !important; }
+  }
+</style>
