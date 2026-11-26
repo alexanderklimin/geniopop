@@ -1,0 +1,36 @@
+// Home page blocks per language (only languages with content). Every link points to a real page.
+export const HOME = {
+  es: {
+    h1: 'Matemáticas de primaria, paso a paso',
+    lead: 'Tablas de multiplicar para practicar, calculadoras que explican cada paso como en el cuaderno y fichas para imprimir con soluciones. Gratis y sin registro.',
+    demo: { title: 'Pruébalo ahora', q: [7, 8], check: 'Comprobar', ok: '¡Correcto! 7 × 8 = 56', bad: 'Casi. 7 × 8 = 56 (truco: 5, 6, 7, 8)', more: 'Practicar todas las tablas', placeholder: '?' },
+    toolsTitle: 'Lo más usado',
+    tools: [
+      { icon: 'grid', c: 'tablas', title: 'Tablas de multiplicar', text: 'Entrenador que repite lo que fallas', href: '/es/tablas-de-multiplicar/' },
+      { icon: 'pizza', c: 'fracciones', title: 'Calculadora de fracciones', text: 'Suma, resta, multiplica y divide con procedimiento', href: '/es/fracciones/calculadora-de-fracciones/' },
+      { icon: 'sheet', c: 'fichas', title: 'Fichas para imprimir', text: 'Generador con soluciones, A4 o carta', href: '/es/fichas/' },
+      { icon: 'divide', c: 'calc', title: 'División paso a paso', text: 'Con resto o decimales, como en tu país', href: '/es/division/' },
+      { icon: 'percent', c: 'calc', title: 'Porcentajes', text: 'Descuentos, aumentos, IVA y más', href: '/es/calculadora-de-porcentajes/' },
+      { icon: 'roman', c: 'calc', title: 'Números romanos', text: 'Convertidor en los dos sentidos y tabla', href: '/es/numeros-romanos/' },
+      { icon: 'layers', c: 'calc', title: 'Operaciones combinadas', text: 'Paréntesis y prioridad, paso a paso', href: '/es/operaciones-combinadas/' },
+      { icon: 'calc', c: 'calc', title: 'Sumas y restas llevando', text: 'En columna, con los dos métodos de resta', href: '/es/sumas-y-restas-llevando/' },
+    ],
+    tablesTitle: 'Elige una tabla',
+    tablesHref: (n) => `/es/tablas-de-multiplicar/tabla-del-${n}/`,
+    tablesExtra: [['Tabla pitagórica', '/es/tabla-pitagorica/'], ['Todas las tablas', '/es/tablas-de-multiplicar/']],
+    groupsTitle: 'Todos los temas',
+    groups: [
+      { c: 'tablas', icon: 'grid', title: 'Tablas', links: [['Tablas del 1 al 12', '/es/tablas-de-multiplicar/'], ['Tabla pitagórica', '/es/tabla-pitagorica/'], ['Tabla del 7', '/es/tablas-de-multiplicar/tabla-del-7/'], ['Tabla del 8', '/es/tablas-de-multiplicar/tabla-del-8/'], ['Tabla del 9', '/es/tablas-de-multiplicar/tabla-del-9/']] },
+      { c: 'fracciones', icon: 'pizza', title: 'Fracciones', links: [['Qué son las fracciones', '/es/fracciones/'], ['Calculadora', '/es/fracciones/calculadora-de-fracciones/'], ['Suma', '/es/fracciones/suma-de-fracciones/'], ['Resta', '/es/fracciones/resta-de-fracciones/'], ['Multiplicación', '/es/fracciones/multiplicacion-de-fracciones/'], ['División', '/es/fracciones/division-de-fracciones/'], ['Equivalentes', '/es/fracciones/fracciones-equivalentes/'], ['Simplificar', '/es/fracciones/simplificar-fracciones/']] },
+      { c: 'calc', icon: 'calc', title: 'Operaciones', links: [['Sumas y restas llevando', '/es/sumas-y-restas-llevando/'], ['Multiplicaciones', '/es/multiplicaciones/'], ['División', '/es/division/'], ['Operaciones combinadas', '/es/operaciones-combinadas/'], ['Potencias', '/es/potencias/'], ['Raíz cuadrada', '/es/raiz-cuadrada/']] },
+      { c: 'calc', icon: 'percent', title: 'Calculadoras', links: [['Porcentajes', '/es/calculadora-de-porcentajes/'], ['Números romanos', '/es/numeros-romanos/'], ['mcm y mcd', '/es/mcm-mcd/']] },
+    ],
+    coursesTitle: 'Fichas por curso',
+    steps: { title: 'Cómo funciona', items: [['Elige el tema', 'Una tabla, una operación o un curso entero.'], ['Practica o resuelve', 'Cada paso se explica con palabras sencillas, como lo haría un profe.'], ['Imprime y corrige', 'Fichas en A4 o carta con la hoja de soluciones aparte.']] },
+    faq: [
+      { q: '¿GenioPop es gratis?', a: 'Sí. Todo se puede usar e imprimir sin pagar y sin crear una cuenta.' },
+      { q: '¿Para qué edades es?', a: 'Para primaria, de 6 a 12 años (1.º a 6.º de primaria, 1.er a 6.º grado, 1.º a 6.º básico), y para familias y profes que les ayudan.' },
+      { q: '¿Guardáis datos de los niños?', a: 'No. No hay registro y el progreso del entrenador se queda en el propio dispositivo. Más detalles en la política de privacidad.' },
+    ],
+  },
+};

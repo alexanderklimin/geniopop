@@ -1,0 +1,60 @@
+---
+// Column +, − or × step by step. Subtraction offers the two school methods; default depends on the visitor's region.
+import { addColumns, subColumns, mulColumns } from '../lib/columnops.js';
+import { addHTML, subHTML, mulHTML, COL_TEXT } from '../i18n/column-render.js';
+interface Props { lang: string; op: 'add' | 'sub' | 'mul'; a: number; b: number; button: string; methodLabels?: [string, string] }
+const { lang, op, a, b, button, methodLabels } = Astro.props;
+const T = COL_TEXT[lang];
+const r = op === 'add' ? addColumns(a, b) : op === 'sub' ? subColumns(a, b, 'borrow') : mulColumns(a, b);
+const html = op === 'add' ? addHTML(r) : op === 'sub' ? subHTML(r) : mulHTML(r);
+const steps = T[op](r);
+const sign = { add: '+', sub: '−', mul: '×' }[op];
+---
+<section class="fx cc" data-cc data-op={op} data-lang={lang}>
+  <form class="gl-form cc-form" data-cc-form novalidate>
+    <input name="a" value={a} inputmode="numeric" aria-label="1" />
+    <span class="cc-sign">{sign}</span>
+    <input name="b" value={b} inputmode="numeric" aria-label="2" />
+    <button class="fx-go">{button}</button>
+  </form>
+  {op === 'sub' && methodLabels && (
+    <div class="ld-opts">
+      <label><input type="radio" name={`m-${a}`} value="borrow" checked /> {methodLabels[0]}</label>
+      <label><input type="radio" name={`m-${a}`} value="compensate" /> {methodLabels[1]}</label>
+    </div>
+  )}
+  <p class="fx-err" data-cc-err role="alert"></p>
+  <div class="cc-out" data-cc-out set:html={html} />
+  <ol class="fx-steps" data-cc-steps>{steps.map((s) => <li set:html={s} />)}</ol>
+</section>
+<script>
+  import { addColumns, subColumns, mulColumns } from '../lib/columnops.js';
+  import { addHTML, subHTML, mulHTML, COL_TEXT } from '../i18n/column-render.js';
+  for (const root of document.querySelectorAll('[data-cc]')) {
+    const op = root.dataset.op, T = COL_TEXT[root.dataset.lang];
+    const form = root.querySelector('[data-cc-form]');
+    const radios = root.querySelectorAll('.ld-opts input');
+    // Spain teaches subtraction by compensation ("llevando"); elsewhere, borrowing ("pedir prestado")
+    const region = (navigator.languages || []).map((l) => l.split('-')[1]).find(Boolean);
+    if (op === 'sub' && region === 'ES') radios.forEach((r) => { r.checked = r.value === 'compensate'; });
+    const run = () => {
+      const err = root.querySelector('[data-cc-err]'); err.textContent = '';
+      const a = form.elements.a.value.trim(), b = form.elements.b.value.trim();
+      const limit = op === 'mul' ? [8, 5] : [12, 12];
+      if (!/^\d+$/.test(a) || !/^\d+$/.test(b) || a.length > limit[0] || b.length > limit[1]) { err.textContent = op === 'mul' ? 'Escribe dos números enteros (hasta 8 y 5 cifras).' : 'Escribe dos números enteros (hasta 12 cifras).'; return; }
+      if (op === 'sub' && Number(b) > Number(a)) { err.textContent = 'El número de abajo es mayor: cambia el orden (en primaria se resta el menor al mayor).'; return; }
+      const method = [...radios].find((r) => r.checked)?.value ?? 'borrow';
+      const r = op === 'add' ? addColumns(+a, +b) : op === 'sub' ? subColumns(+a, +b, method) : mulColumns(+a, +b);
+      root.querySelector('[data-cc-out]').innerHTML = op === 'add' ? addHTML(r) : op === 'sub' ? subHTML(r) : mulHTML(r);
+      root.querySelector('[data-cc-steps]').innerHTML = T[op](r).map((s) => `<li>${s}</li>`).join('');
+    };
+    form.addEventListener('submit', (e) => { e.preventDefault(); run(); });
+    radios.forEach((r) => r.addEventListener('change', run));
+    if (op === 'sub' && region === 'ES') run();
+  }
+</script>
+<style is:global>
+  .cc-form input { width: 9rem; flex: 0 1 9rem; }
+  .cc-sign { font-size: 1.8rem; font-weight: 900; align-self: center; }
+  .cc-out { padding: 0.5rem 0 0.25rem; overflow-x: auto; }
+</style>

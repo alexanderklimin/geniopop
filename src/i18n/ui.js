@@ -34,7 +34,7 @@ export const UI = {
     sections: [
       { title: 'Tablas de multiplicar', text: 'Del 1 al 12, con práctica en orden, salteada o contrarreloj, y la tabla pitagórica.', href: '/es/tablas-de-multiplicar/' },
       { title: 'Fracciones', text: 'Calculadora de suma, resta, multiplicación y división con el procedimiento completo.', href: '/es/fracciones/' },
-      { title: 'Calculadoras', text: 'Porcentajes, números romanos, división paso a paso, mcm y mcd, potencias y raíces.', links: [['Porcentajes', '/es/calculadora-de-porcentajes/'], ['Números romanos', '/es/numeros-romanos/'], ['División', '/es/division/'], ['mcm y mcd', '/es/mcm-mcd/'], ['Operaciones combinadas', '/es/operaciones-combinadas/'], ['Potencias', '/es/potencias/'], ['Raíz cuadrada', '/es/raiz-cuadrada/']] },
+      { title: 'Calculadoras', text: 'Porcentajes, números romanos, división paso a paso, mcm y mcd, potencias y raíces.', links: [['Sumas y restas llevando', '/es/sumas-y-restas-llevando/'], ['Multiplicaciones', '/es/multiplicaciones/'], ['Porcentajes', '/es/calculadora-de-porcentajes/'], ['Números romanos', '/es/numeros-romanos/'], ['División', '/es/division/'], ['mcm y mcd', '/es/mcm-mcd/'], ['Operaciones combinadas', '/es/operaciones-combinadas/'], ['Potencias', '/es/potencias/'], ['Raíz cuadrada', '/es/raiz-cuadrada/']] },
       { title: 'Fichas para imprimir', text: 'Elige tema, curso y cantidad: la ficha sale lista en A4 o carta, con hoja de soluciones.', href: '/es/fichas/' },
       { title: 'Juegos y reto del día', text: 'Juegos cortos de cálculo y un acertijo nuevo cada día.' },
       { title: 'Ciencia en casa', text: 'Experimentos seguros con materiales de la cocina.' },
@@ -132,7 +132,7 @@ export const NAV = {
 export function sectionOf(pathname) {
   if (/\/(tablas-de-multiplicar|tabla-pitagorica)\//.test(pathname)) return 'tablas';
   if (/\/fracciones\//.test(pathname)) return 'fracciones';
-  if (/\/(division|calculadora-de-porcentajes|numeros-romanos|mcm-mcd|operaciones-combinadas|raiz-cuadrada|potencias)\//.test(pathname)) return 'calc';
+  if (/\/(division|calculadora-de-porcentajes|numeros-romanos|mcm-mcd|operaciones-combinadas|raiz-cuadrada|potencias|sumas-y-restas-llevando|multiplicaciones)\//.test(pathname)) return 'calc';
   if (/\/fichas\//.test(pathname)) return 'fichas';
   return 'home';
 }

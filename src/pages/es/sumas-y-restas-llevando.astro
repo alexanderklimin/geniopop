@@ -1,0 +1,62 @@
+---
+import Base from '../../layouts/Base.astro';
+import ColumnCalc from '../../components/ColumnCalc.astro';
+import { generate } from '../../lib/worksheet.js';
+import { sheetHTML } from '../../i18n/sheet-render.js';
+
+const path = '/es/sumas-y-restas-llevando/';
+const faqs = [
+  { q: '¿Qué significa «llevar» en una suma?', a: 'Cuando una columna suma 10 o más, solo cabe una cifra: se escribe la de las unidades y la decena se «lleva» a la columna siguiente como un 1 pequeño. 8 + 6 = 14: escribimos 4 y nos llevamos 1.' },
+  { q: '¿Por qué en España se resta distinto?', a: 'En España se suele enseñar el método de compensación: si arriba no alcanza, se suma 10 a esa cifra y se añade 1 a la cifra de abajo de la columna siguiente. En Latinoamérica y Estados Unidos se pide prestada una decena a la cifra de arriba de la izquierda. Los dos métodos dan el mismo resultado; usa el que te enseñen en el colegio.' },
+  { q: '¿Cómo se resta cuando arriba hay ceros, como en 503 − 178?', a: 'Pidiendo prestado, el 0 no tiene nada que prestar, así que pide a la cifra siguiente: el 5 pasa a 4, el 0 pasa a 9 y las unidades reciben 10. Con el método de compensación no hace falta: se suma 10 arriba y 1 abajo en la columna siguiente.' },
+  { q: '¿Cómo compruebo una resta?', a: 'Suma el resultado y el número que restaste: tiene que salir el número de arriba. 325 + 178 = 503.' },
+];
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+const s1 = sheetHTML('es', generate('add', { digits: 3, carry: 'force', count: 15, seed: 31 }).problems, { title: 'Sumas llevando' });
+const s2 = sheetHTML('es', generate('sub', { digits: 3, borrow: 'force', count: 15, seed: 32 }).problems, { title: 'Restas llevando' });
+---
+<Base lang="es" title="Sumas y restas llevando paso a paso (con llevadas)"
+  description="Calculadora de sumas y restas con llevadas paso a paso, en columna. La resta, con los dos métodos que se enseñan: pedir prestado (Latinoamérica) y compensación (España). Explicación, errores y fichas."
+  alternates={{ es: path }} crumbs={[{ name: 'Sumas y restas llevando', path }]}
+  jsonLd={[faq]} kidsPage>
+  <h1>Sumas y restas llevando</h1>
+  <p class="lead">Escribe los números y verás la cuenta en columna con cada llevada explicada. Para las restas puedes elegir el método de tu colegio: pidiendo prestado o por compensación.</p>
+
+  <h2>Suma con llevadas</h2>
+  <ColumnCalc lang="es" op="add" a={478} b={356} button="Sumar" />
+
+  <h2>Resta con llevadas</h2>
+  <ColumnCalc lang="es" op="sub" a={503} b={178} button="Restar" methodLabels={['Pidiendo prestado (Latinoamérica)', 'Por compensación (España)']} />
+
+  <section class="prose">
+    <h2>Cómo sumar llevando</h2>
+    <ol>
+      <li>Coloca los números uno debajo del otro, con las unidades en la misma columna.</li>
+      <li>Empieza por la derecha: suma las unidades.</li>
+      <li>Si el resultado es 10 o más, escribe solo la cifra de las unidades y lleva 1 a la columna de al lado.</li>
+      <li>En la columna siguiente, suma también el 1 que llevabas.</li>
+    </ol>
+
+    <h2>Cómo restar llevando: los dos métodos</h2>
+    <p><strong>Pidiendo prestado</strong> (Latinoamérica, Estados Unidos): si la cifra de arriba es menor, «pide prestada» una decena a la cifra de su izquierda, que baja en 1. En 52 − 17: el 2 pide al 5, que queda en 4; 12 − 7 = 5 y 4 − 1 = 3 → 35.</p>
+    <p><strong>Por compensación</strong> (España, «llevando»): si la cifra de arriba es menor, se le suma 10, y para compensar se suma 1 a la cifra de abajo de la columna siguiente. En 52 − 17: 12 − 7 = 5, y en las decenas 5 − (1 + 1) = 3 → 35.</p>
+    <p>Funcionan porque sumar lo mismo a los dos números (10 unidades arriba, 1 decena abajo) no cambia la diferencia.</p>
+
+    <h2>Errores frecuentes</h2>
+    <ul>
+      <li>Olvidar sumar la llevada en la columna siguiente.</li>
+      <li>En la resta, restar «al revés» la cifra pequeña de la grande: en 52 − 17, hacer 7 − 2 = 5 en las unidades. Da 45, que está mal.</li>
+      <li>No alinear las unidades: 345 + 27 se escribe con el 7 debajo del 5.</li>
+    </ul>
+  </section>
+
+  <h2>Fichas para imprimir</h2>
+  <div class="actions"><button type="button" class="button primary" data-print="sheet-1">Imprimir sumas</button><button type="button" class="button primary" data-print="sheet-2">Imprimir restas</button><a class="button" href="/es/fichas/?t=add&digits=3&carry=force">Crear más</a></div>
+  <div data-print-area="sheet-1" set:html={s1} />
+  <div data-print-area="sheet-2" set:html={s2} />
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{faqs.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>

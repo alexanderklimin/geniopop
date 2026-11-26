@@ -1,0 +1,60 @@
+---
+import Base from '../../layouts/Base.astro';
+import ColumnCalc from '../../components/ColumnCalc.astro';
+import { generate } from '../../lib/worksheet.js';
+import { sheetHTML } from '../../i18n/sheet-render.js';
+
+const path = '/es/multiplicaciones/';
+const faqs = [
+  { q: '¿Cómo se multiplica por dos cifras?', a: 'Se multiplica el número de arriba primero por las unidades y después por las decenas. El segundo resultado se escribe una posición más a la izquierda (dejando un hueco o un 0), porque en realidad se multiplica por un número de decenas. Al final se suman los dos resultados.' },
+  { q: '¿Por qué se deja un hueco en la segunda fila?', a: 'Porque el 5 de 56 vale 50. Multiplicar por 50 es multiplicar por 5 y luego por 10, y multiplicar por 10 desplaza las cifras un lugar a la izquierda.' },
+  { q: '¿Cómo multiplico rápido por 10, 100 o 1000?', a: 'Añade al final tantos ceros como tenga: 37 × 100 = 3700. Con decimales, la coma se mueve a la derecha.' },
+  { q: '¿Cómo compruebo una multiplicación?', a: 'Cambia el orden de los factores y vuelve a calcular (el resultado es el mismo), o divide el resultado entre uno de los factores: tiene que salir el otro.' },
+];
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+const s1 = sheetHTML('es', generate('mul', { digitsA: 3, digitsB: 1, count: 15, seed: 51 }).problems, { title: 'Multiplicaciones por una cifra' });
+const s2 = sheetHTML('es', generate('mul', { digitsA: 3, digitsB: 2, count: 10, seed: 52 }).problems, { title: 'Multiplicaciones por dos cifras' });
+---
+<Base lang="es" title="Multiplicaciones paso a paso: por una, dos y tres cifras"
+  description="Calculadora de multiplicaciones en columna paso a paso: por una, dos o tres cifras, con las llevadas y los resultados parciales explicados. Método, errores frecuentes y fichas para imprimir."
+  alternates={{ es: path }} crumbs={[{ name: 'Multiplicaciones', path }]} jsonLd={[faq]}>
+  <h1>Multiplicaciones paso a paso</h1>
+  <p class="lead">Escribe dos números y verás la multiplicación en columna, como en el cuaderno: cada llevada, cada resultado parcial y la suma final.</p>
+
+  <ColumnCalc lang="es" op="mul" a={234} b={56} button="Multiplicar" />
+
+  <section class="prose">
+    <h2>Multiplicar por una cifra</h2>
+    <ol>
+      <li>Multiplica la cifra de abajo por las unidades de arriba. Escribe las unidades del resultado y lleva las decenas.</li>
+      <li>Multiplica por las decenas y suma lo que llevabas.</li>
+      <li>Sigue hacia la izquierda; si al final te queda algo que llevar, escríbelo delante.</li>
+    </ol>
+
+    <h2>Multiplicar por dos o más cifras</h2>
+    <ol>
+      <li>Multiplica todo el número de arriba por las unidades de abajo: primer resultado parcial.</li>
+      <li>Multiplica por las decenas y escribe el resultado <strong>una posición a la izquierda</strong> (deja un hueco o pon un 0).</li>
+      <li>Si hay centenas, el tercer resultado va dos posiciones a la izquierda.</li>
+      <li>Suma los resultados parciales.</li>
+    </ol>
+    <p>Antes de multiplicar conviene repasar las <a href="/es/tablas-de-multiplicar/">tablas de multiplicar</a>: casi todos los errores vienen de ahí.</p>
+
+    <h2>Errores frecuentes</h2>
+    <ul>
+      <li>Olvidar el hueco en la segunda fila: el resultado sale diez veces más pequeño.</li>
+      <li>Sumar la llevada antes de multiplicar: en 34 × 6, 6 × 3 = 18, más 2 que llevábamos = 20. No es (3 + 2) × 6.</li>
+      <li>Fallar una tabla: 7 × 8 = 56, no 54.</li>
+    </ul>
+  </section>
+
+  <h2>Fichas para imprimir</h2>
+  <div class="actions"><button type="button" class="button primary" data-print="sheet-1">Imprimir por una cifra</button><button type="button" class="button primary" data-print="sheet-2">Imprimir por dos cifras</button><a class="button" href="/es/fichas/?t=mul&digitsA=3&digitsB=2">Crear más</a></div>
+  <div data-print-area="sheet-1" set:html={s1} />
+  <div data-print-area="sheet-2" set:html={s2} />
+
+  <section class="prose">
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">{faqs.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+  </section>
+</Base>

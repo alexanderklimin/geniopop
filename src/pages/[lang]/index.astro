@@ -1,103 +1,146 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
-import { LIVE, SECTION_STYLE, t } from '../../i18n/ui.js';
+import { LIVE, t } from '../../i18n/ui.js';
+import { HOME } from '../../data/home.js';
 import { AUTHOR, authorPath } from '../../data/author.js';
+import { COURSES } from '../../data/es/fichas.js';
+import { LEGAL, legalPath } from '../../data/legal.js';
 
 export function getStaticPaths() {
   return LIVE.map((lang) => ({ params: { lang } }));
 }
-
 const { lang } = Astro.params as { lang: string };
 const ui = t(lang);
+const H = HOME[lang];
 const alternates = Object.fromEntries(LIVE.map((l) => [l, `/${l}/`]));
 const site = { '@context': 'https://schema.org', '@type': 'WebSite', name: 'GenioPop', url: new URL(`/${lang}/`, Astro.site).href, inLanguage: lang };
+const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: H.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
 ---
-<Base lang={lang} title={ui.home_title} description={ui.home_description} alternates={alternates} jsonLd={[site]}>
+<Base lang={lang} title={ui.home_title} description={ui.home_description} alternates={alternates} jsonLd={[site, faq]}>
   <section class="hero">
     <div class="hero-text">
       <p class="kicker">{ui.kicker}</p>
-      <h1>{ui.home_h1}</h1>
-      <p class="lead">{ui.home_lead}</p>
-      {ui.popular.length > 0 && (
-        <div class="popular">
-          <p class="popular-h">{ui.popularTitle}</p>
-          <div class="chips">{ui.popular.map(([label, href]) => <a href={href}>{label}</a>)}</div>
-        </div>
-      )}
+      <h1>{H.h1}</h1>
+      <p class="lead">{H.lead}</p>
+      <ul class="trust">{ui.trust.map(([icon, text]) => <li><Icon name={icon} size={20} /> {text}</li>)}</ul>
     </div>
-    <svg class="hero-art" viewBox="0 0 360 320" role="presentation" aria-hidden="true">
-      <rect x="40" y="40" width="120" height="120" rx="28" fill="var(--c-tablas)" transform="rotate(-8 100 100)" />
-      <text x="100" y="122" text-anchor="middle" font-size="64" font-weight="900" fill="#fff" transform="rotate(-8 100 100)">7×8</text>
-      <circle cx="262" cy="96" r="66" fill="var(--c-fichas)" />
-      <path d="M262 96 L262 30 A66 66 0 0 1 319 129 Z" fill="#fff" opacity=".9" />
-      <rect x="190" y="180" width="130" height="110" rx="26" fill="var(--c-fracciones)" transform="rotate(7 255 235)" />
-      <text x="255" y="222" text-anchor="middle" font-size="44" font-weight="900" fill="#fff" transform="rotate(7 255 235)">3</text>
-      <rect x="225" y="230" width="60" height="6" rx="3" fill="#fff" transform="rotate(7 255 235)" />
-      <text x="255" y="276" text-anchor="middle" font-size="44" font-weight="900" fill="#fff" transform="rotate(7 255 235)">4</text>
-      <circle cx="96" cy="246" r="54" fill="var(--c-juegos)" />
-      <text x="96" y="268" text-anchor="middle" font-size="60" font-weight="900" fill="#fff">%</text>
-      <circle cx="176" cy="160" r="12" fill="var(--pop)" /><circle cx="30" cy="180" r="7" fill="var(--c-calc)" /><circle cx="330" cy="200" r="8" fill="var(--c-ciencia)" />
-      <path d="M160 40 l6 14 15 2 -11 10 3 15 -13-7 -13 7 3-15 -11-10 15-2z" fill="var(--pop)" />
-    </svg>
+    <form class="demo" data-demo data-ok={H.demo.ok} data-bad={H.demo.bad} data-answer={H.demo.q[0] * H.demo.q[1]}>
+      <p class="demo-title">{H.demo.title}</p>
+      <div class="demo-q"><span>{H.demo.q[0]} × {H.demo.q[1]} =</span><input name="x" inputmode="numeric" maxlength="3" placeholder={H.demo.placeholder} aria-label={`${H.demo.q[0]} × ${H.demo.q[1]}`} /></div>
+      <button class="button primary">{H.demo.check}</button>
+      <p class="demo-msg" data-msg aria-live="polite"></p>
+      <a class="demo-more" href="/es/tablas-de-multiplicar/">{H.demo.more} <Icon name="arrow" size={18} /></a>
+    </form>
   </section>
 
-  <ul class="trust">{ui.trust.map(([icon, text]) => <li><Icon name={icon} size={22} /> {text}</li>)}</ul>
-
-  <h2 class="sections-h">{ui.sectionsTitle}</h2>
-  <ul class="sections">
-    {ui.sections.map((s, i) => ({ s, i })).filter(({ s }) => s.href || s.links).map(({ s, i }) => {
-      const st = SECTION_STYLE[i];
-      const live = s.href || s.links;
-      return (
-        <li class:list={['sec', { soon: !live }]} style={`--c: var(--c-${st.key})`}>
-          <span class="sec-icon"><Icon name={st.icon} size={30} /></span>
-          <h3>{s.href ? <a href={s.href}>{s.title}</a> : s.title}</h3>
-          <p>{s.text}</p>
-          {s.links && <p class="sec-links">{s.links.map(([label, href]) => <a href={href}>{label}</a>)}</p>}
-          {s.href && <a class="sec-go" href={s.href} aria-hidden="true" tabindex="-1">{ui.open} <Icon name="arrow" size={18} /></a>}
-          {!live && <span class="tag">{ui.soon}</span>}
-        </li>
-      );
-    })}
+  <h2>{H.toolsTitle}</h2>
+  <ul class="tools">
+    {H.tools.map((x) => (
+      <li style={`--c: var(--c-${x.c})`}><a href={x.href}><span class="ti"><Icon name={x.icon} size={26} /></span><strong>{x.title}</strong><span class="tt">{x.text}</span></a></li>
+    ))}
   </ul>
+
+  <h2>{H.tablesTitle}</h2>
+  <div class="tnums">
+    {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => <a href={H.tablesHref(n)} style={`--h:${(n * 37 + 250) % 360}`}><small>×</small>{n}</a>)}
+    {H.tablesExtra.map(([l, h]) => <a class="wide" href={h}>{l}</a>)}
+  </div>
+
+  <h2>{H.groupsTitle}</h2>
+  <div class="groups">
+    {H.groups.map((g) => (
+      <section class="grp" style={`--c: var(--c-${g.c})`}>
+        <h3><span class="ti"><Icon name={g.icon} size={22} /></span>{g.title}</h3>
+        <ul>{g.links.map(([l, h]) => <li><a href={h}>{l}</a></li>)}</ul>
+      </section>
+    ))}
+  </div>
+
+  <h2>{H.coursesTitle}</h2>
+  <ul class="courses">
+    {COURSES.map((c) => <li><a href={`/es/fichas/${c.slug}/`}><strong>{c.name}</strong><span>{c.syn}</span></a></li>)}
+  </ul>
+
+  <h2>{H.steps.title}</h2>
+  <ol class="steps">{H.steps.items.map(([h, p]) => <li><strong>{h}</strong><span>{p}</span></li>)}</ol>
 
   <a class="reviewer" href={authorPath(lang)}>
     <img src={AUTHOR.photo} alt="" width="72" height="72" loading="lazy" />
     <span><small>{ui.reviewedBy}</small><strong>{AUTHOR.name}</strong>, {ui.reviewer}</span>
   </a>
+
+  <section class="prose">
+    <dl class="faq">{H.faq.map((f) => <><dt>{f.q}</dt><dd>{f.a}</dd></>)}</dl>
+    <p class="more-legal"><a href={legalPath(lang, 'privacy')}>{LEGAL[lang].names.privacy}</a></p>
+  </section>
 </Base>
 
+<script>
+  const f = document.querySelector('[data-demo]');
+  f?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const ok = Number(f.elements.x.value) === Number(f.dataset.answer);
+    const msg = f.querySelector('[data-msg]');
+    msg.textContent = ok ? f.dataset.ok : f.dataset.bad;
+    msg.className = `demo-msg ${ok ? 'ok' : 'bad'}`;
+    f.classList.remove('pop', 'shake'); void f.offsetWidth; f.classList.add(ok ? 'pop' : 'shake');
+  });
+</script>
+
 <style>
-  .hero { display: grid; grid-template-columns: 1.25fr 1fr; gap: 2rem; align-items: center; padding: 1rem 0 0.5rem; }
-  .kicker { display: inline-block; margin: 0 0 0.9rem; padding: 0.3rem 0.85rem; border-radius: 999px; background: #fff; border: 2px solid var(--ink); font-weight: 900; font-size: 0.85rem; box-shadow: 3px 3px 0 var(--c-fichas); }
-  .hero h1 { font-size: clamp(2.5rem, 7.5vw, 4.4rem); max-width: 12ch; }
-  .hero-art { width: 100%; max-width: 420px; justify-self: center; font-family: inherit; animation: float 6s ease-in-out infinite; }
-  @keyframes float { 50% { transform: translateY(-8px) rotate(-1deg); } }
-  .popular-h { font-weight: 900; margin: 0 0 0.5rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
-  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .chips a { padding: 0.5rem 0.95rem; border-radius: 999px; background: #fff; border: 2px solid var(--line); color: var(--ink); font-weight: 800; text-decoration: none; transition: transform 0.1s, border-color 0.1s; }
-  .chips a:hover { transform: translateY(-2px); border-color: var(--ink); }
-  .trust { list-style: none; padding: 0; margin: 2rem 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 0.75rem; }
-  .trust li { display: flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1rem; border-radius: 16px; background: #fff; border: 2px solid var(--line); font-weight: 700; }
+  .hero { display: grid; grid-template-columns: 1.3fr 1fr; gap: 2.5rem; align-items: center; padding-top: 0.5rem; }
+  .kicker { display: inline-block; margin: 0 0 0.8rem; padding: 0.3rem 0.85rem; border-radius: 999px; background: #fff; border: 2px solid var(--ink); font-weight: 900; font-size: 0.82rem; box-shadow: 3px 3px 0 var(--c-fichas); }
+  .hero h1 { font-size: clamp(2.1rem, 5.4vw, 3.3rem); max-width: 16ch; }
+  .trust { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.4rem; }
+  .trust li { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; }
   .trust svg { color: var(--pop); flex-shrink: 0; }
-  .sections { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); gap: 1.1rem; }
-  .sec { position: relative; display: flex; flex-direction: column; background: #fff; border: 2px solid var(--ink); border-radius: var(--radius); padding: 1.3rem; box-shadow: 5px 5px 0 var(--c); transition: transform 0.12s, box-shadow 0.12s; }
-  .sec:not(.soon):hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--c); }
-  .sec.soon { border-color: var(--line); box-shadow: none; }
-  .sec-icon { display: grid; place-items: center; width: 3.4rem; height: 3.4rem; border-radius: 16px; background: var(--c); color: #fff; margin-bottom: 0.8rem; transform: rotate(-4deg); }
-  .sec.soon .sec-icon { opacity: 0.55; }
-  .sec h3 { margin: 0 0 0.35rem; font-size: 1.3rem; }
-  .sec h3 a { color: var(--ink); text-decoration: none; }
-  .sec h3 a::after { content: ''; position: absolute; inset: 0; }
-  .sec p { margin: 0; color: var(--muted); }
-  .sec-links { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.8rem !important; }
-  .sec-links a { position: relative; z-index: 1; padding: 0.3rem 0.7rem; border-radius: 999px; background: color-mix(in srgb, var(--c) 14%, #fff); color: var(--ink); font-weight: 800; font-size: 0.9rem; text-decoration: none; }
-  .sec-links a:hover { background: var(--c); color: #fff; }
-  .sec-go { margin-top: auto; padding-top: 0.9rem; display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 900; color: var(--c); text-decoration: none; }
-  .tag { align-self: flex-start; margin-top: 0.8rem; font-size: 0.8rem; font-weight: 900; color: var(--muted); background: var(--paper); border-radius: 999px; padding: 0.2rem 0.7rem; }
-  .reviewer { display: flex; align-items: center; gap: 1rem; margin-top: 2.5rem; padding: 1rem 1.2rem; border-radius: var(--radius); background: #fff; border: 2px solid var(--line); color: var(--ink); text-decoration: none; max-width: 40rem; }
+  .demo { background: #fff; border: 2px solid var(--ink); border-radius: var(--radius); padding: 1.3rem; box-shadow: 7px 7px 0 var(--c-tablas); display: grid; gap: 0.8rem; justify-items: center; text-align: center; }
+  .demo-title { margin: 0; font-weight: 900; color: var(--c-tablas); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.85rem; }
+  .demo-q { display: flex; align-items: center; gap: 0.6rem; font-size: clamp(2.2rem, 7vw, 3rem); font-weight: 900; background: #efeaff; border-radius: 18px; padding: 0.6rem 1rem; }
+  .demo-q input { width: 3.2ch; font: inherit; text-align: center; color: var(--c-tablas); border: 3px solid var(--ink); border-radius: 14px; background: #fff; }
+  .demo-q input:focus { outline: none; box-shadow: 0 0 0 4px var(--c-tablas); }
+  .demo .button.primary { background: var(--c-tablas); }
+  .demo-msg { margin: 0; min-height: 1.5em; font-weight: 900; }
+  .demo-msg.ok { color: #13863f; } .demo-msg.bad { color: #c2261b; }
+  .demo-more { font-weight: 900; color: var(--c-tablas); text-decoration: none; display: inline-flex; gap: 0.3rem; align-items: center; }
+  .demo.pop { animation: pop 0.35s; } .demo.shake { animation: shake 0.4s; }
+  @keyframes pop { 40% { transform: scale(1.03); } }
+  @keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+
+  .tools { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); gap: 0.9rem; }
+  .tools a { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 0.8rem; align-items: center; padding: 0.9rem 1rem; border-radius: 18px; background: #fff; border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--c); color: var(--ink); text-decoration: none; transition: transform 0.12s, box-shadow 0.12s; height: 100%; }
+  .tools a:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--c); }
+  .tools .ti { grid-row: 1 / 3; }
+  .ti { display: inline-grid; place-items: center; width: 2.9rem; height: 2.9rem; border-radius: 14px; background: var(--c); color: #fff; flex-shrink: 0; }
+  .tools strong { font-size: 1.05rem; line-height: 1.2; }
+  .tt { color: var(--muted); font-size: 0.9rem; line-height: 1.3; }
+
+  .tnums { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .tnums a { --tc: hsl(var(--h) 75% 55%); display: inline-flex; align-items: baseline; gap: 0.1rem; min-width: 3.6rem; justify-content: center; padding: 0.55rem 0.8rem; border-radius: 14px; background: var(--tc); color: #fff; font-weight: 900; font-size: 1.35rem; text-decoration: none; box-shadow: 0 3px 0 hsl(var(--h) 70% 38%); transition: transform 0.1s; }
+  .tnums a small { font-size: 0.7em; opacity: 0.85; }
+  .tnums a:hover { transform: translateY(-2px); }
+  .tnums a.wide { background: #fff; color: var(--ink); border: 2px solid var(--ink); box-shadow: 0 3px 0 var(--ink); font-size: 1rem; }
+
+  .groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1rem; }
+  .grp { background: #fff; border: 2px solid var(--line); border-radius: var(--radius); padding: 1rem 1.2rem; border-top: 6px solid var(--c); }
+  .grp h3 { display: flex; align-items: center; gap: 0.6rem; margin: 0 0 0.6rem; font-size: 1.2rem; }
+  .grp .ti { width: 2.3rem; height: 2.3rem; border-radius: 11px; }
+  .grp ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.3rem; }
+  .grp a { color: var(--ink); font-weight: 700; text-decoration-color: var(--c); text-decoration-thickness: 2px; }
+
+  .courses { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr)); gap: 0.7rem; }
+  .courses a { display: flex; flex-direction: column; padding: 0.8rem 1rem; border-radius: 16px; background: #fff; border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--c-fichas); color: var(--ink); text-decoration: none; }
+  .courses strong { font-weight: 900; } .courses span { color: var(--muted); font-size: 0.85rem; font-weight: 700; }
+
+  .steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; counter-reset: st; }
+  .steps li { position: relative; background: #fff; border: 2px solid var(--line); border-radius: var(--radius); padding: 1.1rem 1.1rem 1.1rem 3.8rem; display: grid; }
+  .steps li::before { counter-increment: st; content: counter(st); position: absolute; left: 1rem; top: 1rem; width: 2.1rem; height: 2.1rem; border-radius: 50%; background: var(--pop); color: #fff; display: grid; place-items: center; font-weight: 900; }
+  .steps span { color: var(--muted); }
+
+  .reviewer { display: flex; align-items: center; gap: 1rem; margin: 2.5rem 0 1rem; padding: 1rem 1.2rem; border-radius: var(--radius); background: #fff; border: 2px solid var(--line); color: var(--ink); text-decoration: none; max-width: 40rem; }
   .reviewer img { border-radius: 50%; object-fit: cover; border: 3px solid var(--c-fichas); }
   .reviewer small { display: block; color: var(--muted); font-weight: 700; }
-  @media (max-width: 760px) { .hero { grid-template-columns: 1fr; } .hero-art { max-width: 260px; order: -1; margin-bottom: -1rem; } }
+  .more-legal { font-size: 0.9rem; }
+  @media (max-width: 800px) { .hero { grid-template-columns: 1fr; gap: 1.5rem; } }
 </style>
