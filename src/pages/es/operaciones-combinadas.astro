@@ -18,7 +18,7 @@ const ex = ['18 − 2 × (3 + 4) ÷ 7', '[20 − (2 + 3) × 2] ÷ 5', '3^2 + 4 �
 const sheets = [1, 2, 3].map((level) => ({ level, html: sheetHTML('es', generate('combined', { level, count: 12, seed: 40 + level }).problems, { title: `Operaciones combinadas · nivel ${level}` }) }));
 ---
 <Base lang="es" title="Operaciones combinadas paso a paso: calculadora y jerarquía"
-  description="Resuelve operaciones combinadas con paréntesis, corchetes y potencias paso a paso, en el orden correcto (jerarquía de las operaciones, PAPOMUDAS). Explicación, ejemplos, errores frecuentes y fichas."
+  description="Resuelve operaciones combinadas con paréntesis y potencias paso a paso, en el orden correcto (PAPOMUDAS). Ejemplos, errores y fichas."
   alternates={{ es: path }} crumbs={[{ name: 'Operaciones combinadas', path }]} jsonLd={[faq]}>
   <h1>Operaciones combinadas</h1>
   <p class="lead">Escribe una operación con sumas, restas, multiplicaciones, divisiones, potencias y paréntesis: la calculadora la resuelve paso a paso en el orden correcto y te dice qué regla usa en cada momento.</p>

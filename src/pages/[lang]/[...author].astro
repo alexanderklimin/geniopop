@@ -18,7 +18,7 @@ const person = {
   mainEntity: { '@type': 'Person', name: AUTHOR.name, jobTitle: a.jobTitle, image: new URL(AUTHOR.photo, Astro.site).href, sameAs: AUTHOR.sameAs, worksFor: { '@type': 'Organization', name: SITE_NAME } },
 };
 ---
-<Base lang={lang} title={`${AUTHOR.name}, ${a.short}`} description={`${AUTHOR.name}: ${a.short}. ${a.role.split('. ')[0]}.`} alternates={alternates} xDefault={authorPath('es')}>
+<Base lang={lang} title={`${AUTHOR.name}, ${a.short}`} description={`${AUTHOR.name}, ${a.short}. ${a.role.split('. ')[0]}.`.slice(0, 158)} alternates={alternates} xDefault={authorPath('es')}>
   <script is:inline type="application/ld+json" set:html={JSON.stringify(person).replace(/</g, '\\u003c')} />
   <article class="reading">
     <header class="author-head">

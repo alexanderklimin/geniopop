@@ -10,7 +10,7 @@ const tables = Array.from({ length: 12 }, (_, i) => i + 1);
 const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: HUB.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
 ---
 <Base lang="es" title="Tablas de multiplicar del 1 al 12: practicar e imprimir"
-  description="Tablas de multiplicar del 1 al 12 para practicar en orden, salteadas o contrarreloj, con trucos para memorizarlas y fichas para imprimir con soluciones. Gratis y sin registro."
+  description="Tablas de multiplicar del 1 al 12 para practicar en orden, salteadas o contrarreloj, con trucos para memorizarlas y fichas para imprimir."
   alternates={{ es: path }} crumbs={[{ name: 'Tablas de multiplicar', path }]} jsonLd={[faq]} kidsPage>
   <h1>Tablas de multiplicar del 1 al 12</h1>
   <p class="lead">Practica las tablas en orden, salteadas o contrarreloj. El entrenador recuerda qué multiplicaciones te cuestan y te las vuelve a preguntar. Debajo tienes todas las tablas y una ficha para imprimir.</p>

@@ -14,7 +14,7 @@ const faqs = [
 const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
 ---
 <Base lang="es" title="Fichas de matemáticas para imprimir con soluciones (generador)"
-  description="Generador gratuito de fichas de matemáticas para primaria: sumas y restas con llevadas, tablas, multiplicaciones, divisiones, fracciones, números romanos, porcentajes y mcm y mcd. Con soluciones, en A4 o Carta."
+  description="Generador gratis de fichas de matemáticas para primaria: sumas y restas, tablas, divisiones, fracciones y más. Con soluciones, en A4 o carta."
   alternates={{ es: path }} crumbs={[{ name: 'Fichas para imprimir', path }]} jsonLd={[faq]}>
   <h1>Fichas de matemáticas para imprimir</h1>
   <p class="lead">Elige el tema y el nivel y la ficha se crea al momento, con su hoja de soluciones. Cada vez que pulses «Otra ficha» salen ejercicios nuevos: nunca se acaban.</p>

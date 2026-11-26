@@ -18,8 +18,8 @@ const sheets = c.sheets.map((s, i) => {
 });
 const prev = COURSES.find((x) => x.id === c.id - 1), next = COURSES.find((x) => x.id === c.id + 1);
 ---
-<Base lang="es" title={`Fichas de matemáticas para ${c.name} (${c.syn.split(' · ')[0]}) para imprimir`}
-  description={`Fichas de matemáticas de ${c.name} (${c.syn}) para imprimir con soluciones: ${c.sheets.map((s) => s.title.toLowerCase()).join(', ')}.`}
+<Base lang="es" title={`Fichas de matemáticas de ${c.name} (${c.syn.split(' · ')[0]})`}
+  description={`Fichas de matemáticas de ${c.name} (${c.syn}) para imprimir con soluciones: ${c.sheets.slice(0, 3).map((s) => s.title.toLowerCase()).join(', ')} y más.`.slice(0, 158)}
   alternates={{ es: path }} crumbs={[{ name: 'Fichas para imprimir', path: base }, { name: c.name, path }]}>
   <h1>Fichas de matemáticas para {c.name}</h1>
   <p class="syn">{c.syn} · {c.age}</p>

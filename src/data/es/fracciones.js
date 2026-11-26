@@ -7,7 +7,7 @@ export const PAGES = {
     nav: 'Calculadora',
     h1: 'Calculadora de fracciones con procedimiento',
     title: 'Calculadora de fracciones paso a paso (con procedimiento)',
-    description: 'Suma, resta, multiplica y divide fracciones y números mixtos. La calculadora muestra el procedimiento completo, simplifica el resultado y lo da también como número mixto y decimal.',
+    description: 'Suma, resta, multiplica y divide fracciones y números mixtos con el procedimiento completo. Simplifica y da el resultado mixto y en decimal.',
     lead: 'Escribe dos fracciones, elige la operación y verás el resultado simplificado con todos los pasos explicados, como se hace en el cuaderno. Acepta números mixtos y negativos.',
     calc: { mode: 'calc', op: '+', a: '2 1/3', b: '3/4' },
     sections: [
@@ -35,7 +35,7 @@ export const PAGES = {
     nav: 'Suma',
     h1: 'Suma de fracciones',
     title: 'Suma de fracciones: con igual y distinto denominador, paso a paso',
-    description: 'Cómo sumar fracciones con el mismo denominador y con distinto denominador, con ejemplos resueltos, errores frecuentes, calculadora paso a paso y ejercicios para imprimir.',
+    description: 'Cómo sumar fracciones con igual y distinto denominador, paso a paso, con ejemplos resueltos, errores frecuentes, calculadora y ejercicios.',
     lead: 'Para sumar fracciones, las dos tienen que estar en las mismas «piezas», es decir, tener el mismo denominador. Si ya lo tienen, se suman los numeradores; si no, primero se busca un denominador común.',
     calc: { mode: 'calc', op: '+', a: '1/4', b: '1/6' },
     sections: [
@@ -63,8 +63,8 @@ export const PAGES = {
   'resta-de-fracciones': {
     nav: 'Resta',
     h1: 'Resta de fracciones',
-    title: 'Resta de fracciones: con igual y distinto denominador, paso a paso',
-    description: 'Cómo restar fracciones con el mismo y con distinto denominador, con números mixtos y resultados negativos. Ejemplos resueltos, calculadora paso a paso y ejercicios para imprimir.',
+    title: 'Resta de fracciones con igual y distinto denominador',
+    description: 'Cómo restar fracciones con igual y distinto denominador y con números mixtos. Ejemplos resueltos, calculadora paso a paso y ejercicios.',
     lead: 'La resta de fracciones sigue las mismas reglas que la suma: con el mismo denominador se restan los numeradores; con distinto denominador, primero hay que igualarlos.',
     calc: { mode: 'calc', op: '-', a: '5/6', b: '1/4' },
     sections: [
@@ -93,7 +93,7 @@ export const PAGES = {
     nav: 'Multiplicación',
     h1: 'Multiplicación de fracciones',
     title: 'Multiplicación de fracciones: regla, ejemplos y ejercicios',
-    description: 'Cómo multiplicar fracciones: numerador por numerador y denominador por denominador, cómo simplificar en cruz, multiplicar por un entero y por números mixtos. Calculadora y ejercicios.',
+    description: 'Cómo multiplicar fracciones: la regla, simplificar en cruz, por un entero y con números mixtos. Calculadora paso a paso y ejercicios.',
     lead: 'Multiplicar fracciones es la operación más directa: no hace falta denominador común. Se multiplica numerador por numerador y denominador por denominador.',
     calc: { mode: 'calc', op: '*', a: '4/9', b: '3/8' },
     sections: [
@@ -116,8 +116,8 @@ export const PAGES = {
   'division-de-fracciones': {
     nav: 'División',
     h1: 'División de fracciones',
-    title: 'División de fracciones: método de la inversa y en cruz, paso a paso',
-    description: 'Cómo dividir fracciones multiplicando por la inversa o en cruz, dividir entre un entero y con números mixtos. Ejemplos resueltos, calculadora paso a paso y ejercicios para imprimir.',
+    title: 'División de fracciones: inversa y en cruz, paso a paso',
+    description: 'Cómo dividir fracciones con la inversa o en cruz, entre un entero y con números mixtos. Ejemplos, calculadora paso a paso y ejercicios.',
     lead: 'Para dividir fracciones se multiplica la primera por la inversa de la segunda: se le da la vuelta a la segunda fracción y se multiplica.',
     calc: { mode: 'calc', op: '/', a: '2/3', b: '4/5' },
     sections: [
@@ -141,7 +141,7 @@ export const PAGES = {
     nav: 'Equivalentes',
     h1: 'Fracciones equivalentes',
     title: 'Fracciones equivalentes: qué son, cómo hallarlas y comprobarlas',
-    description: 'Qué son las fracciones equivalentes, cómo obtenerlas amplificando y simplificando, y cómo comprobar si dos fracciones son equivalentes con la multiplicación en cruz. Con comprobador y ejercicios.',
+    description: 'Qué son las fracciones equivalentes, cómo obtenerlas y cómo comprobar si dos fracciones lo son con la multiplicación en cruz.',
     lead: 'Dos fracciones son equivalentes cuando representan la misma cantidad aunque se escriban con números distintos: 1/2, 2/4 y 4/8 son la misma mitad.',
     calc: { mode: 'equiv', a: '2/3', b: '8/12' },
     sections: [
@@ -165,7 +165,7 @@ export const PAGES = {
     nav: 'Simplificar',
     h1: 'Simplificar fracciones',
     title: 'Simplificar fracciones: cómo llegar a la fracción irreducible',
-    description: 'Cómo simplificar fracciones dividiendo entre el máximo común divisor o paso a paso con divisores pequeños. Simplificador con procedimiento, reglas de divisibilidad y ejercicios para imprimir.',
+    description: 'Cómo simplificar fracciones hasta la irreducible: con el mcd o paso a paso. Simplificador con procedimiento, trucos y ejercicios.',
     lead: 'Simplificar una fracción es escribirla con números más pequeños sin cambiar su valor. Se divide el numerador y el denominador entre un mismo número hasta que ya no se pueda más.',
     calc: { mode: 'simplify', a: '36/48' },
     sections: [

@@ -20,9 +20,25 @@ const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: 
 ---
 <Base lang={lang} title={ui.home_title} description={ui.home_description} alternates={alternates} jsonLd={[site, faq]}>
   <section class="hero">
-    <h1>{H.h1}</h1>
-    <p class="hero-sub">{H.sub}</p>
-    <HeroPlay P={H.play} />
+    <div class="hero-main">
+      <h1>{H.h1}</h1>
+      <p class="hero-sub">{H.sub}</p>
+      <HeroPlay P={H.play} />
+    </div>
+    <svg class="hero-art" viewBox="0 0 360 320" aria-hidden="true">
+      <rect x="40" y="40" width="120" height="120" rx="28" fill="var(--c-tablas)" transform="rotate(-8 100 100)" />
+      <text x="100" y="122" text-anchor="middle" font-size="64" font-weight="900" fill="#fff" transform="rotate(-8 100 100)">7×8</text>
+      <circle cx="262" cy="96" r="66" fill="var(--c-fichas)" />
+      <path d="M262 96 L262 30 A66 66 0 0 1 319 129 Z" fill="#fff" opacity=".9" />
+      <rect x="190" y="180" width="130" height="110" rx="26" fill="var(--c-fracciones)" transform="rotate(7 255 235)" />
+      <text x="255" y="222" text-anchor="middle" font-size="44" font-weight="900" fill="#fff" transform="rotate(7 255 235)">3</text>
+      <rect x="225" y="230" width="60" height="6" rx="3" fill="#fff" transform="rotate(7 255 235)" />
+      <text x="255" y="276" text-anchor="middle" font-size="44" font-weight="900" fill="#fff" transform="rotate(7 255 235)">4</text>
+      <circle cx="96" cy="246" r="54" fill="var(--c-juegos)" />
+      <text x="96" y="268" text-anchor="middle" font-size="60" font-weight="900" fill="#fff">%</text>
+      <circle cx="176" cy="160" r="12" fill="var(--pop)" /><circle cx="30" cy="180" r="7" fill="var(--c-calc)" /><circle cx="330" cy="200" r="8" fill="var(--c-ciencia)" />
+      <path d="M160 40 l6 14 15 2 -11 10 3 15 -13-7 -13 7 3-15 -11-10 15-2z" fill="var(--pop)" />
+    </svg>
     <ul class="trust">{ui.trust.map(([icon, text]) => <li><Icon name={icon} size={20} /> {text}</li>)}</ul>
   </section>
 
@@ -71,7 +87,11 @@ const faq = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: 
 
 
 <style>
-  .hero { padding-top: 0.25rem; }
+  .hero { padding-top: 0.25rem; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 0 2.5rem; align-items: center; }
+  .hero .trust { grid-column: 1 / -1; }
+  .hero-art { width: 100%; max-width: 400px; justify-self: center; font-family: inherit; animation: float 6s ease-in-out infinite; }
+  @keyframes float { 50% { transform: translateY(-8px) rotate(-1deg); } }
+  @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } .hero-art { display: none; } }
   .hero h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 0.2rem; max-width: none; }
   .hero-sub { margin: 0 0 1.2rem; color: var(--muted); font-weight: 700; font-size: 1.1rem; }
   .trust { list-style: none; padding: 0; margin: 1.4rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
