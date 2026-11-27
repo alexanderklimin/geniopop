@@ -143,14 +143,17 @@ if (trail.length) schemas.push({
         <div class="tsheet" id="topic-sheet" hidden>
           <div class="tsheet-panel" role="dialog" aria-modal="true" aria-label={TABBAR.allTopics[lang]}>
             <div class="tsheet-head"><strong>{TABBAR.allTopics[lang]}</strong><button type="button" data-sheet-close aria-label={TABBAR.close[lang]}><Icon name="close" size={24} /></button></div>
-            {groups.map((g) => (
-              <section style={`--c: var(--c-${g.c})`}>
-                <h3><span class="tsheet-ic"><Icon name={g.icon} size={18} /></span>{g.title}</h3>
-                <ul>{g.links.filter(([, h]) => g.c !== 'tablas' || !/tabla-del-/.test(h)).map(([l, h]) => <li><a href={h} aria-current={current === h ? 'page' : undefined}>{l}</a></li>)}</ul>
-                {g.c === 'tablas' && lang === 'es' && <ul class="tsheet-nums">{Array.from({ length: 12 }, (_, i) => i + 1).map((n) => <li><a href={`/es/tablas-de-multiplicar/tabla-del-${n}/`} aria-current={current === `/es/tablas-de-multiplicar/tabla-del-${n}/` ? 'page' : undefined}>×{n}</a></li>)}</ul>}
-              </section>
-            ))}
-            <section style="--c: var(--c-fichas)"><h3><span class="tsheet-ic"><Icon name="sheet" size={18} /></span>Fichas</h3><ul><li><a href="/es/fichas/">Generador de fichas</a></li></ul></section>
+            {[...groups, { c: 'fichas', icon: 'sheet', title: 'Fichas para imprimir', links: [['Generador de fichas', '/es/fichas/'], ['1.º de primaria', '/es/fichas/primero-de-primaria/'], ['2.º de primaria', '/es/fichas/segundo-de-primaria/'], ['3.º de primaria', '/es/fichas/tercero-de-primaria/'], ['4.º de primaria', '/es/fichas/cuarto-de-primaria/'], ['5.º de primaria', '/es/fichas/quinto-de-primaria/'], ['6.º de primaria', '/es/fichas/sexto-de-primaria/']] }].map((g) => {
+              const links = g.links.filter(([, h]) => g.c !== 'tablas' || !/tabla-del-/.test(h));
+              const here = g.links.some(([, h]) => current === h) || (g.c === 'tablas' && /\/tablas-de-multiplicar\//.test(current)) || (g.c === 'fichas' && current.startsWith('/es/fichas/'));
+              return (
+                <details class="tgrp" name="tgrp" style={`--c: var(--c-${g.c})`} open={here}>
+                  <summary><span class="tsheet-ic"><Icon name={g.icon} size={18} /></span><span class="tgrp-t">{g.title}</span><span class="tgrp-n">{links.length + (g.c === 'tablas' ? 12 : 0)}</span><Icon name="arrow" size={18} class="tgrp-chev" /></summary>
+                  <ul class="tgrp-list">{links.map(([l, h]) => <li><a href={h} aria-current={current === h ? 'page' : undefined}>{l}</a></li>)}</ul>
+                  {g.c === 'tablas' && lang === 'es' && <ul class="tsheet-nums">{Array.from({ length: 12 }, (_, i) => i + 1).map((n) => <li><a href={`/es/tablas-de-multiplicar/tabla-del-${n}/`} aria-current={current === `/es/tablas-de-multiplicar/tabla-del-${n}/` ? 'page' : undefined}>×{n}</a></li>)}</ul>}
+                </details>
+              );
+            })}
           </div>
         </div>
         <script is:inline>
